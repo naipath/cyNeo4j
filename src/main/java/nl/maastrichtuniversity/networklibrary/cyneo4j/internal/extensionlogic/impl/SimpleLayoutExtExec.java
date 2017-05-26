@@ -20,71 +20,71 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 public class SimpleLayoutExtExec implements ExtensionExecutor {
 
-	private Plugin plugin;
-	private Extension extension;
-	private CyNetwork currNet;
-	
-	public SimpleLayoutExtExec() {
-	}
+    private Plugin plugin;
+    private Extension extension;
+    private CyNetwork currNet;
 
-	@Override
-	public boolean collectParameters() {
-		currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
-		return true;
-	}
+    public SimpleLayoutExtExec() {
+    }
 
-	private Plugin getPlugin() {
-		return plugin;
-	}
+    @Override
+    public boolean collectParameters() {
+        currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
+        return true;
+    }
 
-	@Override
-	public void processCallResponse(ExtensionCall call, Object callRetValue) {
-		
-		List<Double> values = (List<Double>)callRetValue;
-		
-		CyTable defNodeTab = currNet.getDefaultNodeTable();
-		CyNetworkView networkView = getPlugin().getCyNetViewMgr().getNetworkViews(currNet).iterator().next();
-		
-		for(int i = 0; i < (values.size() / 3); ++i){
-			Long neoid = values.get(i*3).longValue();
-			Double x = values.get(i*3+1);
-			Double y = values.get(i*3+2);
-			
-			
-			Set<CyNode> nodeSet = CyUtils.getNodesWithValue(currNet, defNodeTab, "neoid", neoid);
-			CyNode n = nodeSet.iterator().next();
-			
-			View<CyNode> nodeView = networkView.getNodeView(n);
-			nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x);
-			nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
-			
-			CyUtils.updateVisualStyle(getPlugin().getVisualMappingManager(), networkView, currNet);
-		}
-		
+    private Plugin getPlugin() {
+        return plugin;
+    }
 
-	}
+    @Override
+    public void processCallResponse(ExtensionCall call, Object callRetValue) {
 
-	@Override
-	public void setPlugin(Plugin plugin) {
-		this.plugin = plugin;
+        List<Double> values = (List<Double>) callRetValue;
 
-	}
+        CyTable defNodeTab = currNet.getDefaultNodeTable();
+        CyNetworkView networkView = getPlugin().getCyNetViewMgr().getNetworkViews(currNet).iterator().next();
 
-	@Override
-	public void setExtension(Extension extension) {
-		this.extension = extension;
+        for (int i = 0; i < (values.size() / 3); ++i) {
+            Long neoid = values.get(i * 3).longValue();
+            Double x = values.get(i * 3 + 1);
+            Double y = values.get(i * 3 + 2);
 
-	}
 
-	@Override
-	public List<ExtensionCall> buildExtensionCalls() {
-		List<ExtensionCall> calls = new ArrayList<ExtensionCall>();
-		
-		String urlFragment = extension.getEndpoint();
-		String payload = "{\"saveInGraph\":false}";
-		
-		calls.add(new Neo4jCall(urlFragment,payload));
-		
-		return calls;
-	}
+            Set<CyNode> nodeSet = CyUtils.getNodesWithValue(currNet, defNodeTab, "neoid", neoid);
+            CyNode n = nodeSet.iterator().next();
+
+            View<CyNode> nodeView = networkView.getNodeView(n);
+            nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x);
+            nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
+
+            CyUtils.updateVisualStyle(getPlugin().getVisualMappingManager(), networkView, currNet);
+        }
+
+
+    }
+
+    @Override
+    public void setPlugin(Plugin plugin) {
+        this.plugin = plugin;
+
+    }
+
+    @Override
+    public void setExtension(Extension extension) {
+        this.extension = extension;
+
+    }
+
+    @Override
+    public List<ExtensionCall> buildExtensionCalls() {
+        List<ExtensionCall> calls = new ArrayList<ExtensionCall>();
+
+        String urlFragment = extension.getEndpoint();
+        String payload = "{\"saveInGraph\":false}";
+
+        calls.add(new Neo4jCall(urlFragment, payload));
+
+        return calls;
+    }
 }

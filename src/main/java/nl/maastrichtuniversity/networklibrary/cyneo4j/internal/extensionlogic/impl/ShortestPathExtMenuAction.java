@@ -11,20 +11,20 @@ import org.cytoscape.application.swing.AbstractCyAction;
 
 public class ShortestPathExtMenuAction extends AbstractCyAction {
 
-	private static final String MENU_LOC = "Apps.cyNeo4j";
-	private Plugin plugin;
+    private static final String MENU_LOC = "Apps.cyNeo4j";
+    private Plugin plugin;
 
 
-	public ShortestPathExtMenuAction(CyApplicationManager cyApplicationManager,Plugin plugin) {
-		super("Shortest path", cyApplicationManager,null,null);
-		setPreferredMenu(MENU_LOC);
-		this.plugin = plugin;
+    public ShortestPathExtMenuAction(CyApplicationManager cyApplicationManager, Plugin plugin) {
+        super("Shortest path", cyApplicationManager, null, null);
+        setPreferredMenu(MENU_LOC);
+        this.plugin = plugin;
 //		setEnabled(false);
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		JOptionPane.showMessageDialog(null, "shortest path extension!!!");
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JOptionPane.showMessageDialog(null, "shortest path extension!!!");
 //		try {
 //			ExtensionExecutor exec = new ShortestPathExtExec();
 //						
@@ -53,10 +53,9 @@ public class ShortestPathExtMenuAction extends AbstractCyAction {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		
-		
-	}
 
-	
+
+    }
+
 
 }
