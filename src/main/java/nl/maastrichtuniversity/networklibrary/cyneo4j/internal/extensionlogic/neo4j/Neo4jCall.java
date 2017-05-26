@@ -23,13 +23,6 @@ public class Neo4jCall implements ExtensionCall {
         this.payload = payload;
     }
 
-    @Deprecated
-    public Neo4jCall(String urlFragment, String payload) {
-        this.urlFragment = urlFragment;
-        this.payload = payload;
-        this.async = false;
-    }
-
     public Neo4jCall(String urlFragment, String payload, boolean async) {
         this.urlFragment = urlFragment;
         this.payload = payload;

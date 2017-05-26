@@ -14,7 +14,7 @@ public interface ExtensionParameter {
 
     Class<?> getType();
 
-    void setType(Class<? extends Object> type);
+    void setType(Class<?> type);
 
     void setName(String name);
 
