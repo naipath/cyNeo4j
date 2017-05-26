@@ -71,7 +71,7 @@ public class ForceAtlas2LayoutExtMenuAction extends AbstractCyAction {
             double progress = 0.0;
             for (Neo4jCall call : calls) {
                 Object callRetValue = plugin.getInteractor().executeExtensionCall(call, false);
-                exec.processCallResponse(call, callRetValue);
+                exec.processCallResponse(callRetValue);
                 ++progress;
                 monitor.setProgress(progress / ((double) calls.size()));
 

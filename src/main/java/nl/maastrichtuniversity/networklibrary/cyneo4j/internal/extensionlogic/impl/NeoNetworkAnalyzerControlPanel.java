@@ -45,7 +45,7 @@ public class NeoNetworkAnalyzerControlPanel extends JPanel implements ActionList
     private JCheckBox clustCoeff;
 
 
-    public NeoNetworkAnalyzerControlPanel(JDialog dialog) {
+    NeoNetworkAnalyzerControlPanel(JDialog dialog) {
         this.dialog = dialog;
 
         JPanel directionalityPanel = buildDirectionalityPanel();
@@ -273,7 +273,7 @@ public class NeoNetworkAnalyzerControlPanel extends JPanel implements ActionList
         closeUp();
     }
 
-    protected boolean runIt() {
+    boolean runIt() {
         return runIt;
     }
 

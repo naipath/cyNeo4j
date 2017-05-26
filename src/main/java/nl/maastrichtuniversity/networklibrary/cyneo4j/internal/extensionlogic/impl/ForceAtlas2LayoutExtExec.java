@@ -2,7 +2,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.i
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ContinuiousExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
@@ -17,7 +16,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
 
-public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
+public class ForceAtlas2LayoutExtExec {
 
     private static final int IterationStepSize = 10;
 
@@ -52,7 +51,6 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
         params.put("numIterations", 1000);
     }
 
-    @Override
     public boolean collectParameters() {
         currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
 
@@ -78,8 +76,7 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
         return plugin;
     }
 
-    @Override
-    public void processCallResponse(Neo4jCall call, Object callRetValue) {
+    public void processCallResponse(Object callRetValue) {
 
         List<Double> values = (List<Double>) callRetValue;
 
@@ -102,19 +99,16 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
         }
     }
 
-    @Override
     public void setPlugin(Plugin plugin) {
         this.plugin = plugin;
 
     }
 
-    @Override
     public void setExtension(Extension extension) {
         this.extension = extension;
 
     }
 
-    @Override
     public List<Neo4jCall> buildExtensionCalls() {
         List<Neo4jCall> calls = new ArrayList<>();
 
@@ -153,9 +147,7 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
         return calls;
     }
 
-
-    @Override
-    public boolean doContinue() {
+    boolean doContinue() {
         return runIt;
     }
 }
