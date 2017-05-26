@@ -14,8 +14,8 @@ import org.cytoscape.application.swing.AbstractCyAction;
 @SuppressWarnings("serial")
 public class ConnectInstanceMenuAction extends AbstractCyAction {
 	
-	public final static String MENU_TITLE = "Connect to Instance";
-	public final static String MENU_LOC = "Apps.cyNeo4j";
+	private final static String MENU_TITLE = "Connect to Instance";
+	private final static String MENU_LOC = "Apps.cyNeo4j";
 	
 	private Plugin plugin;
 	
@@ -29,8 +29,6 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
-//		System.out.println("sanity: am i connected to "+plugin.getInteractor().getInstanceLocation()+"? " + plugin.getInteractor().isConnected());
-//		System.out.println("alive!");
 		JDialog dialog = new JDialog(plugin.getCySwingApplication().getJFrame());
 		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		

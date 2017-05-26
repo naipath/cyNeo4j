@@ -20,9 +20,6 @@ public class CypherExtExec implements ExtensionExecutor {
 	private String query;
 	private CyNetwork currNet;
 	
-	public CypherExtExec() {
-	}
-
 	@Override
 	public boolean collectParameters() {
 		
@@ -64,7 +61,7 @@ public class CypherExtExec implements ExtensionExecutor {
 
 	@Override
 	public List<ExtensionCall> buildExtensionCalls() {
-		List<ExtensionCall> calls = new ArrayList<ExtensionCall>();
+		List<ExtensionCall> calls = new ArrayList<>();
 		
 		String urlFragment = extension.getEndpoint();
 		String payload = "{\"query\" : \""+query+"\",\"params\" : {}}";

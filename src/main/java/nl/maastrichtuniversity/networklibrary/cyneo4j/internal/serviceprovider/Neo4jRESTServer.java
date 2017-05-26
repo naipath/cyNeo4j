@@ -1,14 +1,5 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionCall;
@@ -21,7 +12,6 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.e
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general.Neo4jPingHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownTaskFactory;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpTaskFactory;
-
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Async;
 import org.apache.http.client.fluent.Request;
@@ -30,210 +20,211 @@ import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.TaskIterator;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Neo4jRESTServer implements Neo4jServer {
 
-	private static final String DATA_URL = "/db/data/";
-	private static final String CYPHER_URL = DATA_URL + "cypher";
-	private static final String EXT_URL = DATA_URL + "ext/";
+    private static final String DATA_URL = "/db/data/";
+    private static final String CYPHER_URL = DATA_URL + "cypher";
+    private static final String EXT_URL = DATA_URL + "ext/";
 
-	protected String instanceLocation = null;
+    protected String instanceLocation = null;
 
-	private Plugin plugin;
-	private Map<String,AbstractCyAction> localExtensions;
-	
-	protected ExecutorService threadpool;
-	protected Async async;
+    private Plugin plugin;
+    private Map<String, AbstractCyAction> localExtensions;
 
-	public Neo4jRESTServer(Plugin plugin){
-		this.plugin = plugin;
-	
-	}
+    protected ExecutorService threadpool;
+    protected Async async;
 
-	@Override
-	public boolean connect(String instanceLocation) {
-		
-		if(isConnected()){
-			disconnect();
-		}
-		
-		if(validateConnection(instanceLocation)){
-			setInstanceLocation(instanceLocation);
-			registerExtension();
-		}
-		return isConnected();
-	}
+    public Neo4jRESTServer(Plugin plugin) {
+        this.plugin = plugin;
 
-	protected void registerExtension() {
-		for(Extension ext : getExtensions()){
-			getPlugin().registerAction(localExtensions.get(ext.getName()));
-		}
-	}
+    }
 
-	@Override
-	public void disconnect() {
-		instanceLocation = null;
-		unregisterExtensions();
+    @Override
+    public boolean connect(String instanceLocation) {
 
-	}
+        if (isConnected()) {
+            disconnect();
+        }
 
-	private void unregisterExtensions() {
-		getPlugin().unregisterActions();
+        if (validateConnection(instanceLocation)) {
+            setInstanceLocation(instanceLocation);
+            registerExtension();
+        }
+        return isConnected();
+    }
 
-	}
+    protected void registerExtension() {
+        for (Extension ext : getExtensions()) {
+            getPlugin().registerAction(localExtensions.get(ext.getName()));
+        }
+    }
 
-	@Override
-	public boolean isConnected() {
-		return validateConnection(getInstanceLocation());
-	}
+    @Override
+    public void disconnect() {
+        instanceLocation = null;
+        unregisterExtensions();
 
-	@Override
-	public String getInstanceLocation() {
-		return instanceLocation;
-	}
+    }
 
-	protected void setInstanceLocation(String instanceLocation) {
-		this.instanceLocation = instanceLocation;
-	}
+    private void unregisterExtensions() {
+        getPlugin().unregisterActions();
 
-	@Override
-	public void syncDown(boolean mergeInCurrent) {
+    }
 
-		TaskIterator it = new SyncDownTaskFactory(getPlugin().getCyNetworkManager(), 
-				mergeInCurrent, 
-				getPlugin().getCyNetworkFactory(), 
-				getInstanceLocation(), 
-				getCypherURL(),
-				getPlugin().getCyNetViewMgr(),
-				getPlugin().getCyNetworkViewFactory(),
-				getPlugin().getCyLayoutAlgorithmManager(),
-				getPlugin().getVisualMappingManager()
-				).createTaskIterator();
+    @Override
+    public boolean isConnected() {
+        return validateConnection(getInstanceLocation());
+    }
 
-		plugin.getDialogTaskManager().execute(it);
+    @Override
+    public String getInstanceLocation() {
+        return instanceLocation;
+    }
 
-	}
+    protected void setInstanceLocation(String instanceLocation) {
+        this.instanceLocation = instanceLocation;
+    }
 
-	@Override
-	public List<Extension> getExtensions() {
-		List<Extension> res = new ArrayList<Extension>();
+    @Override
+    public void syncDown(boolean mergeInCurrent) {
 
-		Extension cypherExt = new Neo4jExtension();
-		cypherExt.setName("cypher");
-		cypherExt.setEndpoint(getCypherURL());
+        TaskIterator it = new SyncDownTaskFactory(getPlugin().getCyNetworkManager(),
+            mergeInCurrent,
+            getPlugin().getCyNetworkFactory(),
+            getInstanceLocation(),
+            getCypherURL(),
+            getPlugin().getCyNetViewMgr(),
+            getPlugin().getCyNetworkViewFactory(),
+            getPlugin().getCyLayoutAlgorithmManager(),
+            getPlugin().getVisualMappingManager()
+        ).createTaskIterator();
 
-		List<ExtensionParameter> params = new ArrayList<ExtensionParameter>();
+        plugin.getDialogTaskManager().execute(it);
 
-		ExtensionParameter queryParam = new Neo4jExtParam("cypherQuery", "Cypher Endpoint", false,String.class);
-		params.add(queryParam);
+    }
 
-		cypherExt.setParameters(params);
+    @Override
+    public List<Extension> getExtensions() {
+        List<Extension> res = new ArrayList<Extension>();
 
-		if(localExtensions.containsKey("cypher")){
-			res.add(cypherExt);
-		}
-		try {
-			Set<String> extNames = Request.Get(getInstanceLocation() + EXT_URL).execute().handleResponse(new ExtensionLocationsHandler());
+        Extension cypherExt = new Neo4jExtension();
+        cypherExt.setName("cypher");
+        cypherExt.setEndpoint(getCypherURL());
 
-			for(String extName : extNames){
-				List<Extension> serverSupportedExt = Request.Get(getInstanceLocation() + EXT_URL + extName).execute().handleResponse(new ExtensionParametersResponseHandler(getInstanceLocation() + EXT_URL + extName)); 
+        List<ExtensionParameter> params = new ArrayList<ExtensionParameter>();
 
-				for(Extension ext : serverSupportedExt){
-					if(localExtensions.containsKey(ext.getName())){
-						res.add(ext);
-					}
-				}
-			}
+        ExtensionParameter queryParam = new Neo4jExtParam("cypherQuery", "Cypher Endpoint", false, String.class);
+        params.add(queryParam);
 
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        cypherExt.setParameters(params);
+
+        if (localExtensions.containsKey("cypher")) {
+            res.add(cypherExt);
+        }
+        try {
+            Set<String> extNames = Request.Get(getInstanceLocation() + EXT_URL).execute().handleResponse(new ExtensionLocationsHandler());
+
+            for (String extName : extNames) {
+                List<Extension> serverSupportedExt = Request.Get(getInstanceLocation() + EXT_URL + extName).execute().handleResponse(new ExtensionParametersResponseHandler(getInstanceLocation() + EXT_URL + extName));
+
+                for (Extension ext : serverSupportedExt) {
+                    if (localExtensions.containsKey(ext.getName())) {
+                        res.add(ext);
+                    }
+                }
+            }
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
-		return res;
-	}
+        return res;
+    }
 
-	@Override
-	public void syncUp(boolean wipeRemote, CyNetwork curr) {
-		TaskIterator it = new SyncUpTaskFactory(wipeRemote,getCypherURL(),getPlugin().getCyApplicationManager().getCurrentNetwork()).createTaskIterator();
-		plugin.getDialogTaskManager().execute(it);
+    @Override
+    public void syncUp(boolean wipeRemote, CyNetwork curr) {
+        TaskIterator it = new SyncUpTaskFactory(wipeRemote, getCypherURL(), getPlugin().getCyApplicationManager().getCurrentNetwork()).createTaskIterator();
+        plugin.getDialogTaskManager().execute(it);
 
-	}
+    }
 
-	private String getCypherURL() {
-		return getInstanceLocation() + CYPHER_URL;
-	}
-	
-	protected void setupAsync(){
-		threadpool = Executors.newFixedThreadPool(2);
-		async = Async.newInstance().use(threadpool);
-	}
+    private String getCypherURL() {
+        return getInstanceLocation() + CYPHER_URL;
+    }
 
-	@Override
-	public Object executeExtensionCall(ExtensionCall call, boolean doAsync) {
-		Object retVal = null;
-		
-		if(doAsync){
-			setupAsync();
-			
-//			System.out.println("executing call: " + call.getUrlFragment());
-//			System.out.println("using payload: " + call.getPayload());
-			String url = call.getUrlFragment();
-			Request req = Request.Post(url).bodyString(call.getPayload(), ContentType.APPLICATION_JSON);
-			
-			async.execute(req);
-		} else {
+    protected void setupAsync() {
+        threadpool = Executors.newFixedThreadPool(2);
+        async = Async.newInstance().use(threadpool);
+    }
 
-			
-			try {
-//				System.out.println("executing call: " + call.getUrlFragment());
-//				System.out.println("using payload: " + call.getPayload());
-				String url = call.getUrlFragment();
-				retVal = Request.Post(url).bodyString(call.getPayload(), ContentType.APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandler());
+    @Override
+    public Object executeExtensionCall(ExtensionCall call, boolean doAsync) {
+        Object retVal = null;
 
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+        if (doAsync) {
+            setupAsync();
 
-		return retVal;
-	}
+            String url = call.getUrlFragment();
+            Request req = Request.Post(url).bodyString(call.getPayload(), ContentType.APPLICATION_JSON);
 
-	@Override
-	public boolean validateConnection(String instanceLocation) {
-		try {
-			return instanceLocation != null && Request.Get(instanceLocation).execute().handleResponse(new Neo4jPingHandler());
-		} catch (ClientProtocolException e) {
-		} catch (IOException e) {
-		}
-		// show exceptions? does the user understand the error messages? 
-		return false;
-	}
+            async.execute(req);
+        } else {
 
-	protected Plugin getPlugin() {
-		return plugin;
-	}
 
-	@Override
-	public Extension supportsExtension(String name) {
-		List<Extension> extensions = getExtensions();
+            try {
+                String url = call.getUrlFragment();
+                retVal = Request.Post(url).bodyString(call.getPayload(), ContentType.APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandler());
 
-		for(Extension extension : extensions){
-			if(extension.getName().equals(name)){
-				return extension;
-			}
-		}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-		return null;
-	}
+        return retVal;
+    }
 
-	@Override
-	public void setLocalSupportedExtension(Map<String,AbstractCyAction> localExtensions) {
-		this.localExtensions = localExtensions;
+    @Override
+    public boolean validateConnection(String instanceLocation) {
+        try {
+            return instanceLocation != null && Request.Get(instanceLocation).execute().handleResponse(new Neo4jPingHandler());
+        } catch (IOException e) {
+        }
+        // TODO fix error messages | show exceptions? does the user understand the error messages?
+        return false;
+    }
 
-	}
+    protected Plugin getPlugin() {
+        return plugin;
+    }
+
+    @Override
+    public Extension supportsExtension(String name) {
+        List<Extension> extensions = getExtensions();
+
+        for (Extension extension : extensions) {
+            if (extension.getName().equals(name)) {
+                return extension;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setLocalSupportedExtension(Map<String, AbstractCyAction> localExtensions) {
+        this.localExtensions = localExtensions;
+
+    }
 
 }

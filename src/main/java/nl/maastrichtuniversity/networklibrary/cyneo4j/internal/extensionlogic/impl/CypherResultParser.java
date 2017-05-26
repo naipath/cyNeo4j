@@ -16,220 +16,220 @@ import org.cytoscape.model.CyTable;
 
 public class CypherResultParser {
 
-	private static final String NODE_KEY = "outgoing_typed_relationships";
-	private static final String EDGE_KEY = "type";
+    private static final String NODE_KEY = "outgoing_typed_relationships";
+    private static final String EDGE_KEY = "type";
 
-	protected List<String> cols;
-	protected Map<String,ResType> colType = new HashMap<String,ResType>();
-	protected CyNetwork currNet;
+    protected List<String> cols;
+    protected Map<String, ResType> colType = new HashMap<String, ResType>();
+    protected CyNetwork currNet;
 
-	protected long numNodes;
-	protected long numEdges;
+    protected long numNodes;
+    protected long numEdges;
 
-	public CypherResultParser(CyNetwork network){
-		this.currNet = network;
+    public CypherResultParser(CyNetwork network) {
+        this.currNet = network;
 
-		numNodes = 0;
-		numEdges = 0;
-	}
+        numNodes = 0;
+        numEdges = 0;
+    }
 
-	public void parseRetVal(Object callRetValue){
-		Map<String,Object> retVal = (Map<String,Object>)callRetValue;
+    public void parseRetVal(Object callRetValue) {
+        Map<String, Object> retVal = (Map<String, Object>) callRetValue;
 
-		readColumns((List<String>)retVal.get("columns"));
+        readColumns((List<String>) retVal.get("columns"));
 
-		readResultTable((List<List<Object>>)retVal.get("data"));
-	}
+        readResultTable((List<List<Object>>) retVal.get("data"));
+    }
 
-	protected void readColumns(List<String> columns){
-		cols = columns;
-		for(String col : cols){
-			colType.put(col,ResType.Unknown);
-		}
-	}
+    protected void readColumns(List<String> columns) {
+        cols = columns;
+        for (String col : cols) {
+            colType.put(col, ResType.Unknown);
+        }
+    }
 
-	protected void readResultTable(List<List<Object>> rows){
-		//		for(List<Object> row : rows){
-		for(int r = 0; r < rows.size(); ++r){
-			List<Object> row = rows.get(r);
+    protected void readResultTable(List<List<Object>> rows) {
+        //		for(List<Object> row : rows){
+        for (int r = 0; r < rows.size(); ++r) {
+            List<Object> row = rows.get(r);
 
-			for(int i = 0; i < row.size(); ++i){
+            for (int i = 0; i < row.size(); ++i) {
 
-				Object item = row.get(i);
-				String col = cols.get(i);
-				ResType type = duckTypeObject(item, col);
-				
-				switch(type){
-				case Node:
-					parseNode(item,col);
-					break;
+                Object item = row.get(i);
+                String col = cols.get(i);
+                ResType type = duckTypeObject(item, col);
 
-				case Edge:
-					parseEdge(item,col);
-					break;
+                switch (type) {
+                    case Node:
+                        parseNode(item, col);
+                        break;
 
-				default:
-					break;
+                    case Edge:
+                        parseEdge(item, col);
+                        break;
 
-				}
-			}
-		}
-	}
+                    default:
+                        break;
 
-	public void parseNode(Object nodeObj, String column){
+                }
+            }
+        }
+    }
 
-		CyTable defNodeTab = currNet.getDefaultNodeTable();
-		if(defNodeTab.getColumn("neoid") == null){
-			defNodeTab.createColumn("neoid", Long.class, false);
-		}
+    public void parseNode(Object nodeObj, String column) {
 
-		Map<String,Object> node = (Map<String,Object>)nodeObj;
+        CyTable defNodeTab = currNet.getDefaultNodeTable();
+        if (defNodeTab.getColumn("neoid") == null) {
+            defNodeTab.createColumn("neoid", Long.class, false);
+        }
 
-		String selfURL = (String)node.get("self");
-		Long self = Long.valueOf(NeoUtils.extractID((String)node.get("self")));
+        Map<String, Object> node = (Map<String, Object>) nodeObj;
 
-		CyNode cyNode = CyUtils.getNodeByNeoId(currNet, self);
+        String selfURL = (String) node.get("self");
+        Long self = Long.valueOf(NeoUtils.extractID((String) node.get("self")));
 
-		if(cyNode == null){
-			cyNode = currNet.addNode();
-			currNet.getRow(cyNode).set("neoid", self);
-			++numNodes;
-		}
+        CyNode cyNode = CyUtils.getNodeByNeoId(currNet, self);
 
-		Map<String,Object> nodeProps = (Map<String,Object>) node.get("data");
+        if (cyNode == null) {
+            cyNode = currNet.addNode();
+            currNet.getRow(cyNode).set("neoid", self);
+            ++numNodes;
+        }
 
-		for(Entry<String,Object> obj : nodeProps.entrySet()){
-			if(defNodeTab.getColumn(obj.getKey()) == null){
-				if(obj.getValue().getClass() == ArrayList.class){
-					defNodeTab.createListColumn(obj.getKey(), String.class, true);
-				} else {
-					defNodeTab.createColumn(obj.getKey(), obj.getValue().getClass(), true);
-				}
-			}
+        Map<String, Object> nodeProps = (Map<String, Object>) node.get("data");
 
-			Object value = CyUtils.fixSpecialTypes(obj.getValue(), defNodeTab.getColumn(obj.getKey()).getType());
-			defNodeTab.getRow(cyNode.getSUID()).set(obj.getKey(), value);
-		}
-	}
+        for (Entry<String, Object> obj : nodeProps.entrySet()) {
+            if (defNodeTab.getColumn(obj.getKey()) == null) {
+                if (obj.getValue().getClass() == ArrayList.class) {
+                    defNodeTab.createListColumn(obj.getKey(), String.class, true);
+                } else {
+                    defNodeTab.createColumn(obj.getKey(), obj.getValue().getClass(), true);
+                }
+            }
 
-	public void parseEdge(Object edgeObj, String column){
+            Object value = CyUtils.fixSpecialTypes(obj.getValue(), defNodeTab.getColumn(obj.getKey()).getType());
+            defNodeTab.getRow(cyNode.getSUID()).set(obj.getKey(), value);
+        }
+    }
 
-		CyTable defEdgeTab = currNet.getDefaultEdgeTable();
-		if(defEdgeTab.getColumn("neoid") == null){
-			defEdgeTab.createColumn("neoid", Long.class, false);
-		}
+    public void parseEdge(Object edgeObj, String column) {
 
-		CyTable defNodeTab = currNet.getDefaultNodeTable();
-		if(defNodeTab.getColumn("neoid") == null){
-			defNodeTab.createColumn("neoid", Long.class, false);
-		}
+        CyTable defEdgeTab = currNet.getDefaultEdgeTable();
+        if (defEdgeTab.getColumn("neoid") == null) {
+            defEdgeTab.createColumn("neoid", Long.class, false);
+        }
 
-		Map<Object, Object> edge = (Map<Object, Object>)edgeObj;
+        CyTable defNodeTab = currNet.getDefaultNodeTable();
+        if (defNodeTab.getColumn("neoid") == null) {
+            defNodeTab.createColumn("neoid", Long.class, false);
+        }
 
-		String selfURL = (String)edge.get("self");
-		Long self = NeoUtils.extractID(selfURL);
+        Map<Object, Object> edge = (Map<Object, Object>) edgeObj;
 
-		CyEdge cyEdge = CyUtils.getEdgeByNeoId(currNet, self);
+        String selfURL = (String) edge.get("self");
+        Long self = NeoUtils.extractID(selfURL);
 
-		if(cyEdge == null){
+        CyEdge cyEdge = CyUtils.getEdgeByNeoId(currNet, self);
 
-			String startUrl = (String)edge.get("start");
-			Long start = NeoUtils.extractID(startUrl);
+        if (cyEdge == null) {
 
-			String endUrl = (String)edge.get("end");
-			Long end = NeoUtils.extractID(endUrl);
+            String startUrl = (String) edge.get("start");
+            Long start = NeoUtils.extractID(startUrl);
 
-			String type = (String)edge.get("type");
+            String endUrl = (String) edge.get("end");
+            Long end = NeoUtils.extractID(endUrl);
 
-			CyNode startNode = CyUtils.getNodeByNeoId(currNet, start);
-			CyNode endNode = CyUtils.getNodeByNeoId(currNet, end);
+            String type = (String) edge.get("type");
 
-			if(startNode == null){
-				startNode = currNet.addNode();
-				currNet.getRow(startNode).set("neoid", start);
-			}
+            CyNode startNode = CyUtils.getNodeByNeoId(currNet, start);
+            CyNode endNode = CyUtils.getNodeByNeoId(currNet, end);
 
-			if(endNode == null){
-				endNode = currNet.addNode();
-				currNet.getRow(endNode).set("neoid", end);
-			}
+            if (startNode == null) {
+                startNode = currNet.addNode();
+                currNet.getRow(startNode).set("neoid", start);
+            }
 
-			cyEdge = currNet.addEdge(startNode, endNode, true);
-			++numEdges;
+            if (endNode == null) {
+                endNode = currNet.addNode();
+                currNet.getRow(endNode).set("neoid", end);
+            }
 
-			currNet.getRow(cyEdge).set("neoid", self);
-			currNet.getRow(cyEdge).set(CyEdge.INTERACTION, type);
+            cyEdge = currNet.addEdge(startNode, endNode, true);
+            ++numEdges;
 
-			Map<String,Object> nodeProps = (Map<String,Object>) edge.get("data");
+            currNet.getRow(cyEdge).set("neoid", self);
+            currNet.getRow(cyEdge).set(CyEdge.INTERACTION, type);
 
-			for(Entry<String,Object> obj : nodeProps.entrySet()){
-				if(defEdgeTab.getColumn(obj.getKey()) == null){
-					if(obj.getValue().getClass() == ArrayList.class){
-						defEdgeTab.createListColumn(obj.getKey(), String.class, true);
-					} else {
-						defEdgeTab.createColumn(obj.getKey(), obj.getValue().getClass(), true);
-					}
-				}
+            Map<String, Object> nodeProps = (Map<String, Object>) edge.get("data");
 
-				Object value = CyUtils.fixSpecialTypes(obj.getValue(), defEdgeTab.getColumn(obj.getKey()).getType());
-				defEdgeTab.getRow(cyEdge.getSUID()).set(obj.getKey(), value);
+            for (Entry<String, Object> obj : nodeProps.entrySet()) {
+                if (defEdgeTab.getColumn(obj.getKey()) == null) {
+                    if (obj.getValue().getClass() == ArrayList.class) {
+                        defEdgeTab.createListColumn(obj.getKey(), String.class, true);
+                    } else {
+                        defEdgeTab.createColumn(obj.getKey(), obj.getValue().getClass(), true);
+                    }
+                }
 
-			}
-		}
-	}
+                Object value = CyUtils.fixSpecialTypes(obj.getValue(), defEdgeTab.getColumn(obj.getKey()).getType());
+                defEdgeTab.getRow(cyEdge.getSUID()).set(obj.getKey(), value);
 
-	public long nodesAdded(){
-		return numNodes;
-	}
+            }
+        }
+    }
 
-	public long edgesAdded() {
-		return numEdges;
-	}
+    public long nodesAdded() {
+        return numNodes;
+    }
 
-	protected ResType duckTypeObject(Object obj,String column){
+    public long edgesAdded() {
+        return numEdges;
+    }
 
-		ResType result = colType.get(column);
+    protected ResType duckTypeObject(Object obj, String column) {
 
-		if(result == ResType.Unknown){
-			if(isNodeType(obj)){
-				result = ResType.Node;
-			} else if(isEdgeType(obj)){
-				result = ResType.Edge;
-			} else { // this could / should be extended
-				result = ResType.Ignore;
-			}
-			colType.put(column, result);
-		}
+        ResType result = colType.get(column);
 
-		return result;
-	}
+        if (result == ResType.Unknown) {
+            if (isNodeType(obj)) {
+                result = ResType.Node;
+            } else if (isEdgeType(obj)) {
+                result = ResType.Edge;
+            } else { // this could / should be extended
+                result = ResType.Ignore;
+            }
+            colType.put(column, result);
+        }
 
-	protected boolean isNodeType(Object obj){
-		try{
-			Map<String,Object> node = (Map<String,Object>)obj;
-			return node.containsKey(NODE_KEY);
+        return result;
+    }
 
-		} catch(ClassCastException e){
-			return false;
-		}
-	}
+    protected boolean isNodeType(Object obj) {
+        try {
+            Map<String, Object> node = (Map<String, Object>) obj;
+            return node.containsKey(NODE_KEY);
 
-	protected boolean isEdgeType(Object obj){
-		try{
-			Map<String,Object> node = (Map<String,Object>)obj;
-			return node.containsKey(EDGE_KEY);
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
 
-		} catch(ClassCastException e){
-			return false;
-		}
-	}
+    protected boolean isEdgeType(Object obj) {
+        try {
+            Map<String, Object> node = (Map<String, Object>) obj;
+            return node.containsKey(EDGE_KEY);
 
-	protected enum ResType {
-		Node,
-		Edge,
-		Ignore,
-		Unknown
-	}
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    protected enum ResType {
+        Node,
+        Edge,
+        Ignore,
+        Unknown
+    }
 
 
 }

@@ -15,8 +15,8 @@ import org.cytoscape.application.swing.AbstractCyAction;
 
 public class CypherMenuAction extends AbstractCyAction {
 
-	public final static String MENU_TITLE = "Cypher Query";
-	public final static String MENU_LOC = "Apps.cyNeo4j";
+	private final static String MENU_TITLE = "Cypher Query";
+	private final static String MENU_LOC = "Apps.cyNeo4j";
 
 	private Plugin plugin;
 

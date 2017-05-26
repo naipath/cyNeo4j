@@ -14,49 +14,49 @@ import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 
 public class NeoNetworkAnalyzerAction extends AbstractCyAction {
-	public final static String MENU_TITLE = "NeoNetworkAnalyzer";
-	public final static String MENU_LOC = "Apps.cyNeo4j.Statistics";
+    private final static String MENU_TITLE = "NeoNetworkAnalyzer";
+    private final static String MENU_LOC = "Apps.cyNeo4j.Statistics";
 
-	private Plugin plugin;
+    private Plugin plugin;
 
-	public NeoNetworkAnalyzerAction(CyApplicationManager cyApplicationManager, Plugin plugin){
-		super(MENU_TITLE, cyApplicationManager, null, null);
-		setPreferredMenu(MENU_LOC);
-		setEnabled(false);
-		this.plugin = plugin;
+    public NeoNetworkAnalyzerAction(CyApplicationManager cyApplicationManager, Plugin plugin) {
+        super(MENU_TITLE, cyApplicationManager, null, null);
+        setPreferredMenu(MENU_LOC);
+        setEnabled(false);
+        this.plugin = plugin;
 
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		Extension neoAnalyzer = getPlugin().getInteractor().supportsExtension("neonetworkanalyzer");
-		
-		ExtensionExecutor exec = new NeoNetworkAnalyzerExec();
-		
-		exec.setPlugin(plugin);
-		exec.setExtension(neoAnalyzer);
-		
-		if(!exec.collectParameters()){
-			JOptionPane.showMessageDialog(plugin.getCySwingApplication().getJFrame(), "Failed to collect parameters for " + neoAnalyzer.getName());
-			return;
-		}
-	
-		List<ExtensionCall> calls = exec.buildExtensionCalls();
-		long time = System.currentTimeMillis();
-		System.out.println("start time cyNeo4j: " + time);
-		for(ExtensionCall call : calls){
-			Object callRetValue = plugin.getInteractor().executeExtensionCall(call,call.isAsync());
-			exec.processCallResponse(call,callRetValue);
-		}
-	
-		time = System.currentTimeMillis() - time;
-		System.out.println("runtime time cyNeo4j: " + time);
-	}
+    }
 
-	protected Plugin getPlugin() {
-		return plugin;
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-	
+        Extension neoAnalyzer = getPlugin().getInteractor().supportsExtension("neonetworkanalyzer");
+
+        ExtensionExecutor exec = new NeoNetworkAnalyzerExec();
+
+        exec.setPlugin(plugin);
+        exec.setExtension(neoAnalyzer);
+
+        if (!exec.collectParameters()) {
+            JOptionPane.showMessageDialog(plugin.getCySwingApplication().getJFrame(), "Failed to collect parameters for " + neoAnalyzer.getName());
+            return;
+        }
+
+        List<ExtensionCall> calls = exec.buildExtensionCalls();
+        long time = System.currentTimeMillis();
+        System.out.println("start time cyNeo4j: " + time);
+        for (ExtensionCall call : calls) {
+            Object callRetValue = plugin.getInteractor().executeExtensionCall(call, call.isAsync());
+            exec.processCallResponse(call, callRetValue);
+        }
+
+        time = System.currentTimeMillis() - time;
+        System.out.println("runtime time cyNeo4j: " + time);
+    }
+
+    protected Plugin getPlugin() {
+        return plugin;
+    }
+
+
 }

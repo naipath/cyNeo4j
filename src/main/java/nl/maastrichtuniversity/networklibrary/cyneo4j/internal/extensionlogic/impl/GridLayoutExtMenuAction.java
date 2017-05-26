@@ -15,41 +15,41 @@ import org.cytoscape.application.swing.AbstractCyAction;
 
 public class GridLayoutExtMenuAction extends AbstractCyAction {
 
-	public final static String MENU_TITLE = "Grid Layout";
-	public final static String MENU_LOC = "Apps.cyNeo4j.Layouts";
+    private final static String MENU_TITLE = "Grid Layout";
+    private final static String MENU_LOC = "Apps.cyNeo4j.Layouts";
 
-	private Plugin plugin;
+    private Plugin plugin;
 
-	public GridLayoutExtMenuAction(CyApplicationManager cyApplicationManager, Plugin plugin){
-		super(MENU_TITLE, cyApplicationManager, null, null);
-		setPreferredMenu(MENU_LOC);
-		setEnabled(false);
-		this.plugin = plugin;
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Extension gridLayoutExt = getPlugin().getInteractor().supportsExtension("gridlayout");
-		
-		ExtensionExecutor exec = new SimpleLayoutExtExec();
-		
-		exec.setPlugin(plugin);
-		exec.setExtension(gridLayoutExt);
-		
-		if(!exec.collectParameters()){
-			JOptionPane.showMessageDialog(plugin.getCySwingApplication().getJFrame(), "Failed to collect parameters for " + gridLayoutExt.getName());
-			return;
-		}
-		
-		List<ExtensionCall> calls = exec.buildExtensionCalls();
-		
-		for(ExtensionCall call : calls){
-			Object callRetValue = plugin.getInteractor().executeExtensionCall(call,false);
-			exec.processCallResponse(call,callRetValue);
-		}
-	}
+    public GridLayoutExtMenuAction(CyApplicationManager cyApplicationManager, Plugin plugin) {
+        super(MENU_TITLE, cyApplicationManager, null, null);
+        setPreferredMenu(MENU_LOC);
+        setEnabled(false);
+        this.plugin = plugin;
+    }
 
-	protected Plugin getPlugin() {
-		return plugin;
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Extension gridLayoutExt = getPlugin().getInteractor().supportsExtension("gridlayout");
+
+        ExtensionExecutor exec = new SimpleLayoutExtExec();
+
+        exec.setPlugin(plugin);
+        exec.setExtension(gridLayoutExt);
+
+        if (!exec.collectParameters()) {
+            JOptionPane.showMessageDialog(plugin.getCySwingApplication().getJFrame(), "Failed to collect parameters for " + gridLayoutExt.getName());
+            return;
+        }
+
+        List<ExtensionCall> calls = exec.buildExtensionCalls();
+
+        for (ExtensionCall call : calls) {
+            Object callRetValue = plugin.getInteractor().executeExtensionCall(call, false);
+            exec.processCallResponse(call, callRetValue);
+        }
+    }
+
+    protected Plugin getPlugin() {
+        return plugin;
+    }
 }

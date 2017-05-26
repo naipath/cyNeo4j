@@ -15,8 +15,8 @@ import org.cytoscape.application.swing.AbstractCyAction;
 
 public class CircularLayoutExtMenuAction extends AbstractCyAction {
 
-	public final static String MENU_TITLE = "Circle Layout";
-	public final static String MENU_LOC = "Apps.cyNeo4j.Layouts";
+	private final static String MENU_TITLE = "Circle Layout";
+	private final static String MENU_LOC = "Apps.cyNeo4j.Layouts";
 
 	private Plugin plugin;
 
