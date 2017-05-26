@@ -1,22 +1,20 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
-
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class SimpleLayoutExtExec implements ExtensionExecutor {
 
@@ -38,7 +36,7 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
     }
 
     @Override
-    public void processCallResponse(ExtensionCall call, Object callRetValue) {
+    public void processCallResponse(Neo4jCall call, Object callRetValue) {
 
         List<Double> values = (List<Double>) callRetValue;
 
@@ -73,8 +71,8 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
     }
 
     @Override
-    public List<ExtensionCall> buildExtensionCalls() {
-        List<ExtensionCall> calls = new ArrayList<>();
+    public List<Neo4jCall> buildExtensionCalls() {
+        List<Neo4jCall> calls = new ArrayList<>();
 
         String urlFragment = extension.getEndpoint();
         String payload = "{\"saveInGraph\":false}";

@@ -1,8 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionCall;
-
-public class Neo4jCall implements ExtensionCall {
+public class Neo4jCall {
     private String urlFragment;
     private String payload;
     private boolean async;
@@ -11,16 +9,8 @@ public class Neo4jCall implements ExtensionCall {
         return urlFragment;
     }
 
-    public void setUrlFragment(String urlFragment) {
-        this.urlFragment = urlFragment;
-    }
-
     public String getPayload() {
         return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
     }
 
     public Neo4jCall(String urlFragment, String payload, boolean async) {
@@ -29,18 +19,10 @@ public class Neo4jCall implements ExtensionCall {
         this.async = async;
     }
 
-    @Override
     public String toString() {
         return "Neo4jCall [urlFragment=" + urlFragment + ", payload=" + payload + "]";
     }
 
-    @Override
-    public void setAsync(boolean async) {
-        this.async = async;
-
-    }
-
-    @Override
     public boolean isAsync() {
         return async;
     }

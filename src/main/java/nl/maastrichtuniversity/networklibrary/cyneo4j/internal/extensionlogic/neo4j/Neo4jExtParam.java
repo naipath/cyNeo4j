@@ -24,28 +24,8 @@ public class Neo4jExtParam implements ExtensionParameter {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public boolean isOptional() {
         return optional;
-    }
-
-    public void setOptional(boolean optional) {
-        this.optional = optional;
-    }
-
-    public Class<?> getType() {
-        return type;
-    }
-
-    public void setType(Class<?> type) {
-        this.type = type;
     }
 
 

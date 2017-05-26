@@ -57,19 +57,8 @@ public class Neo4jExtension implements Extension {
     }
 
     @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
     public String getEndpoint() {
         return location;
-    }
-
-    @Override
-    public void setDescription(String desc) {
-        this.description = desc;
-
     }
 
     @Override

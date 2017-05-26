@@ -3,7 +3,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.i
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
@@ -78,7 +77,7 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
     }
 
     @Override
-    public void processCallResponse(ExtensionCall call, Object callRetValue) {
+    public void processCallResponse(Neo4jCall call, Object callRetValue) {
 
         if (currNet != null) {
 
@@ -143,8 +142,8 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
     }
 
     @Override
-    public List<ExtensionCall> buildExtensionCalls() {
-        List<ExtensionCall> calls = new ArrayList<>();
+    public List<Neo4jCall> buildExtensionCalls() {
+        List<Neo4jCall> calls = new ArrayList<>();
 
         if (run) {
             String urlFragment = extension.getEndpoint();

@@ -2,7 +2,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionCall;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtParam;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.ExtensionLocationsHandler;
@@ -19,7 +19,10 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.TaskIterator;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -148,7 +151,7 @@ public class Neo4jRESTServer {
         async = Async.newInstance().use(threadpool);
     }
 
-    public Object executeExtensionCall(ExtensionCall call, boolean doAsync) {
+    public Object executeExtensionCall(Neo4jCall call, boolean doAsync) {
         Object retVal = null;
 
         if (doAsync) {
