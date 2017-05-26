@@ -46,7 +46,7 @@ public class Neo4jRESTServer {
 
     }
 
-    public boolean connect(String instanceLocation) {
+    public void connect(String instanceLocation) {
 
         if (isConnected()) {
             disconnect();
@@ -56,7 +56,7 @@ public class Neo4jRESTServer {
             setInstanceLocation(instanceLocation);
             registerExtension();
         }
-        return isConnected();
+        isConnected();
     }
 
     protected void registerExtension() {
