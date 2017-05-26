@@ -31,7 +31,6 @@ public class SyncDownEdgeResponseHandler implements ResponseHandler<Long> {
 
         Long resNet = null;
         if (responseCode >= 200 && responseCode < 300) {
-            resNet = new Long(0);
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> nodes = mapper.readValue(response.getEntity().getContent(), Map.class);
 

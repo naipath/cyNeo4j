@@ -117,7 +117,7 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
 
     @Override
     public List<ExtensionCall> buildExtensionCalls() {
-        List<ExtensionCall> calls = new ArrayList<ExtensionCall>();
+        List<ExtensionCall> calls = new ArrayList<>();
 
         if (runIt) {
 
@@ -137,7 +137,7 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
 
                     numIterations -= IterationStepSize;
 
-                    Map<String, Object> callParams = new HashMap<String, Object>(params);
+                    Map<String, Object> callParams = new HashMap<>(params);
 
                     callParams.put("numIterations", itersToDo);
                     callParams.put("pickup", numRuns > 0);

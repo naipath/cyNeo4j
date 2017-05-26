@@ -20,7 +20,7 @@ public class CypherResultParser {
     private static final String EDGE_KEY = "type";
 
     protected List<String> cols;
-    protected Map<String, ResType> colType = new HashMap<String, ResType>();
+    protected Map<String, ResType> colType = new HashMap<>();
     protected CyNetwork currNet;
 
     protected long numNodes;
@@ -50,9 +50,7 @@ public class CypherResultParser {
 
     protected void readResultTable(List<List<Object>> rows) {
         //		for(List<Object> row : rows){
-        for (int r = 0; r < rows.size(); ++r) {
-            List<Object> row = rows.get(r);
-
+        for (List<Object> row : rows) {
             for (int i = 0; i < row.size(); ++i) {
 
                 Object item = row.get(i);
@@ -86,7 +84,7 @@ public class CypherResultParser {
         Map<String, Object> node = (Map<String, Object>) nodeObj;
 
         String selfURL = (String) node.get("self");
-        Long self = Long.valueOf(NeoUtils.extractID((String) node.get("self")));
+        Long self = NeoUtils.extractID((String) node.get("self"));
 
         CyNode cyNode = CyUtils.getNodeByNeoId(currNet, self);
 

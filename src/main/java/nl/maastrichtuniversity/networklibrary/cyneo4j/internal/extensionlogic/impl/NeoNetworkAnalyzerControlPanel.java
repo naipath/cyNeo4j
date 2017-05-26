@@ -25,7 +25,6 @@ public class NeoNetworkAnalyzerControlPanel extends JPanel implements ActionList
     private JCheckBox stress;
     private JCheckBox eccentricity;
     private JRadioButton undirButton;
-    private JRadioButton dirButton;
 
     private JDialog dialog = null;
 
@@ -230,7 +229,7 @@ public class NeoNetworkAnalyzerControlPanel extends JPanel implements ActionList
     private JPanel buildDirectionalityPanel() {
         JLabel directionalityLabel = new JLabel("Directionality");
         undirButton = new JRadioButton("Undirected");
-        dirButton = new JRadioButton("Directed");
+        JRadioButton dirButton = new JRadioButton("Directed");
         dirButton.setEnabled(false);
 
         ButtonGroup directionality = new ButtonGroup();

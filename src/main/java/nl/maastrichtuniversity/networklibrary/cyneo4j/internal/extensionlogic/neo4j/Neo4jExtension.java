@@ -39,11 +39,11 @@ public class Neo4jExtension implements Extension {
 
     public String toString() {
         StringBuilder strbuff = new StringBuilder();
-        strbuff.append("name: " + getName() + " endpoint: " + getEndpoint() + " of type: " + getType() + "\n");
+        strbuff.append("name: ").append(getName()).append(" endpoint: ").append(getEndpoint()).append(" of type: ").append(getType()).append("\n");
         strbuff.append("\nrequired parameters: \n");
 
         for (ExtensionParameter param : getParameters()) {
-            strbuff.append("\tparameter: " + param.getName() + " is optional? " + param.isOptional() + "\n");
+            strbuff.append("\tparameter: ").append(param.getName()).append(" is optional? ").append(param.isOptional()).append("\n");
         }
 
         return strbuff.toString();

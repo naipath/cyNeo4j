@@ -315,7 +315,7 @@ public class ForceAtlas2LayoutControlPanel extends JPanel implements ActionListe
     }
 
     public int getNumIterations() {
-        return Integer.valueOf(numItersText.getText()).intValue();
+        return Integer.valueOf(numItersText.getText());
     }
 
     public boolean runIt() {

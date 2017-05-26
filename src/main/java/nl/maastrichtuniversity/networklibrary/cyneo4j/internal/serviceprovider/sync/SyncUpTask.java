@@ -1,13 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync;
 
-import java.io.IOException;
-
-import javax.swing.JOptionPane;
-
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general.ReturnCodeResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
-
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.cytoscape.model.CyEdge;
@@ -16,6 +10,9 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
+
+import javax.swing.*;
+import java.io.IOException;
 
 public class SyncUpTask extends AbstractTask {
 

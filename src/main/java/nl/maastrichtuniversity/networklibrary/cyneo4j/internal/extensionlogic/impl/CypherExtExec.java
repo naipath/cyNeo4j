@@ -35,15 +35,11 @@ public class CypherExtExec implements ExtensionExecutor {
 
     @Override
     public void processCallResponse(ExtensionCall call, Object callRetValue) {
-        System.out.println(callRetValue.getClass().toString());
-
         if (currNet == null) {
             currNet = getPlugin().getCyNetworkFactory().createNetwork();
             currNet.getRow(currNet).set(CyNetwork.NAME, query);
             getPlugin().getCyNetworkManager().addNetwork(currNet);
-
         }
-
         CypherResultParser cypherResParser = new CypherResultParser(currNet);
         cypherResParser.parseRetVal(callRetValue);
 

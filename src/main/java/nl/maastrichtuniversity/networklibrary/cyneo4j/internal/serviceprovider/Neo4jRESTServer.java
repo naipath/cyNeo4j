@@ -12,7 +12,6 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.e
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general.Neo4jPingHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownTaskFactory;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpTaskFactory;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Async;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
@@ -71,12 +70,10 @@ public class Neo4jRESTServer implements Neo4jServer {
     public void disconnect() {
         instanceLocation = null;
         unregisterExtensions();
-
     }
 
     private void unregisterExtensions() {
         getPlugin().unregisterActions();
-
     }
 
     @Override
@@ -113,13 +110,13 @@ public class Neo4jRESTServer implements Neo4jServer {
 
     @Override
     public List<Extension> getExtensions() {
-        List<Extension> res = new ArrayList<Extension>();
+        List<Extension> res = new ArrayList<>();
 
         Extension cypherExt = new Neo4jExtension();
         cypherExt.setName("cypher");
         cypherExt.setEndpoint(getCypherURL());
 
-        List<ExtensionParameter> params = new ArrayList<ExtensionParameter>();
+        List<ExtensionParameter> params = new ArrayList<>();
 
         ExtensionParameter queryParam = new Neo4jExtParam("cypherQuery", "Cypher Endpoint", false, String.class);
         params.add(queryParam);
@@ -141,9 +138,6 @@ public class Neo4jRESTServer implements Neo4jServer {
                     }
                 }
             }
-
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -217,14 +211,11 @@ public class Neo4jRESTServer implements Neo4jServer {
                 return extension;
             }
         }
-
         return null;
     }
 
     @Override
     public void setLocalSupportedExtension(Map<String, AbstractCyAction> localExtensions) {
         this.localExtensions = localExtensions;
-
     }
-
 }

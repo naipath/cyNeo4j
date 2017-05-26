@@ -146,7 +146,7 @@ public class SyncDownTask extends AbstractTask {
                     taskMonitor.setStatusMessage("Applying Layout");
                     taskMonitor.setProgress(0.9);
 
-                    Set<View<CyNode>> nodes = new HashSet<View<CyNode>>();
+                    Set<View<CyNode>> nodes = new HashSet<>();
                     CyLayoutAlgorithm layout = cyLayoutAlgorithmMgr.getLayout("force-directed");
                     insertTasksAfterCurrentTask(layout.createTaskIterator(view, layout.createLayoutContext(), nodes, null));
 
