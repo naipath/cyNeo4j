@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Neo4jRESTServer implements Neo4jServer {
+public class Neo4jRESTServer {
 
     private static final String DATA_URL = "/db/data/";
     private static final String CYPHER_URL = DATA_URL + "cypher";
@@ -47,7 +47,6 @@ public class Neo4jRESTServer implements Neo4jServer {
 
     }
 
-    @Override
     public boolean connect(String instanceLocation) {
 
         if (isConnected()) {
@@ -67,7 +66,6 @@ public class Neo4jRESTServer implements Neo4jServer {
         }
     }
 
-    @Override
     public void disconnect() {
         instanceLocation = null;
         unregisterExtensions();
@@ -79,12 +77,10 @@ public class Neo4jRESTServer implements Neo4jServer {
 
     }
 
-    @Override
     public boolean isConnected() {
         return validateConnection(getInstanceLocation());
     }
 
-    @Override
     public String getInstanceLocation() {
         return instanceLocation;
     }
@@ -93,7 +89,6 @@ public class Neo4jRESTServer implements Neo4jServer {
         this.instanceLocation = instanceLocation;
     }
 
-    @Override
     public void syncDown(boolean mergeInCurrent) {
 
         TaskIterator it = new SyncDownTaskFactory(getPlugin().getCyNetworkManager(),
@@ -111,7 +106,6 @@ public class Neo4jRESTServer implements Neo4jServer {
 
     }
 
-    @Override
     public List<Extension> getExtensions() {
         List<Extension> res = new ArrayList<Extension>();
 
@@ -152,7 +146,6 @@ public class Neo4jRESTServer implements Neo4jServer {
         return res;
     }
 
-    @Override
     public void syncUp(boolean wipeRemote, CyNetwork curr) {
         TaskIterator it = new SyncUpTaskFactory(wipeRemote, getCypherURL(), getPlugin().getCyApplicationManager().getCurrentNetwork()).createTaskIterator();
         plugin.getDialogTaskManager().execute(it);
@@ -168,7 +161,6 @@ public class Neo4jRESTServer implements Neo4jServer {
         async = Async.newInstance().use(threadpool);
     }
 
-    @Override
     public Object executeExtensionCall(ExtensionCall call, boolean doAsync) {
         Object retVal = null;
 
@@ -194,7 +186,6 @@ public class Neo4jRESTServer implements Neo4jServer {
         return retVal;
     }
 
-    @Override
     public boolean validateConnection(String instanceLocation) {
         try {
             return instanceLocation != null && Request.Get(instanceLocation).execute().handleResponse(new Neo4jPingHandler());
@@ -208,7 +199,6 @@ public class Neo4jRESTServer implements Neo4jServer {
         return plugin;
     }
 
-    @Override
     public Extension supportsExtension(String name) {
         List<Extension> extensions = getExtensions();
 
@@ -221,7 +211,6 @@ public class Neo4jRESTServer implements Neo4jServer {
         return null;
     }
 
-    @Override
     public void setLocalSupportedExtension(Map<String, AbstractCyAction> localExtensions) {
         this.localExtensions = localExtensions;
 
