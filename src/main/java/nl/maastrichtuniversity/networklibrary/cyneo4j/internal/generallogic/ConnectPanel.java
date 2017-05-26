@@ -107,8 +107,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
 	}
 
 	private boolean validURL() {
-		UrlValidator validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
-		return (!getUrl().contains(" ")) && validator.isValid(getUrl()) && interactor.validateConnection(getUrl());
+		return interactor.validateConnection(getUrl());
 	}
 	
 	private String getUrl() {
