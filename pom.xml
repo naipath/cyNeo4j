@@ -6,6 +6,8 @@
 		<bundle.symbolicName>nl.maastrichtuniversity.networklibrary.cyneo4j</bundle.symbolicName>
 		<bundle.namespace>nl.maastrichtuniversity.networklibrary.cyneo4j</bundle.namespace>
 		<cytoscape.version>3.1.1</cytoscape.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -27,48 +29,17 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<executions>
-					<execution>
-						<id>default-testCompile</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>default-compile</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
+				<version>3.6.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<optimize>true</optimize>
-					<showWarnings>true</showWarnings>
-					<showDeprecation>true</showDeprecation>
-					<compilerArguments>
-						<Xmaxwarns>10000</Xmaxwarns>
-						<Xmaxerrs>10000</Xmaxerrs>
-					</compilerArguments>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.7.1</version>
-				<configuration>
-					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<!-- Generates the OSGi metadata based on the osgi.bnd file. -->
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.3.7</version>
+				<version>3.3.0</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
