@@ -2,6 +2,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.NeoUtils;
 import org.apache.http.HttpResponse;
@@ -13,8 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension.ExtensionTarget.NODE;
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension.ExtensionTarget.RELATIONSHIP;
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.GRAPHDB;
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.NODE;
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.RELATIONSHIP;
 
 public class ExtensionParametersResponseHandler implements ResponseHandler<List<Extension>> {
 
@@ -44,7 +46,7 @@ public class ExtensionParametersResponseHandler implements ResponseHandler<List<
                     Neo4jExtension currExt = new Neo4jExtension();
 
                     Map<String, Object> extensionDesc = (Map<String, Object>) extension.getValue();
-                    Neo4jExtension.ExtensionTarget type = decideExtensionType((String) extensionDesc.get("extends"));
+                    ExtensionTarget type = decideExtensionType((String) extensionDesc.get("extends"));
                     currExt.setType(type);
 
                     String name = (String) extensionDesc.get("name");
@@ -84,14 +86,14 @@ public class ExtensionParametersResponseHandler implements ResponseHandler<List<
         return endpoint;
     }
 
-    protected Neo4jExtension.ExtensionTarget decideExtensionType(String target) {
+    protected ExtensionTarget decideExtensionType(String target) {
         switch (target) {
             case "graphdb":
-                return Neo4jExtension.ExtensionTarget.GRAPHDB;
+                return GRAPHDB;
             case "node":
                 return NODE;
             case "relationship":
-                return Neo4jExtension.ExtensionTarget.RELATIONSHIP;
+                return RELATIONSHIP;
             default:
                 return null;
         }

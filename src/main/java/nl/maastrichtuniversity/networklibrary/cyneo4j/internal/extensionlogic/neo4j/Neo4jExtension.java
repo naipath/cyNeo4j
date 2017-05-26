@@ -5,10 +5,9 @@ import java.util.List;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionParameter;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget;
 
 public class Neo4jExtension implements Extension {
-
-    public enum ExtensionTarget {NODE, RELATIONSHIP, GRAPHDB}
 
     private ExtensionTarget type;
     private String name;

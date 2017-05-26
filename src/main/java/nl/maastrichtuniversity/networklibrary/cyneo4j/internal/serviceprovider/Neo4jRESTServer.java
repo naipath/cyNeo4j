@@ -3,7 +3,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionCall;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionParameter;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtParam;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.ExtensionLocationsHandler;
@@ -20,12 +19,11 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.TaskIterator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static java.util.Collections.singletonList;
 
 public class Neo4jRESTServer {
 
@@ -110,12 +108,7 @@ public class Neo4jRESTServer {
         cypherExt.setName("cypher");
         cypherExt.setEndpoint(getCypherURL());
 
-        List<ExtensionParameter> params = new ArrayList<>();
-
-        ExtensionParameter queryParam = new Neo4jExtParam("cypherQuery", "Cypher Endpoint", false, String.class);
-        params.add(queryParam);
-
-        cypherExt.setParameters(params);
+        cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery", "Cypher Endpoint", false, String.class)));
 
         if (localExtensions.containsKey("cypher")) {
             res.add(cypherExt);

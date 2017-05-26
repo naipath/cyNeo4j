@@ -9,8 +9,7 @@ public class Neo4jExtParam implements ExtensionParameter {
     private boolean optional;
     private Class<?> type;
 
-    public Neo4jExtParam(String name, String description, boolean optional,
-                         Class<?> type) {
+    public Neo4jExtParam(String name, String description, boolean optional, Class<?> type) {
         this.name = name;
         this.description = description;
         this.optional = optional;
