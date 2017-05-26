@@ -8,79 +8,74 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Ex
 
 public class Neo4jExtension implements Extension {
 
-	public enum ExtensionTarget { NODE, RELATIONSHIP, GRAPHDB }
-	
-	private ExtensionTarget type;
-	private String name;
-	private String location;
-	private String description;
-	
-	private List<ExtensionParameter> parameters;
-		
-	public Neo4jExtension() {
-		super();
-		parameters = new ArrayList<ExtensionParameter>();
-	}
-	
-	public String getName() {
-		return name;
-	}
+    public enum ExtensionTarget {NODE, RELATIONSHIP, GRAPHDB}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private ExtensionTarget type;
+    private String name;
+    private String location;
+    private String description;
 
-	public void setEndpoint(String endpoint) {
-		this.location = endpoint;
-	}
-	
-	public List<ExtensionParameter> getParameters() {
-		return parameters;
-	}
-	
-	public void addParameter(Neo4jExtParam param) {
-		getParameters().add(param);
-	}
+    private List<ExtensionParameter> parameters = new ArrayList<>();
 
-	public String toString(){
-		StringBuffer strbuff = new StringBuffer();
-		strbuff.append("name: " + getName() + " endpoint: " + getEndpoint() + " of type: "+ getType() + "\n");
-		strbuff.append("\nrequired parameters: \n");
-		
-		for(ExtensionParameter param : getParameters()){
-			strbuff.append("\tparameter: " + param.getName() + " is optional? " + param.isOptional() + "\n");
-		}
-			
-		return strbuff.toString();
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setType(ExtensionTarget type) {
-		this.type = type;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public ExtensionTarget getType() {
-		return type;
-	}
+    public void setEndpoint(String endpoint) {
+        this.location = endpoint;
+    }
 
-	@Override
-	public String getDescription() {
-		return description;
-	}
+    public List<ExtensionParameter> getParameters() {
+        return parameters;
+    }
 
-	@Override
-	public String getEndpoint() {
-		return location;
-	}
+    public void addParameter(Neo4jExtParam param) {
+        getParameters().add(param);
+    }
 
-	@Override
-	public void setDescription(String desc) {
-		this.description = desc;
-		
-	}
+    public String toString() {
+        StringBuilder strbuff = new StringBuilder();
+        strbuff.append("name: " + getName() + " endpoint: " + getEndpoint() + " of type: " + getType() + "\n");
+        strbuff.append("\nrequired parameters: \n");
 
-	@Override
-	public void setParameters(List<ExtensionParameter> params) {
-		this.parameters = params;
-		
-	}
+        for (ExtensionParameter param : getParameters()) {
+            strbuff.append("\tparameter: " + param.getName() + " is optional? " + param.isOptional() + "\n");
+        }
+
+        return strbuff.toString();
+    }
+
+    public void setType(ExtensionTarget type) {
+        this.type = type;
+    }
+
+    public ExtensionTarget getType() {
+        return type;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String getEndpoint() {
+        return location;
+    }
+
+    @Override
+    public void setDescription(String desc) {
+        this.description = desc;
+
+    }
+
+    @Override
+    public void setParameters(List<ExtensionParameter> params) {
+        this.parameters = params;
+
+    }
 }

@@ -10,6 +10,7 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.im
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.ForceAtlas2LayoutExtMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.GridLayoutExtMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.NeoNetworkAnalyzerAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jServer;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 
 import org.cytoscape.application.CyApplicationManager;
@@ -25,33 +26,33 @@ import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.swing.DialogTaskManager;
 
 public class Plugin {
-	
-	private CyApplicationManager cyApplicationManager = null;
-	
-	private Neo4jRESTServer interactor = null;
-	
-	private List<AbstractCyAction> registeredActions = null;
 
-	private CySwingApplication cySwingApplication = null;
-	private CyNetworkFactory cyNetworkFactory = null;
-	private CyTableFactory cyTableFactory = null;
-	private CyNetworkManager cyNetMgr = null;
-	private CyNetworkViewManager cyNetViewMgr = null;
-	private DialogTaskManager diagTaskManager = null;
-	private CyNetworkViewFactory cyNetworkViewFactory = null;
-	private CyLayoutAlgorithmManager cyLayoutAlgorithmMgr = null;
-	private VisualMappingManager visualMappingMgr = null;
-		
-	public Plugin(CyApplicationManager cyApplicationManager,
-			CySwingApplication cySwingApplication,
-			CyNetworkFactory cyNetworkFactory, CyTableFactory cyTableFactory,
-			CyNetworkManager cyNetMgr, CyNetworkViewManager cyNetViewMgr,
-			DialogTaskManager diagTaskManager,
-			CyNetworkViewFactory cyNetworkViewFactory,
-			CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
-			VisualMappingManager visualMappingMgr) {
-		super();
-		
+    private CyApplicationManager cyApplicationManager = null;
+
+    private Neo4jServer interactor = null;
+
+    private List<AbstractCyAction> registeredActions = null;
+
+    private CySwingApplication cySwingApplication = null;
+    private CyNetworkFactory cyNetworkFactory = null;
+    private CyTableFactory cyTableFactory = null;
+    private CyNetworkManager cyNetMgr = null;
+    private CyNetworkViewManager cyNetViewMgr = null;
+    private DialogTaskManager diagTaskManager = null;
+    private CyNetworkViewFactory cyNetworkViewFactory = null;
+    private CyLayoutAlgorithmManager cyLayoutAlgorithmMgr = null;
+    private VisualMappingManager visualMappingMgr = null;
+
+    public Plugin(CyApplicationManager cyApplicationManager,
+                  CySwingApplication cySwingApplication,
+                  CyNetworkFactory cyNetworkFactory, CyTableFactory cyTableFactory,
+                  CyNetworkManager cyNetMgr, CyNetworkViewManager cyNetViewMgr,
+                  DialogTaskManager diagTaskManager,
+                  CyNetworkViewFactory cyNetworkViewFactory,
+                  CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
+                  VisualMappingManager visualMappingMgr) {
+        super();
+
 		/*
 		 * This should eventually be replaced by a more modular system. Each of the extensions
 		 * is its own Cytoscape app and this app just serves as a entry point for them?
@@ -62,95 +63,95 @@ public class Plugin {
 		 * Link a name of a plugin on the server side with an action in the app!
 		 * The linked action will be displayed in the cyNeo4j menu item if the plugin is available on the server
 		 */
-		Map<String,AbstractCyAction> localExtensions = new HashMap<String,AbstractCyAction>();
-		localExtensions.put("neonetworkanalyzer",new NeoNetworkAnalyzerAction(cyApplicationManager, this));
-		localExtensions.put("forceatlas2",new ForceAtlas2LayoutExtMenuAction(cyApplicationManager, this));
-		localExtensions.put("circlelayout",new CircularLayoutExtMenuAction(cyApplicationManager, this));
-		localExtensions.put("gridlayout",new GridLayoutExtMenuAction(cyApplicationManager, this));
-		localExtensions.put("cypher",new CypherMenuAction(cyApplicationManager, this));
-		
-		
-		this.cyApplicationManager = cyApplicationManager;
-		this.cySwingApplication = cySwingApplication;
-		this.cyNetworkFactory = cyNetworkFactory;
-		this.cyTableFactory = cyTableFactory;
-		this.cyNetMgr = cyNetMgr;
-		this.cyNetViewMgr = cyNetViewMgr;
-		this.diagTaskManager = diagTaskManager;
-		this.cyNetworkViewFactory = cyNetworkViewFactory;
-		this.cyLayoutAlgorithmMgr = cyLayoutAlgorithmMgr;
-		this.visualMappingMgr = visualMappingMgr;
-		
-		interactor = new Neo4jRESTServer(this);
-		interactor.setLocalSupportedExtension(localExtensions);
-		
-		registeredActions = new ArrayList<AbstractCyAction>();
-	}
+        Map<String, AbstractCyAction> localExtensions = new HashMap<String, AbstractCyAction>();
+        localExtensions.put("neonetworkanalyzer", new NeoNetworkAnalyzerAction(cyApplicationManager, this));
+        localExtensions.put("forceatlas2", new ForceAtlas2LayoutExtMenuAction(cyApplicationManager, this));
+        localExtensions.put("circlelayout", new CircularLayoutExtMenuAction(cyApplicationManager, this));
+        localExtensions.put("gridlayout", new GridLayoutExtMenuAction(cyApplicationManager, this));
+        localExtensions.put("cypher", new CypherMenuAction(cyApplicationManager, this));
 
-	public CyNetworkFactory getCyNetworkFactory() {
-		return cyNetworkFactory;
-	}
-	
-	public CyTableFactory getCyTableFactory() {
-		return cyTableFactory;
-	}
-	
-	public CyNetworkManager getCyNetworkManager() {
-		return cyNetMgr;
-	}
 
-	public CyNetworkViewManager getCyNetViewMgr() {
-		return cyNetViewMgr;
-	}
+        this.cyApplicationManager = cyApplicationManager;
+        this.cySwingApplication = cySwingApplication;
+        this.cyNetworkFactory = cyNetworkFactory;
+        this.cyTableFactory = cyTableFactory;
+        this.cyNetMgr = cyNetMgr;
+        this.cyNetViewMgr = cyNetViewMgr;
+        this.diagTaskManager = diagTaskManager;
+        this.cyNetworkViewFactory = cyNetworkViewFactory;
+        this.cyLayoutAlgorithmMgr = cyLayoutAlgorithmMgr;
+        this.visualMappingMgr = visualMappingMgr;
 
-	public void setCyNetViewMgr(CyNetworkViewManager cyNetViewMgr) {
-		this.cyNetViewMgr = cyNetViewMgr;
-	}
+        interactor = new Neo4jRESTServer(this);
+        interactor.setLocalSupportedExtension(localExtensions);
 
-	public CyApplicationManager getCyApplicationManager() {
-		return cyApplicationManager;
-	}
+        registeredActions = new ArrayList<AbstractCyAction>();
+    }
 
-	public CySwingApplication getCySwingApplication() {
-		return cySwingApplication;
-	}
-	
-	public Neo4jRESTServer getInteractor() {
-		return interactor;
-	}
+    public CyNetworkFactory getCyNetworkFactory() {
+        return cyNetworkFactory;
+    }
 
-	public DialogTaskManager getDialogTaskManager() {
-		return diagTaskManager;
-	}
+    public CyTableFactory getCyTableFactory() {
+        return cyTableFactory;
+    }
 
-	public CyNetworkViewFactory getCyNetworkViewFactory() {
-		return cyNetworkViewFactory;
-	}
+    public CyNetworkManager getCyNetworkManager() {
+        return cyNetMgr;
+    }
 
-	public CyLayoutAlgorithmManager getCyLayoutAlgorithmManager() {
-		return cyLayoutAlgorithmMgr;
-	}
+    public CyNetworkViewManager getCyNetViewMgr() {
+        return cyNetViewMgr;
+    }
 
-	public VisualMappingManager getVisualMappingManager() {
-		return visualMappingMgr;
-	}
+    public void setCyNetViewMgr(CyNetworkViewManager cyNetViewMgr) {
+        this.cyNetViewMgr = cyNetViewMgr;
+    }
 
-	public void cleanUp() {
-		//extension actions
-		unregisterActions();
-	}
-	
-	public void registerAction(AbstractCyAction action){
-		registeredActions.add(action);
-		
-		getCySwingApplication().addAction(action);
-	}
+    public CyApplicationManager getCyApplicationManager() {
+        return cyApplicationManager;
+    }
 
-	public void unregisterActions() {
-		for(AbstractCyAction action : registeredActions){
-			getCySwingApplication().removeAction(action);
-		}
-		
-	}
-	
+    public CySwingApplication getCySwingApplication() {
+        return cySwingApplication;
+    }
+
+    public Neo4jServer getInteractor() {
+        return interactor;
+    }
+
+    public DialogTaskManager getDialogTaskManager() {
+        return diagTaskManager;
+    }
+
+    public CyNetworkViewFactory getCyNetworkViewFactory() {
+        return cyNetworkViewFactory;
+    }
+
+    public CyLayoutAlgorithmManager getCyLayoutAlgorithmManager() {
+        return cyLayoutAlgorithmMgr;
+    }
+
+    public VisualMappingManager getVisualMappingManager() {
+        return visualMappingMgr;
+    }
+
+    public void cleanUp() {
+        //extension actions
+        unregisterActions();
+    }
+
+    public void registerAction(AbstractCyAction action) {
+        registeredActions.add(action);
+
+        getCySwingApplication().addAction(action);
+    }
+
+    public void unregisterActions() {
+        for (AbstractCyAction action : registeredActions) {
+            getCySwingApplication().removeAction(action);
+        }
+
+    }
+
 }

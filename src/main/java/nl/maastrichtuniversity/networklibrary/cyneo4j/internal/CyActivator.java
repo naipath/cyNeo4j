@@ -20,39 +20,39 @@ import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
 
 public class CyActivator extends AbstractCyActivator {
-	
-	protected Plugin plugin;
 
-	@Override
-	public void start(BundleContext context) throws Exception {
-		
-		CyApplicationManager cyApplicationManager = getService(context, CyApplicationManager.class);
-		CySwingApplication cySwingApplication = getService(context, CySwingApplication.class);
-		CyNetworkFactory cyNetworkFactory = getService(context, CyNetworkFactory.class);
-		CyNetworkManager cyNetMgr = getService(context,CyNetworkManager.class);
-		CyTableFactory tableFactory = getService(context, CyTableFactory.class);
-		CyNetworkViewManager cyNetViewMgr = getService(context, CyNetworkViewManager.class);
-		DialogTaskManager diagTaskManager = getService(context, DialogTaskManager.class);
-		CyNetworkViewFactory cyNetworkViewFactory = getService(context, CyNetworkViewFactory.class);
-		CyLayoutAlgorithmManager cyLayoutAlgorithmMgr = getService(context,CyLayoutAlgorithmManager.class);
-		VisualMappingManager visualMappingMgr = getService(context,VisualMappingManager.class);
-		
-		plugin = new Plugin(cyApplicationManager,cySwingApplication,cyNetworkFactory,tableFactory,cyNetMgr,cyNetViewMgr,diagTaskManager,cyNetworkViewFactory,cyLayoutAlgorithmMgr,visualMappingMgr);
-				
-		ConnectInstanceMenuAction connectAction = new ConnectInstanceMenuAction(cyApplicationManager,plugin);	
-		SyncUpMenuAction syncUpAction = new SyncUpMenuAction(cyApplicationManager, plugin);
-		SyncDownMenuAction syncDownAction = new SyncDownMenuAction(cyApplicationManager, plugin);
-		
-		registerAllServices(context, connectAction, new Properties());
-		registerAllServices(context, syncUpAction, new Properties());
-		registerAllServices(context, syncDownAction, new Properties());
-		
-	}
-	
-	@Override
-	public void shutDown(){
-		plugin.cleanUp();
-	}
-	
+    protected Plugin plugin;
+
+    @Override
+    public void start(BundleContext context) throws Exception {
+
+        CyApplicationManager cyApplicationManager = getService(context, CyApplicationManager.class);
+        CySwingApplication cySwingApplication = getService(context, CySwingApplication.class);
+        CyNetworkFactory cyNetworkFactory = getService(context, CyNetworkFactory.class);
+        CyNetworkManager cyNetMgr = getService(context, CyNetworkManager.class);
+        CyTableFactory tableFactory = getService(context, CyTableFactory.class);
+        CyNetworkViewManager cyNetViewMgr = getService(context, CyNetworkViewManager.class);
+        DialogTaskManager diagTaskManager = getService(context, DialogTaskManager.class);
+        CyNetworkViewFactory cyNetworkViewFactory = getService(context, CyNetworkViewFactory.class);
+        CyLayoutAlgorithmManager cyLayoutAlgorithmMgr = getService(context, CyLayoutAlgorithmManager.class);
+        VisualMappingManager visualMappingMgr = getService(context, VisualMappingManager.class);
+
+        plugin = new Plugin(cyApplicationManager, cySwingApplication, cyNetworkFactory, tableFactory, cyNetMgr, cyNetViewMgr, diagTaskManager, cyNetworkViewFactory, cyLayoutAlgorithmMgr, visualMappingMgr);
+
+        ConnectInstanceMenuAction connectAction = new ConnectInstanceMenuAction(cyApplicationManager, plugin);
+        SyncUpMenuAction syncUpAction = new SyncUpMenuAction(cyApplicationManager, plugin);
+        SyncDownMenuAction syncDownAction = new SyncDownMenuAction(cyApplicationManager, plugin);
+
+        registerAllServices(context, connectAction, new Properties());
+        registerAllServices(context, syncUpAction, new Properties());
+        registerAllServices(context, syncDownAction, new Properties());
+
+    }
+
+    @Override
+    public void shutDown() {
+        plugin.cleanUp();
+    }
+
 
 }
