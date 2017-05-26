@@ -1,27 +1,22 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ResponseHandler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
-public class ExtensionLocationsHandler implements ResponseHandler<Set<String>> {
+public class ExtensionLocationsHandler extends MyHttpResponseHandler<Set<String>> {
 
     @Override
-    public Set<String> handleResponse(HttpResponse response) throws IOException {
+    public Set<String> handle(int responseCode, InputStream content) throws IOException {
         Set<String> res = null;
-        int responseCode = response.getStatusLine().getStatusCode();
         if (responseCode >= 200 && responseCode < 300) {
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, String> instanceResp = mapper.readValue(response.getEntity().getContent(), Map.class);
-
+            Map<String, String> instanceResp = mapper.readValue(content, Map.class);
             res = instanceResp.keySet();
         }
-
         return res;
     }
-
 }

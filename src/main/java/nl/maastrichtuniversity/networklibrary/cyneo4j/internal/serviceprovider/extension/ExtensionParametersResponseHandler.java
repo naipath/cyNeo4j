@@ -4,10 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.NeoUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ResponseHandler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,7 @@ import java.util.Map.Entry;
 import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension.ExtensionTarget.NODE;
 import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension.ExtensionTarget.RELATIONSHIP;
 
-public class ExtensionParametersResponseHandler implements ResponseHandler<List<Extension>> {
+public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<List<Extension>> {
 
     private String extName = null;
 
@@ -25,16 +24,11 @@ public class ExtensionParametersResponseHandler implements ResponseHandler<List<
     }
 
     @Override
-    public List<Extension> handleResponse(HttpResponse response)
-        throws IOException {
-
-        int responseCode = response.getStatusLine().getStatusCode();
-
+    public List<Extension> handle(int responseCode, InputStream content) throws IOException {
         List<Extension> res = new ArrayList<>();
-
         if (responseCode >= 200 && responseCode < 300) {
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> targets = mapper.readValue(response.getEntity().getContent(), Map.class);
+            Map<String, Object> targets = mapper.readValue(content, Map.class);
 
             for (Entry<String, Object> target : targets.entrySet()) {
 
@@ -65,12 +59,14 @@ public class ExtensionParametersResponseHandler implements ResponseHandler<List<
         } else {
             ObjectMapper mapper = new ObjectMapper();
 
-            Map<String, String> error = mapper.readValue(response.getEntity().getContent(), Map.class);
+            Map<String, String> error = mapper.readValue(content, Map.class);
             System.out.println(error); // TODO
         }
 
         return res;
     }
+
+
 
     private String buildEndpoint(Neo4jExtension currExt) {
         String endpoint = extName + "/" + currExt.getType().toString().toLowerCase() + "/";

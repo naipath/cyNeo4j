@@ -1,7 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.CypherResultParser;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.PassThroughResponseHandler;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.PassThroughResponseHandlerMy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
@@ -83,7 +83,7 @@ public class SyncDownTask extends AbstractTask {
                     CyNetwork network = cyNetworkFactory.createNetwork();
                     network.getRow(network).set(CyNetwork.NAME, instanceLocation);
 
-                    PassThroughResponseHandler passHandler = new PassThroughResponseHandler();
+                    PassThroughResponseHandlerMy passHandler = new PassThroughResponseHandlerMy();
                     CypherResultParser cypherParser = new CypherResultParser(network);
 
                     taskMonitor.setStatusMessage("Downloading nodes");
