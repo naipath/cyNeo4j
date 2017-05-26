@@ -12,8 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jServer;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 
 import org.apache.commons.validator.routines.UrlValidator;
 
@@ -25,7 +24,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
 	private static final String OK_CMD = "ok";
 
 	private JDialog dialog = null;
-	private Neo4jServer interactor = null;
+	private Neo4jRESTServer interactor = null;
 	private JTextField servURL = null;
 	private JLabel status = null;
 	private JButton okButton = null;
@@ -33,7 +32,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
 	private ImageIcon green = null;
 	private ImageIcon red = null;
 	
-	public ConnectPanel(JDialog dialog, Neo4jServer neo4jInteractor) {
+	public ConnectPanel(JDialog dialog, Neo4jRESTServer neo4jInteractor) {
 		this.dialog = dialog;
 		this.interactor = neo4jInteractor;
 

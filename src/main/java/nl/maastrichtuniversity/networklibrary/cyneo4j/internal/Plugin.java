@@ -10,7 +10,6 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.im
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.ForceAtlas2LayoutExtMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.GridLayoutExtMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.NeoNetworkAnalyzerAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jServer;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 
 import org.cytoscape.application.CyApplicationManager;
@@ -29,7 +28,7 @@ public class Plugin {
 	
 	private CyApplicationManager cyApplicationManager = null;
 	
-	private Neo4jServer interactor = null;
+	private Neo4jRESTServer interactor = null;
 	
 	private List<AbstractCyAction> registeredActions = null;
 
@@ -116,7 +115,7 @@ public class Plugin {
 		return cySwingApplication;
 	}
 	
-	public Neo4jServer getInteractor() {
+	public Neo4jRESTServer getInteractor() {
 		return interactor;
 	}
 
