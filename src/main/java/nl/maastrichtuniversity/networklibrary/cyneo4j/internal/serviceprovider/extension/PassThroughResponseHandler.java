@@ -3,10 +3,10 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.
 import java.io.IOException;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
-import org.codehaus.jackson.map.ObjectMapper;
 
 public class PassThroughResponseHandler implements ResponseHandler<Object> {
 
