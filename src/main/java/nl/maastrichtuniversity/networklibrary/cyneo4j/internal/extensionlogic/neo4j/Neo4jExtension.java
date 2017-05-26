@@ -5,15 +5,13 @@ import java.util.List;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionParameter;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget;
 
 public class Neo4jExtension implements Extension {
-
-    public enum ExtensionTarget {NODE, RELATIONSHIP, GRAPHDB}
 
     private ExtensionTarget type;
     private String name;
     private String location;
-    private String description;
 
     private List<ExtensionParameter> parameters = new ArrayList<>();
 
@@ -58,19 +56,8 @@ public class Neo4jExtension implements Extension {
     }
 
     @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
     public String getEndpoint() {
         return location;
-    }
-
-    @Override
-    public void setDescription(String desc) {
-        this.description = desc;
-
     }
 
     @Override

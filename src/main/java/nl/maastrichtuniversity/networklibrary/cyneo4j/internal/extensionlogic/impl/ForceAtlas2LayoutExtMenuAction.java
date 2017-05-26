@@ -1,20 +1,18 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
-import java.awt.event.ActionEvent;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionCall;
-
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.util.List;
 
 public class ForceAtlas2LayoutExtMenuAction extends AbstractCyAction {
 
@@ -68,10 +66,10 @@ public class ForceAtlas2LayoutExtMenuAction extends AbstractCyAction {
         public void run(TaskMonitor monitor) throws Exception {
             monitor.setStatusMessage("Executing ForceAtlas2 layout");
 
-            List<ExtensionCall> calls = exec.buildExtensionCalls();
+            List<Neo4jCall> calls = exec.buildExtensionCalls();
 
             double progress = 0.0;
-            for (ExtensionCall call : calls) {
+            for (Neo4jCall call : calls) {
                 Object callRetValue = plugin.getInteractor().executeExtensionCall(call, false);
                 exec.processCallResponse(call, callRetValue);
                 ++progress;

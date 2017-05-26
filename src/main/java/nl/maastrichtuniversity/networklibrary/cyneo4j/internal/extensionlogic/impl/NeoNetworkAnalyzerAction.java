@@ -1,17 +1,15 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
-import java.awt.event.ActionEvent;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
-
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.util.List;
 
 public class NeoNetworkAnalyzerAction extends AbstractCyAction {
     private final static String MENU_TITLE = "NeoNetworkAnalyzer";
@@ -42,10 +40,10 @@ public class NeoNetworkAnalyzerAction extends AbstractCyAction {
             return;
         }
 
-        List<ExtensionCall> calls = exec.buildExtensionCalls();
+        List<Neo4jCall> calls = exec.buildExtensionCalls();
         long time = System.currentTimeMillis();
         System.out.println("start time cyNeo4j: " + time);
-        for (ExtensionCall call : calls) {
+        for (Neo4jCall call : calls) {
             Object callRetValue = plugin.getInteractor().executeExtensionCall(call, call.isAsync());
             exec.processCallResponse(call, callRetValue);
         }
