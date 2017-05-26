@@ -25,7 +25,6 @@ public class CircularLayoutExtMenuAction extends AbstractCyAction {
         setPreferredMenu(MENU_LOC);
         setEnabled(false);
         this.plugin = plugin;
-
     }
 
     @Override

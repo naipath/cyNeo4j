@@ -60,20 +60,16 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
 
             CyUtils.updateVisualStyle(getPlugin().getVisualMappingManager(), networkView, currNet);
         }
-
-
     }
 
     @Override
     public void setPlugin(Plugin plugin) {
         this.plugin = plugin;
-
     }
 
     @Override
     public void setExtension(Extension extension) {
         this.extension = extension;
-
     }
 
     @Override

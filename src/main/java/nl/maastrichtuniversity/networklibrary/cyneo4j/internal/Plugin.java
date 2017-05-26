@@ -62,7 +62,7 @@ public class Plugin {
 		 * Link a name of a plugin on the server side with an action in the app!
 		 * The linked action will be displayed in the cyNeo4j menu item if the plugin is available on the server
 		 */
-        Map<String, AbstractCyAction> localExtensions = new HashMap<String, AbstractCyAction>();
+        Map<String, AbstractCyAction> localExtensions = new HashMap<>();
         localExtensions.put("neonetworkanalyzer", new NeoNetworkAnalyzerAction(cyApplicationManager, this));
         localExtensions.put("forceatlas2", new ForceAtlas2LayoutExtMenuAction(cyApplicationManager, this));
         localExtensions.put("circlelayout", new CircularLayoutExtMenuAction(cyApplicationManager, this));
@@ -84,7 +84,7 @@ public class Plugin {
         interactor = new Neo4jRESTServer(this);
         interactor.setLocalSupportedExtension(localExtensions);
 
-        registeredActions = new ArrayList<AbstractCyAction>();
+        registeredActions = new ArrayList<>();
     }
 
     public CyNetworkFactory getCyNetworkFactory() {

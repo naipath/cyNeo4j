@@ -41,11 +41,11 @@ public class Neo4jExtParam implements ExtensionParameter {
         this.optional = optional;
     }
 
-    public Class<? extends Object> getType() {
+    public Class<?> getType() {
         return type;
     }
 
-    public void setType(Class<? extends Object> type) {
+    public void setType(Class<?> type) {
         this.type = type;
     }
 

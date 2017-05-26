@@ -26,7 +26,6 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
     private boolean run;
     private boolean saveInGraph;
     private boolean doAsync;
-    private boolean undirected;
 
     // to calculate
     private boolean eccentricity;
@@ -63,7 +62,6 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
         run = p.runIt();
         saveInGraph = p.isSaveInGraph();
         doAsync = p.isDoAsync();
-        undirected = p.isUndirected();
 
         eccentricity = p.isEccentricity();
         stress = p.isStress();
@@ -146,12 +144,12 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
 
     @Override
     public List<ExtensionCall> buildExtensionCalls() {
-        List<ExtensionCall> calls = new ArrayList<ExtensionCall>();
+        List<ExtensionCall> calls = new ArrayList<>();
 
         if (run) {
             String urlFragment = extension.getEndpoint();
 
-            Map<String, Object> params = new HashMap<String, Object>();
+            Map<String, Object> params = new HashMap<>();
             params.put("saveInGraph", saveInGraph);
             params.put("eccentricity", eccentricity);
             params.put("betweenness", betweenness);

@@ -20,7 +20,7 @@ public class CyUtils {
         final CyNetwork net, final CyTable table,
         final String colname, final Object value) {
         final Collection<CyRow> matchingRows = table.getMatchingRows(colname, value);
-        final Set<CyNode> nodes = new HashSet<CyNode>();
+        final Set<CyNode> nodes = new HashSet<>();
         final String primaryKeyColname = table.getPrimaryKey().getName();
         for (final CyRow row : matchingRows) {
             final Long nodeId = row.get(primaryKeyColname, Long.class);
@@ -38,7 +38,7 @@ public class CyUtils {
         final CyNetwork net, final CyTable table,
         final String colname, final Object value) {
         final Collection<CyRow> matchingRows = table.getMatchingRows(colname, value);
-        final Set<CyEdge> edges = new HashSet<CyEdge>();
+        final Set<CyEdge> edges = new HashSet<>();
         final String primaryKeyColname = table.getPrimaryKey().getName();
         for (final CyRow row : matchingRows) {
             final Long edgeId = row.get(primaryKeyColname, Long.class);
@@ -53,7 +53,7 @@ public class CyUtils {
     }
 
     public static String convertCyAttributesToJson(CyIdentifiable item, CyTable tab) {
-        String params = "{";
+        StringBuilder params = new StringBuilder("{");
         for (CyColumn cyCol : tab.getColumns()) {
             String paramName = cyCol.getName();
             if (paramName.equals("neoid"))
@@ -61,7 +61,7 @@ public class CyUtils {
 
             Object paramValue = tab.getRow(item.getSUID()).get(cyCol.getName(), cyCol.getType());
 
-            String paramValueStr = null;
+            String paramValueStr;
             if (paramValue == null) {
                 continue;
             } else {
@@ -73,17 +73,13 @@ public class CyUtils {
             }
 
             String jsonParam = "\"" + paramName + "\" : " + paramValueStr + ",";
-            params = params + jsonParam;
+            params.append(jsonParam);
         }
 
-        params = params.substring(0, params.length() - 1);
-        params = params + "}";
+        params = new StringBuilder(params.substring(0, params.length() - 1));
+        params.append("}");
 
-        return params;
-    }
-
-    public static Long getNeoID(CyNetwork net, CyNode n) {
-        return net.getDefaultNodeTable().getRow(n.getSUID()).get("neoid", Long.class);
+        return params.toString();
     }
 
     public static CyNode getNodeByNeoId(CyNetwork network, Long neoId) {
@@ -95,13 +91,7 @@ public class CyUtils {
         if (res.size() == 0) {
             return null;
         }
-        CyNode n = res.iterator().next();
-
-        return n;
-    }
-
-    public static Long getNeoID(CyNetwork net, CyEdge e) {
-        return net.getDefaultEdgeTable().getRow(e.getSUID()).get("neoid", Long.class);
+        return res.iterator().next();
     }
 
     public static CyEdge getEdgeByNeoId(CyNetwork network, Long neoId) {
@@ -113,9 +103,7 @@ public class CyUtils {
         if (res.size() == 0) {
             return null;
         }
-        CyEdge e = res.iterator().next();
-
-        return e;
+        return res.iterator().next();
     }
 
     public static Object fixSpecialTypes(Object val, Class<?> req) {
@@ -124,7 +112,7 @@ public class CyUtils {
 
         if (val.getClass() != req) {
             if (val.getClass() == Integer.class && req == Long.class) {
-                retV = Long.valueOf(((Integer) val).longValue());
+                retV = ((Integer) val).longValue();
             }
 
         } else {
