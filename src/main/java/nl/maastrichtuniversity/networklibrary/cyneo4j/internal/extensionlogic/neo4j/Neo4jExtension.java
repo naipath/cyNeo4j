@@ -12,7 +12,6 @@ public class Neo4jExtension implements Extension {
     private ExtensionTarget type;
     private String name;
     private String location;
-    private String description;
 
     private List<ExtensionParameter> parameters = new ArrayList<>();
 

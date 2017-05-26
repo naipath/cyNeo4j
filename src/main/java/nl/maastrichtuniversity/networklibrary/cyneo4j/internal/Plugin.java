@@ -1,28 +1,22 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.CircularLayoutExtMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.CypherMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.ForceAtlas2LayoutExtMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.GridLayoutExtMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.NeoNetworkAnalyzerAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.*;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
-
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
-import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.swing.DialogTaskManager;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Plugin {
 
@@ -34,7 +28,6 @@ public class Plugin {
 
     private CySwingApplication cySwingApplication = null;
     private CyNetworkFactory cyNetworkFactory = null;
-    private CyTableFactory cyTableFactory = null;
     private CyNetworkManager cyNetMgr = null;
     private CyNetworkViewManager cyNetViewMgr = null;
     private DialogTaskManager diagTaskManager = null;
@@ -44,14 +37,12 @@ public class Plugin {
 
     public Plugin(CyApplicationManager cyApplicationManager,
                   CySwingApplication cySwingApplication,
-                  CyNetworkFactory cyNetworkFactory, CyTableFactory cyTableFactory,
+                  CyNetworkFactory cyNetworkFactory,
                   CyNetworkManager cyNetMgr, CyNetworkViewManager cyNetViewMgr,
                   DialogTaskManager diagTaskManager,
                   CyNetworkViewFactory cyNetworkViewFactory,
                   CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
                   VisualMappingManager visualMappingMgr) {
-        super();
-
 		/*
 		 * This should eventually be replaced by a more modular system. Each of the extensions
 		 * is its own Cytoscape app and this app just serves as a entry point for them?
@@ -69,11 +60,9 @@ public class Plugin {
         localExtensions.put("gridlayout", new GridLayoutExtMenuAction(cyApplicationManager, this));
         localExtensions.put("cypher", new CypherMenuAction(cyApplicationManager, this));
 
-
         this.cyApplicationManager = cyApplicationManager;
         this.cySwingApplication = cySwingApplication;
         this.cyNetworkFactory = cyNetworkFactory;
-        this.cyTableFactory = cyTableFactory;
         this.cyNetMgr = cyNetMgr;
         this.cyNetViewMgr = cyNetViewMgr;
         this.diagTaskManager = diagTaskManager;
@@ -91,20 +80,12 @@ public class Plugin {
         return cyNetworkFactory;
     }
 
-    public CyTableFactory getCyTableFactory() {
-        return cyTableFactory;
-    }
-
     public CyNetworkManager getCyNetworkManager() {
         return cyNetMgr;
     }
 
     public CyNetworkViewManager getCyNetViewMgr() {
         return cyNetViewMgr;
-    }
-
-    public void setCyNetViewMgr(CyNetworkViewManager cyNetViewMgr) {
-        this.cyNetViewMgr = cyNetViewMgr;
     }
 
     public CyApplicationManager getCyApplicationManager() {
