@@ -78,7 +78,7 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
 
     @Override
     public List<ExtensionCall> buildExtensionCalls() {
-        List<ExtensionCall> calls = new ArrayList<ExtensionCall>();
+        List<ExtensionCall> calls = new ArrayList<>();
 
         String urlFragment = extension.getEndpoint();
         String payload = "{\"saveInGraph\":false}";
