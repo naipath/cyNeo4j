@@ -87,7 +87,8 @@ public class Neo4jRESTServer {
 
     public void syncDown(boolean mergeInCurrent) {
 
-        TaskIterator it = new SyncDownTaskFactory(getPlugin().getCyNetworkManager(),
+        TaskIterator it = new SyncDownTaskFactory(
+            getPlugin().getCyNetworkManager(),
             mergeInCurrent,
             getPlugin().getCyNetworkFactory(),
             getInstanceLocation(),
@@ -107,7 +108,6 @@ public class Neo4jRESTServer {
 
         if (localExtensions.containsKey("cypher")) {
             Neo4jExtension cypherExt = new Neo4jExtension("cypher", getCypherURL());
-            cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery")));
 
             res.add(cypherExt);
         }

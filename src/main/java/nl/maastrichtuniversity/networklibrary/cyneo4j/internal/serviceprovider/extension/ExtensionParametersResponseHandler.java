@@ -3,7 +3,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.NeoUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.*;
 
 public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<List<Neo4jExtension>> {
 
@@ -35,19 +32,11 @@ public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<Li
 
                 for (Entry<String, Object> extension : extensions.entrySet()) {
 
-
                     Map<String, Object> extensionDesc = (Map<String, Object>) extension.getValue();
-                    ExtensionTarget type = decideExtensionType((String) extensionDesc.get("extends"));
                     String name = (String) extensionDesc.get("name");
+                    ExtensionTarget type = ExtensionTarget.map(((String) extensionDesc.get("extends")));
 
-                    List<Map<String, Object>> parameters = (List<Map<String, Object>>) extensionDesc.get("parameters");
-
-                    Neo4jExtension currExt = new Neo4jExtension(type, name, extName);
-
-                    for (Map<String, Object> parameter : parameters) {
-                        currExt.addParameter(NeoUtils.parseExtParameter(parameter));
-                    }
-                    res.add(currExt);
+                    res.add(new Neo4jExtension(type, name, extName));
                 }
             }
         } else {
@@ -58,18 +47,5 @@ public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<Li
         }
 
         return res;
-    }
-
-    protected ExtensionTarget decideExtensionType(String target) {
-        switch (target) {
-            case "graphdb":
-                return GRAPHDB;
-            case "node":
-                return NODE;
-            case "relationship":
-                return RELATIONSHIP;
-            default:
-                return null;
-        }
     }
 }
