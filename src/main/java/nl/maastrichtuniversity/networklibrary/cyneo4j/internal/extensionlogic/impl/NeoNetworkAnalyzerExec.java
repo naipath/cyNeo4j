@@ -38,10 +38,6 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
     private boolean closeness;
     private boolean clustCoeff;
 
-    public NeoNetworkAnalyzerExec() {
-
-    }
-
     @Override
     public boolean collectParameters() {
         currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();

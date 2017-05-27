@@ -22,9 +22,6 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
     private Neo4jExtension extension;
     private CyNetwork currNet;
 
-    public SimpleLayoutExtExec() {
-    }
-
     @Override
     public boolean collectParameters() {
         currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
