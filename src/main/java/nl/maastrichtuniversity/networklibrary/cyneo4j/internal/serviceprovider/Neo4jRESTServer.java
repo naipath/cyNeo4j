@@ -111,7 +111,7 @@ public class Neo4jRESTServer {
         cypherExt.setName("cypher");
         cypherExt.setEndpoint(getCypherURL());
 
-        cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery", "Cypher Endpoint", false, String.class)));
+        cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery", false)));
 
         if (localExtensions.containsKey("cypher")) {
             res.add(cypherExt);

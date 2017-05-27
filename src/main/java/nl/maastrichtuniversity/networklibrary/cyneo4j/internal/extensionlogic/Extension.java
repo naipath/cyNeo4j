@@ -1,5 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtParam;
+
 import java.util.List;
 
 public interface Extension {
@@ -12,7 +14,7 @@ public interface Extension {
 
     void setEndpoint(String endpoint);
 
-    List<ExtensionParameter> getParameters();
+    List<Neo4jExtParam> getParameters();
 
-    void setParameters(List<ExtensionParameter> params);
+    void setParameters(List<Neo4jExtParam> params);
 }

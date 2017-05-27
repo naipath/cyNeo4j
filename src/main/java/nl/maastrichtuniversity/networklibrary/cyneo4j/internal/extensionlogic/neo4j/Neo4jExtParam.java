@@ -1,19 +1,13 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionParameter;
-
-public class Neo4jExtParam implements ExtensionParameter {
+public class Neo4jExtParam {
 
     private String name;
-    private String description;
     private boolean optional;
-    private Class<?> type;
 
-    public Neo4jExtParam(String name, String description, boolean optional, Class<?> type) {
+    public Neo4jExtParam(String name, boolean optional) {
         this.name = name;
-        this.description = description;
         this.optional = optional;
-        this.type = type;
     }
 
     public String getName() {
@@ -24,7 +18,7 @@ public class Neo4jExtParam implements ExtensionParameter {
         this.name = name;
     }
 
-    public boolean isOptional() {
+    boolean isOptional() {
         return optional;
     }
 

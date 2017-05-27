@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionParameter;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget;
 
 public class Neo4jExtension implements Extension {
@@ -13,7 +12,7 @@ public class Neo4jExtension implements Extension {
     private String name;
     private String location;
 
-    private List<ExtensionParameter> parameters = new ArrayList<>();
+    private List<Neo4jExtParam> parameters = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -27,7 +26,7 @@ public class Neo4jExtension implements Extension {
         this.location = endpoint;
     }
 
-    public List<ExtensionParameter> getParameters() {
+    public List<Neo4jExtParam> getParameters() {
         return parameters;
     }
 
@@ -40,7 +39,7 @@ public class Neo4jExtension implements Extension {
         strbuff.append("name: ").append(getName()).append(" endpoint: ").append(getEndpoint()).append(" of type: ").append(getType()).append("\n");
         strbuff.append("\nrequired parameters: \n");
 
-        for (ExtensionParameter param : getParameters()) {
+        for (Neo4jExtParam param : getParameters()) {
             strbuff.append("\tparameter: ").append(param.getName()).append(" is optional? ").append(param.isOptional()).append("\n");
         }
 
@@ -61,7 +60,7 @@ public class Neo4jExtension implements Extension {
     }
 
     @Override
-    public void setParameters(List<ExtensionParameter> params) {
+    public void setParameters(List<Neo4jExtParam> params) {
         this.parameters = params;
 
     }
