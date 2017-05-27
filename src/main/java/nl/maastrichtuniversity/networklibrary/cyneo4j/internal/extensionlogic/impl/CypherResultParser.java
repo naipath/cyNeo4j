@@ -17,18 +17,12 @@ public class CypherResultParser {
     private static final String NODE_KEY = "outgoing_typed_relationships";
     private static final String EDGE_KEY = "type";
 
-    protected List<String> cols;
-    protected Map<String, ResType> colType = new HashMap<>();
-    protected CyNetwork currNet;
-
-    protected long numNodes;
-    protected long numEdges;
+    private List<String> cols;
+    private Map<String, ResType> colType = new HashMap<>();
+    private CyNetwork currNet;
 
     public CypherResultParser(CyNetwork network) {
         this.currNet = network;
-
-        numNodes = 0;
-        numEdges = 0;
     }
 
     public void parseRetVal(Object callRetValue) {
@@ -39,15 +33,14 @@ public class CypherResultParser {
         readResultTable((List<List<Object>>) retVal.get("data"));
     }
 
-    protected void readColumns(List<String> columns) {
+    private void readColumns(List<String> columns) {
         cols = columns;
         for (String col : cols) {
             colType.put(col, ResType.Unknown);
         }
     }
 
-    protected void readResultTable(List<List<Object>> rows) {
-        //		for(List<Object> row : rows){
+    private void readResultTable(List<List<Object>> rows) {
         for (List<Object> row : rows) {
             for (int i = 0; i < row.size(); ++i) {
 
@@ -57,11 +50,11 @@ public class CypherResultParser {
 
                 switch (type) {
                     case Node:
-                        parseNode(item, col);
+                        parseNode(item);
                         break;
 
                     case Edge:
-                        parseEdge(item, col);
+                        parseEdge(item);
                         break;
 
                     default:
@@ -72,7 +65,7 @@ public class CypherResultParser {
         }
     }
 
-    public void parseNode(Object nodeObj, String column) {
+    private void parseNode(Object nodeObj) {
 
         CyTable defNodeTab = currNet.getDefaultNodeTable();
         if (defNodeTab.getColumn("neoid") == null) {
@@ -81,7 +74,6 @@ public class CypherResultParser {
 
         Map<String, Object> node = (Map<String, Object>) nodeObj;
 
-        String selfURL = (String) node.get("self");
         Long self = extractID((String) node.get("self"));
 
         CyNode cyNode = CyUtils.getNodeByNeoId(currNet, self);
@@ -89,7 +81,6 @@ public class CypherResultParser {
         if (cyNode == null) {
             cyNode = currNet.addNode();
             currNet.getRow(cyNode).set("neoid", self);
-            ++numNodes;
         }
 
         Map<String, Object> nodeProps = (Map<String, Object>) node.get("data");
@@ -108,7 +99,7 @@ public class CypherResultParser {
         }
     }
 
-    public void parseEdge(Object edgeObj, String column) {
+    private void parseEdge(Object edgeObj) {
 
         CyTable defEdgeTab = currNet.getDefaultEdgeTable();
         if (defEdgeTab.getColumn("neoid") == null) {
@@ -151,7 +142,6 @@ public class CypherResultParser {
             }
 
             cyEdge = currNet.addEdge(startNode, endNode, true);
-            ++numEdges;
 
             currNet.getRow(cyEdge).set("neoid", self);
             currNet.getRow(cyEdge).set(CyEdge.INTERACTION, type);
@@ -174,15 +164,7 @@ public class CypherResultParser {
         }
     }
 
-    public long nodesAdded() {
-        return numNodes;
-    }
-
-    public long edgesAdded() {
-        return numEdges;
-    }
-
-    protected ResType duckTypeObject(Object obj, String column) {
+    private ResType duckTypeObject(Object obj, String column) {
 
         ResType result = colType.get(column);
 
@@ -200,7 +182,7 @@ public class CypherResultParser {
         return result;
     }
 
-    protected boolean isNodeType(Object obj) {
+    private boolean isNodeType(Object obj) {
         try {
             Map<String, Object> node = (Map<String, Object>) obj;
             return node.containsKey(NODE_KEY);
@@ -210,7 +192,7 @@ public class CypherResultParser {
         }
     }
 
-    protected boolean isEdgeType(Object obj) {
+    private boolean isEdgeType(Object obj) {
         try {
             Map<String, Object> node = (Map<String, Object>) obj;
             return node.containsKey(EDGE_KEY);
@@ -227,8 +209,7 @@ public class CypherResultParser {
         Unknown
     }
 
-    public Long extractID(String objUrl) {
+    private Long extractID(String objUrl) {
         return Long.valueOf(objUrl.substring(objUrl.lastIndexOf('/') + 1));
     }
-
 }
