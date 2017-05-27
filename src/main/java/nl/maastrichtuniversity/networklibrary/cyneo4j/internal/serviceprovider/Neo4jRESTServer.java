@@ -12,9 +12,7 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.s
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpTaskFactory;
 import org.apache.http.client.fluent.Async;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 import org.cytoscape.application.swing.AbstractCyAction;
-import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.TaskIterator;
 
 import java.io.IOException;
@@ -26,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static java.util.Collections.singletonList;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 public class Neo4jRESTServer {
 
@@ -106,13 +105,12 @@ public class Neo4jRESTServer {
     public List<Neo4jExtension> getExtensions() {
         List<Neo4jExtension> res = new ArrayList<>();
 
-        Neo4jExtension cypherExt = new Neo4jExtension();
-        cypherExt.setName("cypher");
-        cypherExt.setEndpoint(getCypherURL());
-
-        cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery")));
-
         if (localExtensions.containsKey("cypher")) {
+            Neo4jExtension cypherExt = new Neo4jExtension();
+            cypherExt.setName("cypher");
+            cypherExt.setEndpoint(getCypherURL());
+            cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery")));
+
             res.add(cypherExt);
         }
         try {
@@ -130,13 +128,11 @@ public class Neo4jRESTServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         return res;
     }
 
-    public void syncUp(boolean wipeRemote, CyNetwork curr) {
-        TaskIterator it = new SyncUpTaskFactory(wipeRemote, getCypherURL(), getPlugin().getCyApplicationManager().getCurrentNetwork()).createTaskIterator();
+    public void syncUp() {
+        TaskIterator it = new SyncUpTaskFactory(true, getCypherURL(), getPlugin().getCyApplicationManager().getCurrentNetwork()).createTaskIterator();
         plugin.getDialogTaskManager().execute(it);
 
     }
@@ -157,15 +153,13 @@ public class Neo4jRESTServer {
             setupAsync();
 
             String url = call.getUrlFragment();
-            Request req = Request.Post(url).bodyString(call.getPayload(), ContentType.APPLICATION_JSON);
+            Request req = Request.Post(url).bodyString(call.getPayload(), APPLICATION_JSON);
 
             async.execute(req);
         } else {
-
-
             try {
                 String url = call.getUrlFragment();
-                retVal = Request.Post(url).bodyString(call.getPayload(), ContentType.APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandlerMy());
+                retVal = Request.Post(url).bodyString(call.getPayload(), APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandlerMy());
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -179,6 +173,7 @@ public class Neo4jRESTServer {
         try {
             return instanceLocation != null && Request.Get(instanceLocation).execute().handleResponse(new Neo4jPingHandler());
         } catch (IOException e) {
+            e.printStackTrace();
         }
         // TODO fix error messages | show exceptions? does the user understand the error messages?
         return false;
@@ -191,12 +186,8 @@ public class Neo4jRESTServer {
     public Neo4jExtension supportsExtension(String name) {
         List<Neo4jExtension> extensions = getExtensions();
 
-        for (Neo4jExtension extension : extensions) {
-            if (extension.getName().equals(name)) {
-                return extension;
-            }
-        }
-        return null;
+        return extensions.stream().filter(extension -> extension.getName().equals(name))
+            .findFirst().orElse(null);
     }
 
     public void setLocalSupportedExtension(Map<String, AbstractCyAction> localExtensions) {

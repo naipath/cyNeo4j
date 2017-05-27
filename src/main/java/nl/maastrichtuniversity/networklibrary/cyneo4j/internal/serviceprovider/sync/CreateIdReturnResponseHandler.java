@@ -14,8 +14,6 @@ public class CreateIdReturnResponseHandler implements ResponseHandler<Long> {
     public Long handleResponse(HttpResponse response) throws IOException {
         int responseCode = response.getStatusLine().getStatusCode();
 
-        Long id = null;
-
         if (responseCode >= 200 && responseCode < 300) {
 
             ObjectMapper mapper = new ObjectMapper();
@@ -23,17 +21,17 @@ public class CreateIdReturnResponseHandler implements ResponseHandler<Long> {
 
             List<List<Integer>> queryRes = (List<List<Integer>>) wrapper.get("data");
 
-            id = queryRes.get(0).get(0).longValue();
+            return queryRes.get(0).get(0).longValue();
 
-        } else {
-            System.out.println("ERROR " + responseCode);
-            ObjectMapper mapper = new ObjectMapper();
-
-            Map<String, String> error = mapper.readValue(response.getEntity().getContent(), Map.class);
-            System.out.println(error);
         }
 
-        return id;
+        System.out.println("ERROR " + responseCode);
+        ObjectMapper mapper = new ObjectMapper();
+
+        Map<String, String> error = mapper.readValue(response.getEntity().getContent(), Map.class);
+        System.out.println(error);
+
+        return null;
     }
 
 }

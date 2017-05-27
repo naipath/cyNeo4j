@@ -12,7 +12,7 @@ public class PassThroughResponseHandlerMy extends MyHttpResponseHandler<Object> 
 
         if (responseCode >= 200 && responseCode < 300) {
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(content, Object.class);//FIXME: implict Map
+            return mapper.readValue(content, Object.class);//FIXME: implicit Map
         }
         System.out.println("ERROR " + responseCode); //TODO
         return null;
