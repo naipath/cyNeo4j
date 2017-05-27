@@ -2,7 +2,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtParam;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.ExtensionLocationsHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.ExtensionParametersResponseHandler;
@@ -23,7 +22,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static java.util.Collections.singletonList;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 public class Neo4jRESTServer {
