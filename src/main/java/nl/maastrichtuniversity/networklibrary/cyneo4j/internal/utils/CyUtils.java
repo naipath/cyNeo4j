@@ -1,75 +1,36 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.cytoscape.model.CyColumn;
-import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyIdentifiable;
-import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyRow;
-import org.cytoscape.model.CyTable;
+import org.cytoscape.model.*;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
 
-public class CyUtils {
-    public static Set<CyNode> getNodesWithValue(CyNetwork net, CyTable table, String colname, Object value) {
-        Collection<CyRow> matchingRows = table.getMatchingRows(colname, value);
-        Set<CyNode> nodes = new HashSet<>();
-        String primaryKeyColname = table.getPrimaryKey().getName();
-        for (CyRow row : matchingRows) {
-            Long nodeId = row.get(primaryKeyColname, Long.class);
-            if (nodeId == null)
-                continue;
-            CyNode node = net.getNode(nodeId);
-            if (node == null)
-                continue;
-            nodes.add(node);
-        }
-        return nodes;
-    }
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
 
-    public static Set<CyEdge> getEdgeWithValue(CyNetwork net, CyTable table, String colname, Object value) {
-        Collection<CyRow> matchingRows = table.getMatchingRows(colname, value);
-        Set<CyEdge> edges = new HashSet<>();
-        String primaryKeyColname = table.getPrimaryKey().getName();
-        for (CyRow row : matchingRows) {
-            Long edgeId = row.get(primaryKeyColname, Long.class);
-            if (edgeId == null)
-                continue;
-            CyEdge edge = net.getEdge(edgeId);
-            if (edge == null)
-                continue;
-            edges.add(edge);
-        }
-        return edges;
-    }
+import static java.util.stream.Collectors.toSet;
+
+public class CyUtils {
 
     public static String convertCyAttributesToJson(CyIdentifiable item, CyTable tab) {
         StringBuilder params = new StringBuilder("{");
         for (CyColumn cyCol : tab.getColumns()) {
             String paramName = cyCol.getName();
-            if (paramName.equals("neoid"))
-                continue;
+            if (!paramName.equals("neoid")) {
 
-            Object paramValue = tab.getRow(item.getSUID()).get(cyCol.getName(), cyCol.getType());
+                Object paramValue = tab.getRow(item.getSUID()).get(cyCol.getName(), cyCol.getType());
 
-            String paramValueStr;
-            if (paramValue == null) {
-                continue;
-            } else {
-                if (cyCol.getType() == String.class) {
-                    paramValueStr = "\"" + paramValue.toString() + "\"";
-                } else {
-                    paramValueStr = paramValue.toString();
+                if (paramValue != null) {
+                    String paramValueStr = cyCol.getType() == String.class ? "\"" + paramValue.toString() + "\"" : paramValue.toString();
+                    params.append("\"")
+                        .append(paramName)
+                        .append("\" : ")
+                        .append(paramValueStr)
+                        .append(",");
                 }
             }
-
-            String jsonParam = "\"" + paramName + "\" : " + paramValueStr + ",";
-            params.append(jsonParam);
         }
 
         params = new StringBuilder(params.substring(0, params.length() - 1));
@@ -79,11 +40,10 @@ public class CyUtils {
     }
 
     public static CyNode getNodeByNeoId(CyNetwork network, Long neoId) {
-        Set<CyNode> res = CyUtils.getNodesWithValue(network, network.getDefaultNodeTable(), "neoid", neoId);
+        Set<CyNode> res = getNodesWithValue(network, network.getDefaultNodeTable(), "neoid", neoId);
         if (res.size() > 1) {
             throw new IllegalArgumentException("more than one start node found! " + res.toString());
         }
-
         if (res.size() == 0) {
             return null;
         }
@@ -91,15 +51,33 @@ public class CyUtils {
     }
 
     public static CyEdge getEdgeByNeoId(CyNetwork network, Long neoId) {
-        Set<CyEdge> res = CyUtils.getEdgeWithValue(network, network.getDefaultEdgeTable(), "neoid", neoId);
+        Set<CyEdge> res = getEdgeWithValue(network, network.getDefaultEdgeTable(), "neoid", neoId);
         if (res.size() > 1) {
             throw new IllegalArgumentException("more than one start node found! " + res.toString());
         }
-
         if (res.size() == 0) {
             return null;
         }
         return res.iterator().next();
+    }
+
+    public static Set<CyNode> getNodesWithValue(CyNetwork net, CyTable table, String colname, Object value) {
+        String primaryKeyColname = table.getPrimaryKey().getName();
+        return getValueFromRows(table.getMatchingRows(colname, value), primaryKeyColname, net::getNode);
+    }
+
+    private static Set<CyEdge> getEdgeWithValue(CyNetwork net, CyTable table, String colname, Object value) {
+        String primaryKeyColname = table.getPrimaryKey().getName();
+        return getValueFromRows(table.getMatchingRows(colname, value), primaryKeyColname, net::getEdge);
+    }
+
+    private static <T> Set<T> getValueFromRows(Collection<CyRow> matchingRows, String primaryKeyColname, Function<Long, T> mapper) {
+        return matchingRows.stream()
+            .map(cyRow -> cyRow.get(primaryKeyColname, Long.class))
+            .filter(Objects::nonNull)
+            .map(mapper)
+            .filter(Objects::nonNull)
+            .collect(toSet());
     }
 
     public static Object fixSpecialTypes(Object val, Class<?> req) {
@@ -117,6 +95,4 @@ public class CyUtils {
         vs.apply(view);
         view.updateView();
     }
-
-
 }
