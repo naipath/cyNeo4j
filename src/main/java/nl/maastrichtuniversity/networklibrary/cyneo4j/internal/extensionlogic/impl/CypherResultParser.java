@@ -202,13 +202,6 @@ public class CypherResultParser {
         }
     }
 
-    protected enum ResType {
-        Node,
-        Edge,
-        Ignore,
-        Unknown
-    }
-
     private Long extractID(String objUrl) {
         return Long.valueOf(objUrl.substring(objUrl.lastIndexOf('/') + 1));
     }
