@@ -23,8 +23,6 @@ public interface ExtensionExecutor {
      */
     void processCallResponse(Neo4jCall call, Object callRetValue);
 
-    void setExtension(Neo4jExtension extension);
-
     /**
      * Generate here a list of calls that should be executed. Each of the calls is going to be executed
      * sequentially and the call and result will be handed backed to the ExtensionExecutor

@@ -17,8 +17,9 @@ public class CypherExtExec implements ExtensionExecutor {
     private String query;
     private CyNetwork currNet;
 
-    CypherExtExec(Plugin plugin) {
+    CypherExtExec(Plugin plugin, Neo4jExtension extension) {
         this.plugin = plugin;
+        this.extension = extension;
     }
 
     @Override
@@ -42,11 +43,6 @@ public class CypherExtExec implements ExtensionExecutor {
         CypherResultParser cypherResParser = new CypherResultParser(currNet);
         cypherResParser.parseRetVal(callRetValue);
 
-    }
-
-    @Override
-    public void setExtension(Neo4jExtension extension) {
-        this.extension = extension;
     }
 
     @Override

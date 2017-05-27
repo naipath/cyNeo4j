@@ -22,8 +22,9 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
     private Neo4jExtension extension;
     private CyNetwork currNet;
 
-    SimpleLayoutExtExec(Plugin plugin) {
+    SimpleLayoutExtExec(Plugin plugin, Neo4jExtension extension) {
         this.plugin = plugin;
+        this.extension = extension;
     }
 
     @Override
@@ -59,11 +60,6 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
 
             CyUtils.updateVisualStyle(getPlugin().getVisualMappingManager(), networkView, currNet);
         }
-    }
-
-    @Override
-    public void setExtension(Neo4jExtension extension) {
-        this.extension = extension;
     }
 
     @Override

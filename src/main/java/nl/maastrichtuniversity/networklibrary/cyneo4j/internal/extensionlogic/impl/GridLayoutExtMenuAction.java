@@ -29,8 +29,7 @@ public class GridLayoutExtMenuAction extends AbstractCyAction {
     public void actionPerformed(ActionEvent e) {
         Neo4jExtension gridLayoutExt = plugin.getInteractor().supportsExtension("gridlayout");
 
-        ExtensionExecutor exec = new SimpleLayoutExtExec(plugin);
-        exec.setExtension(gridLayoutExt);
+        ExtensionExecutor exec = new SimpleLayoutExtExec(plugin, gridLayoutExt);
 
         if (!exec.collectParameters()) {
             JOptionPane.showMessageDialog(plugin.getCySwingApplication().getJFrame(), "Failed to collect parameters for " + gridLayoutExt.getName());

@@ -31,8 +31,7 @@ public class CypherMenuAction extends AbstractCyAction {
     public void actionPerformed(ActionEvent e) {
         Neo4jExtension cypherExt = plugin.getInteractor().supportsExtension("cypher");
 
-        ExtensionExecutor exec = new CypherExtExec(plugin);
-        exec.setExtension(cypherExt);
+        ExtensionExecutor exec = new CypherExtExec(plugin, cypherExt);
 
         if (!exec.collectParameters()) {
             JOptionPane.showMessageDialog(plugin.getCySwingApplication().getJFrame(), "Failed to collect parameters for " + cypherExt.getName());

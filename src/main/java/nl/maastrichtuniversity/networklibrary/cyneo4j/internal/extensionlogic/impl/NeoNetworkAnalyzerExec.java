@@ -38,8 +38,9 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
     private boolean closeness;
     private boolean clustCoeff;
 
-    NeoNetworkAnalyzerExec(Plugin plugin) {
+    NeoNetworkAnalyzerExec(Plugin plugin, Neo4jExtension neoAnalyzer) {
         this.plugin = plugin;
+        this.extension = neoAnalyzer;
     }
 
     @Override
@@ -129,11 +130,6 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
         }
 
         defNodeTab.getRow(n.getSUID()).set(key, val2);
-    }
-
-    @Override
-    public void setExtension(Neo4jExtension extension) {
-        this.extension = extension;
     }
 
     @Override

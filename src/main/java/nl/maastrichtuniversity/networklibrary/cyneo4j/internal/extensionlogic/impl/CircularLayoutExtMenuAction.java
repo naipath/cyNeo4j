@@ -30,8 +30,7 @@ public class CircularLayoutExtMenuAction extends AbstractCyAction {
 
         Neo4jExtension layoutExt = plugin.getInteractor().supportsExtension("circlelayout");
 
-        ExtensionExecutor exec = new SimpleLayoutExtExec(plugin);
-        exec.setExtension(layoutExt);
+        ExtensionExecutor exec = new SimpleLayoutExtExec(plugin, layoutExt);
 
         if (!exec.collectParameters()) {
             JOptionPane.showMessageDialog(plugin.getCySwingApplication().getJFrame(), "Failed to collect parameters for " + layoutExt.getName());
