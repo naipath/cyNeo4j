@@ -1,18 +1,16 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
+import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyTable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.NeoUtils;
-
-import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyTable;
 
 public class CypherResultParser {
 
@@ -84,7 +82,7 @@ public class CypherResultParser {
         Map<String, Object> node = (Map<String, Object>) nodeObj;
 
         String selfURL = (String) node.get("self");
-        Long self = NeoUtils.extractID((String) node.get("self"));
+        Long self = extractID((String) node.get("self"));
 
         CyNode cyNode = CyUtils.getNodeByNeoId(currNet, self);
 
@@ -125,17 +123,17 @@ public class CypherResultParser {
         Map<Object, Object> edge = (Map<Object, Object>) edgeObj;
 
         String selfURL = (String) edge.get("self");
-        Long self = NeoUtils.extractID(selfURL);
+        Long self = extractID(selfURL);
 
         CyEdge cyEdge = CyUtils.getEdgeByNeoId(currNet, self);
 
         if (cyEdge == null) {
 
             String startUrl = (String) edge.get("start");
-            Long start = NeoUtils.extractID(startUrl);
+            Long start = extractID(startUrl);
 
             String endUrl = (String) edge.get("end");
-            Long end = NeoUtils.extractID(endUrl);
+            Long end = extractID(endUrl);
 
             String type = (String) edge.get("type");
 
@@ -229,5 +227,8 @@ public class CypherResultParser {
         Unknown
     }
 
+    public Long extractID(String objUrl) {
+        return Long.valueOf(objUrl.substring(objUrl.lastIndexOf('/') + 1));
+    }
 
 }
