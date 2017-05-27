@@ -10,6 +10,6 @@ public class NeoUtils {
     }
 
     public static Neo4jExtParam parseExtParameter(Map<String, Object> json) {
-        return new Neo4jExtParam((String) json.get("name"), (Boolean) json.get("optional"));
+        return new Neo4jExtParam((String) json.get("name"));
     }
 }

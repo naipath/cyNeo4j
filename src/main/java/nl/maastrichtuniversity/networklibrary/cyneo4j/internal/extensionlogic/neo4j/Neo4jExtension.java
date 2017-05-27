@@ -25,24 +25,8 @@ public class Neo4jExtension {
         this.location = endpoint;
     }
 
-    public List<Neo4jExtParam> getParameters() {
-        return parameters;
-    }
-
     public void addParameter(Neo4jExtParam param) {
-        getParameters().add(param);
-    }
-
-    public String toString() {
-        StringBuilder strbuff = new StringBuilder();
-        strbuff.append("name: ").append(getName()).append(" endpoint: ").append(getEndpoint()).append(" of type: ").append(getType()).append("\n");
-        strbuff.append("\nrequired parameters: \n");
-
-        for (Neo4jExtParam param : getParameters()) {
-            strbuff.append("\tparameter: ").append(param.getName()).append(" is optional? ").append(param.isOptional()).append("\n");
-        }
-
-        return strbuff.toString();
+        parameters.add(param);
     }
 
     public void setType(ExtensionTarget type) {

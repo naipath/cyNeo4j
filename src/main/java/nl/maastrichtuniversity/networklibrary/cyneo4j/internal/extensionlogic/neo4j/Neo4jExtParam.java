@@ -3,24 +3,12 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.n
 public class Neo4jExtParam {
 
     private String name;
-    private boolean optional;
 
-    public Neo4jExtParam(String name, boolean optional) {
+    public Neo4jExtParam(String name) {
         this.name = name;
-        this.optional = optional;
     }
 
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    boolean isOptional() {
-        return optional;
-    }
-
-
 }
