@@ -92,7 +92,7 @@ public class ForceAtlas2LayoutExtExec {
             nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x);
             nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
 
-            CyUtils.updateVisualStyle(plugin.getVisualMappingManager(), networkView, currNet);
+            CyUtils.updateVisualStyle(plugin.getVisualMappingManager(), networkView);
         }
     }
 

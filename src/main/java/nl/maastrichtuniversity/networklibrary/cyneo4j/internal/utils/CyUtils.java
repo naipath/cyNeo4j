@@ -16,17 +16,15 @@ import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
 
 public class CyUtils {
-    public static Set<CyNode> getNodesWithValue(
-        final CyNetwork net, final CyTable table,
-        final String colname, final Object value) {
-        final Collection<CyRow> matchingRows = table.getMatchingRows(colname, value);
-        final Set<CyNode> nodes = new HashSet<>();
-        final String primaryKeyColname = table.getPrimaryKey().getName();
-        for (final CyRow row : matchingRows) {
-            final Long nodeId = row.get(primaryKeyColname, Long.class);
+    public static Set<CyNode> getNodesWithValue(CyNetwork net, CyTable table, String colname, Object value) {
+        Collection<CyRow> matchingRows = table.getMatchingRows(colname, value);
+        Set<CyNode> nodes = new HashSet<>();
+        String primaryKeyColname = table.getPrimaryKey().getName();
+        for (CyRow row : matchingRows) {
+            Long nodeId = row.get(primaryKeyColname, Long.class);
             if (nodeId == null)
                 continue;
-            final CyNode node = net.getNode(nodeId);
+            CyNode node = net.getNode(nodeId);
             if (node == null)
                 continue;
             nodes.add(node);
@@ -34,17 +32,15 @@ public class CyUtils {
         return nodes;
     }
 
-    public static Set<CyEdge> getEdgeWithValue(
-        final CyNetwork net, final CyTable table,
-        final String colname, final Object value) {
-        final Collection<CyRow> matchingRows = table.getMatchingRows(colname, value);
-        final Set<CyEdge> edges = new HashSet<>();
-        final String primaryKeyColname = table.getPrimaryKey().getName();
-        for (final CyRow row : matchingRows) {
-            final Long edgeId = row.get(primaryKeyColname, Long.class);
+    public static Set<CyEdge> getEdgeWithValue(CyNetwork net, CyTable table, String colname, Object value) {
+        Collection<CyRow> matchingRows = table.getMatchingRows(colname, value);
+        Set<CyEdge> edges = new HashSet<>();
+        String primaryKeyColname = table.getPrimaryKey().getName();
+        for (CyRow row : matchingRows) {
+            Long edgeId = row.get(primaryKeyColname, Long.class);
             if (edgeId == null)
                 continue;
-            final CyEdge edge = net.getEdge(edgeId);
+            CyEdge edge = net.getEdge(edgeId);
             if (edge == null)
                 continue;
             edges.add(edge);
@@ -107,22 +103,15 @@ public class CyUtils {
     }
 
     public static Object fixSpecialTypes(Object val, Class<?> req) {
-
-        Object retV = null;
-
-        if (val.getClass() != req) {
-            if (val.getClass() == Integer.class && req == Long.class) {
-                retV = ((Integer) val).longValue();
-            }
-
-        } else {
+        if (val.getClass() == req) {
             return val;
+        } else if (val.getClass() == Integer.class && req == Long.class) {
+            return ((Integer) val).longValue();
         }
-
-        return retV;
+        return null;
     }
 
-    public static void updateVisualStyle(VisualMappingManager visualMappingMgr, CyNetworkView view, CyNetwork network) {
+    public static void updateVisualStyle(VisualMappingManager visualMappingMgr, CyNetworkView view) {
         VisualStyle vs = visualMappingMgr.getDefaultVisualStyle();
         visualMappingMgr.setVisualStyle(vs, view);
         vs.apply(view);
