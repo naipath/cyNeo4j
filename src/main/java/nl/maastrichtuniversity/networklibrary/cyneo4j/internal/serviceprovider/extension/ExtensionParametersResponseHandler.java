@@ -16,7 +16,7 @@ import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionl
 
 public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<List<Neo4jExtension>> {
 
-    private String extName = null;
+    private String extName;
 
     public ExtensionParametersResponseHandler(String extName) {
         this.extName = extName;
@@ -34,24 +34,19 @@ public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<Li
                 Map<String, Object> extensions = (Map<String, Object>) target.getValue();
 
                 for (Entry<String, Object> extension : extensions.entrySet()) {
-                    Neo4jExtension currExt = new Neo4jExtension();
+
 
                     Map<String, Object> extensionDesc = (Map<String, Object>) extension.getValue();
                     ExtensionTarget type = decideExtensionType((String) extensionDesc.get("extends"));
-                    currExt.setType(type);
-
                     String name = (String) extensionDesc.get("name");
-                    currExt.setName(name);
-
 
                     List<Map<String, Object>> parameters = (List<Map<String, Object>>) extensionDesc.get("parameters");
+
+                    Neo4jExtension currExt = new Neo4jExtension(type, name, extName);
 
                     for (Map<String, Object> parameter : parameters) {
                         currExt.addParameter(NeoUtils.parseExtParameter(parameter));
                     }
-
-                    currExt.setEndpoint(buildEndpoint(currExt));
-
                     res.add(currExt);
                 }
             }
@@ -63,20 +58,6 @@ public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<Li
         }
 
         return res;
-    }
-
-
-
-    private String buildEndpoint(Neo4jExtension currExt) {
-        String endpoint = extName + "/" + currExt.getType().toString().toLowerCase() + "/";
-
-        if (currExt.getType() == NODE || currExt.getType() == RELATIONSHIP) {
-            endpoint = endpoint + "<IDHERE>/";
-        }
-
-        endpoint = endpoint + currExt.getName();
-
-        return endpoint;
     }
 
     protected ExtensionTarget decideExtensionType(String target) {

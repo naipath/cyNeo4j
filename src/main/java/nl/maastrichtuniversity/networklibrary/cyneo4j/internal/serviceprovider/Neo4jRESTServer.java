@@ -106,9 +106,7 @@ public class Neo4jRESTServer {
         List<Neo4jExtension> res = new ArrayList<>();
 
         if (localExtensions.containsKey("cypher")) {
-            Neo4jExtension cypherExt = new Neo4jExtension();
-            cypherExt.setName("cypher");
-            cypherExt.setEndpoint(getCypherURL());
+            Neo4jExtension cypherExt = new Neo4jExtension("cypher", getCypherURL());
             cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery")));
 
             res.add(cypherExt);
@@ -119,11 +117,9 @@ public class Neo4jRESTServer {
             for (String extName : extNames) {
                 List<Neo4jExtension> serverSupportedExt = Request.Get(getInstanceLocation() + EXT_URL + extName).execute().handleResponse(new ExtensionParametersResponseHandler(getInstanceLocation() + EXT_URL + extName));
 
-                for (Neo4jExtension ext : serverSupportedExt) {
-                    if (localExtensions.containsKey(ext.getName())) {
-                        res.add(ext);
-                    }
-                }
+                serverSupportedExt.stream()
+                    .filter(extension -> localExtensions.containsKey(extension.getName()))
+                    .forEach(res::add);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -138,7 +134,7 @@ public class Neo4jRESTServer {
     }
 
     private String getCypherURL() {
-        return getInstanceLocation() + CYPHER_URL;
+        return instanceLocation + CYPHER_URL;
     }
 
     protected void setupAsync() {
@@ -184,9 +180,8 @@ public class Neo4jRESTServer {
     }
 
     public Neo4jExtension supportsExtension(String name) {
-        List<Neo4jExtension> extensions = getExtensions();
-
-        return extensions.stream().filter(extension -> extension.getName().equals(name))
+        return getExtensions().stream()
+            .filter(extension -> extension.getName().equals(name))
             .findFirst().orElse(null);
     }
 
