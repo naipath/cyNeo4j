@@ -29,12 +29,8 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
 
     @Override
     public boolean collectParameters() {
-        currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
+        currNet = plugin.getCyApplicationManager().getCurrentNetwork();
         return true;
-    }
-
-    private Plugin getPlugin() {
-        return plugin;
     }
 
     @Override
@@ -43,7 +39,7 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
         List<Double> values = (List<Double>) callRetValue;
 
         CyTable defNodeTab = currNet.getDefaultNodeTable();
-        CyNetworkView networkView = getPlugin().getCyNetViewMgr().getNetworkViews(currNet).iterator().next();
+        CyNetworkView networkView = plugin.getCyNetViewMgr().getNetworkViews(currNet).iterator().next();
 
         for (int i = 0; i < (values.size() / 3); ++i) {
             Long neoid = values.get(i * 3).longValue();
@@ -58,7 +54,7 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
             nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x);
             nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
 
-            CyUtils.updateVisualStyle(getPlugin().getVisualMappingManager(), networkView, currNet);
+            CyUtils.updateVisualStyle(plugin.getVisualMappingManager(), networkView, currNet);
         }
     }
 
@@ -69,7 +65,7 @@ public class SimpleLayoutExtExec implements ExtensionExecutor {
         String urlFragment = extension.getEndpoint();
         String payload = "{\"saveInGraph\":false}";
 
-        calls.add(new Neo4jCall(urlFragment, payload,false));
+        calls.add(new Neo4jCall(urlFragment, payload, false));
 
         return calls;
     }
