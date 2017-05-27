@@ -24,7 +24,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
     private ImageIcon green = null;
     private ImageIcon red = null;
 
-    public ConnectPanel(JDialog dialog, Neo4jRESTServer neo4jInteractor) {
+    ConnectPanel(JDialog dialog, Neo4jRESTServer neo4jInteractor) {
         this.dialog = dialog;
         this.interactor = neo4jInteractor;
 
@@ -85,11 +85,11 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals(CANCEL_CMD)) {
+        if (CANCEL_CMD.equals(e.getActionCommand())) {
             closeUp();
         }
 
-        if (e.getActionCommand().equals(OK_CMD)) {
+        if (OK_CMD.equals(e.getActionCommand())) {
             if (validURL()) {
                 interactor.connect(getUrl());
             }
@@ -105,12 +105,8 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
         return servURL.getText();
     }
 
-    protected JDialog getDialog() {
-        return dialog;
-    }
-
-    protected void closeUp() {
-        getDialog().setVisible(false);
+    private void closeUp() {
+        dialog.setVisible(false);
     }
 
     @Override
@@ -128,7 +124,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
         checkURLChange();
     }
 
-    protected void checkURLChange() {
+    private void checkURLChange() {
         if (validURL()) {
             status.setIcon(green);
             okButton.setEnabled(true);
