@@ -10,33 +10,26 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 
 public class CyUtils {
 
     public static String convertCyAttributesToJson(CyIdentifiable item, CyTable tab) {
-        StringBuilder params = new StringBuilder("{");
-        for (CyColumn cyCol : tab.getColumns()) {
-            String paramName = cyCol.getName();
-            if (!paramName.equals("neoid")) {
+        String params = tab.getColumns()
+            .stream()
+            .filter(cyColumn -> !cyColumn.getName().equals("neoid"))
+            .filter(cyColumn -> tab.getRow(item.getSUID()).get(cyColumn.getName(), cyColumn.getType()) != null)
+            .map(cyColumn -> {
+                String paramName = cyColumn.getName();
+                Object paramValue = tab.getRow(item.getSUID()).get(cyColumn.getName(), cyColumn.getType());
+                String paramValueStr = cyColumn.getType() == String.class ? "\"" + paramValue.toString() + "\"" : paramValue.toString();
 
-                Object paramValue = tab.getRow(item.getSUID()).get(cyCol.getName(), cyCol.getType());
+                return String.format("\"%s\" : %s,", paramName, paramValueStr);
+            })
+            .collect(joining(","));
 
-                if (paramValue != null) {
-                    String paramValueStr = cyCol.getType() == String.class ? "\"" + paramValue.toString() + "\"" : paramValue.toString();
-                    params.append("\"")
-                        .append(paramName)
-                        .append("\" : ")
-                        .append(paramValueStr)
-                        .append(",");
-                }
-            }
-        }
-
-        params = new StringBuilder(params.substring(0, params.length() - 1));
-        params.append("}");
-
-        return params.toString();
+        return String.format("{%s}", params);
     }
 
     public static CyNode getNodeByNeoId(CyNetwork network, Long neoId) {
