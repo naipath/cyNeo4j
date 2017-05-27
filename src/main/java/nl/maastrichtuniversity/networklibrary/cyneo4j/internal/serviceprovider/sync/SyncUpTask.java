@@ -16,6 +16,8 @@ import java.io.IOException;
 
 public class SyncUpTask extends AbstractTask {
 
+    private static final String WIPE_QUERY = "{ \"query\" : \"MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r\",\"params\" : {}}";
+
     private boolean wipeRemote;
     private String cypherURL;
     private CyNetwork currNet;
@@ -43,14 +45,12 @@ public class SyncUpTask extends AbstractTask {
             boolean wiped = false;
             if (wipeRemote) {
                 taskMonitor.setStatusMessage("wiping remote network");
-                String wipeQuery = "{ \"query\" : \"MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r\",\"params\" : {}}";
                 progress = 0.1;
                 taskMonitor.setProgress(progress);
 
                 wiped = Request.Post(cypherURL)
-                    .bodyString(wipeQuery, ContentType.APPLICATION_JSON)
-                    .execute()
-                    .handleResponse(this::hasCorrectResponseCode);
+                    .bodyString(WIPE_QUERY, ContentType.APPLICATION_JSON)
+                    .execute().handleResponse(this::hasCorrectResponseCode);
             }
 
             if (wiped == wipeRemote) {
