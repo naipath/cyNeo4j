@@ -1,9 +1,9 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 
@@ -28,7 +28,7 @@ public class NeoNetworkAnalyzerAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        Extension neoAnalyzer = getPlugin().getInteractor().supportsExtension("neonetworkanalyzer");
+        Neo4jExtension neoAnalyzer = getPlugin().getInteractor().supportsExtension("neonetworkanalyzer");
 
         ExtensionExecutor exec = new NeoNetworkAnalyzerExec();
 

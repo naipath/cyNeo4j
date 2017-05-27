@@ -1,12 +1,11 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget;
-
-public class Neo4jExtension implements Extension {
+public class Neo4jExtension {
 
     private ExtensionTarget type;
     private String name;
@@ -54,12 +53,10 @@ public class Neo4jExtension implements Extension {
         return type;
     }
 
-    @Override
     public String getEndpoint() {
         return location;
     }
 
-    @Override
     public void setParameters(List<Neo4jExtParam> params) {
         this.parameters = params;
 

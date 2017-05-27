@@ -1,7 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.NeoUtils;
@@ -13,11 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.GRAPHDB;
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.NODE;
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.RELATIONSHIP;
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.*;
 
-public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<List<Extension>> {
+public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<List<Neo4jExtension>> {
 
     private String extName = null;
 
@@ -26,8 +23,8 @@ public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<Li
     }
 
     @Override
-    public List<Extension> handle(int responseCode, InputStream content) throws IOException {
-        List<Extension> res = new ArrayList<>();
+    public List<Neo4jExtension> handle(int responseCode, InputStream content) throws IOException {
+        List<Neo4jExtension> res = new ArrayList<>();
         if (responseCode >= 200 && responseCode < 300) {
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> targets = mapper.readValue(content, Map.class);

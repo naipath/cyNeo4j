@@ -1,8 +1,8 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.work.AbstractTask;
@@ -31,7 +31,7 @@ public class ForceAtlas2LayoutExtMenuAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        Extension forceAtlas2LayoutExt = getPlugin().getInteractor().supportsExtension("forceatlas2");
+        Neo4jExtension forceAtlas2LayoutExt = getPlugin().getInteractor().supportsExtension("forceatlas2");
 
         ForceAtlas2LayoutExtExec exec = new ForceAtlas2LayoutExtExec();
         exec.setPlugin(plugin);

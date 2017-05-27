@@ -2,6 +2,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public interface ExtensionExecutor {
 
     void setPlugin(Plugin plugin);
 
-    void setExtension(Extension extension);
+    void setExtension(Neo4jExtension extension);
 
     /**
      * Generate here a list of calls that should be executed. Each of the calls is going to be executed

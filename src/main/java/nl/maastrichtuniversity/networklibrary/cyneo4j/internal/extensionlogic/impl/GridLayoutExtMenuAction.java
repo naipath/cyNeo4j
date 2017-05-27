@@ -1,9 +1,9 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 
@@ -27,7 +27,7 @@ public class GridLayoutExtMenuAction extends AbstractCyAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Extension gridLayoutExt = getPlugin().getInteractor().supportsExtension("gridlayout");
+        Neo4jExtension gridLayoutExt = getPlugin().getInteractor().supportsExtension("gridlayout");
 
         ExtensionExecutor exec = new SimpleLayoutExtExec();
 

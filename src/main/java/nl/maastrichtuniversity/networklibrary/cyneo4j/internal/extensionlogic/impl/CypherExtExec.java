@@ -1,9 +1,9 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import org.cytoscape.model.CyNetwork;
 
 import javax.swing.*;
@@ -13,7 +13,7 @@ import java.util.List;
 public class CypherExtExec implements ExtensionExecutor {
 
     private Plugin plugin;
-    private Extension extension;
+    private Neo4jExtension extension;
     private String query;
     private CyNetwork currNet;
 
@@ -48,7 +48,7 @@ public class CypherExtExec implements ExtensionExecutor {
     }
 
     @Override
-    public void setExtension(Extension extension) {
+    public void setExtension(Neo4jExtension extension) {
         this.extension = extension;
     }
 

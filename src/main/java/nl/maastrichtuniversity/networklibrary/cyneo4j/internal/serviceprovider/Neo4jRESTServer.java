@@ -1,7 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtParam;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
@@ -61,7 +60,7 @@ public class Neo4jRESTServer {
     }
 
     protected void registerExtension() {
-        for (Extension ext : getExtensions()) {
+        for (Neo4jExtension ext : getExtensions()) {
             getPlugin().registerAction(localExtensions.get(ext.getName()));
         }
     }
@@ -104,10 +103,10 @@ public class Neo4jRESTServer {
 
     }
 
-    public List<Extension> getExtensions() {
-        List<Extension> res = new ArrayList<>();
+    public List<Neo4jExtension> getExtensions() {
+        List<Neo4jExtension> res = new ArrayList<>();
 
-        Extension cypherExt = new Neo4jExtension();
+        Neo4jExtension cypherExt = new Neo4jExtension();
         cypherExt.setName("cypher");
         cypherExt.setEndpoint(getCypherURL());
 
@@ -120,9 +119,9 @@ public class Neo4jRESTServer {
             Set<String> extNames = Request.Get(getInstanceLocation() + EXT_URL).execute().handleResponse(new ExtensionLocationsHandler());
 
             for (String extName : extNames) {
-                List<Extension> serverSupportedExt = Request.Get(getInstanceLocation() + EXT_URL + extName).execute().handleResponse(new ExtensionParametersResponseHandler(getInstanceLocation() + EXT_URL + extName));
+                List<Neo4jExtension> serverSupportedExt = Request.Get(getInstanceLocation() + EXT_URL + extName).execute().handleResponse(new ExtensionParametersResponseHandler(getInstanceLocation() + EXT_URL + extName));
 
-                for (Extension ext : serverSupportedExt) {
+                for (Neo4jExtension ext : serverSupportedExt) {
                     if (localExtensions.containsKey(ext.getName())) {
                         res.add(ext);
                     }
@@ -189,10 +188,10 @@ public class Neo4jRESTServer {
         return plugin;
     }
 
-    public Extension supportsExtension(String name) {
-        List<Extension> extensions = getExtensions();
+    public Neo4jExtension supportsExtension(String name) {
+        List<Neo4jExtension> extensions = getExtensions();
 
-        for (Extension extension : extensions) {
+        for (Neo4jExtension extension : extensions) {
             if (extension.getName().equals(name)) {
                 return extension;
             }
