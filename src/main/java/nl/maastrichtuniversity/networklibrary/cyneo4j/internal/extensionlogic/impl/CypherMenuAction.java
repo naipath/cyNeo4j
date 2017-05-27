@@ -29,11 +29,9 @@ public class CypherMenuAction extends AbstractCyAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Neo4jExtension cypherExt = getPlugin().getInteractor().supportsExtension("cypher");
+        Neo4jExtension cypherExt = plugin.getInteractor().supportsExtension("cypher");
 
-        ExtensionExecutor exec = new CypherExtExec();
-
-        exec.setPlugin(plugin);
+        ExtensionExecutor exec = new CypherExtExec(plugin);
         exec.setExtension(cypherExt);
 
         if (!exec.collectParameters()) {
@@ -48,10 +46,4 @@ public class CypherMenuAction extends AbstractCyAction {
             exec.processCallResponse(call, callRetValue);
         }
     }
-
-    protected Plugin getPlugin() {
-        return plugin;
-    }
-
-
 }

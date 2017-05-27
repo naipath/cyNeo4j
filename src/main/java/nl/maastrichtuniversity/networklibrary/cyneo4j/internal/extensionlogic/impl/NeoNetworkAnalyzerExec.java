@@ -38,6 +38,10 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
     private boolean closeness;
     private boolean clustCoeff;
 
+    NeoNetworkAnalyzerExec(Plugin plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     public boolean collectParameters() {
         currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
@@ -125,11 +129,6 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
         }
 
         defNodeTab.getRow(n.getSUID()).set(key, val2);
-    }
-
-    @Override
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
     }
 
     @Override

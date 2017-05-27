@@ -24,7 +24,6 @@ public class NeoNetworkAnalyzerControlPanel extends JPanel implements ActionList
     private JCheckBox betweennes;
     private JCheckBox stress;
     private JCheckBox eccentricity;
-    private JRadioButton undirButton;
 
     private JDialog dialog = null;
 
@@ -228,7 +227,7 @@ public class NeoNetworkAnalyzerControlPanel extends JPanel implements ActionList
 
     private JPanel buildDirectionalityPanel() {
         JLabel directionalityLabel = new JLabel("Directionality");
-        undirButton = new JRadioButton("Undirected");
+        JRadioButton undirButton = new JRadioButton("Undirected");
         JRadioButton dirButton = new JRadioButton("Directed");
         dirButton.setEnabled(false);
 
@@ -277,61 +276,55 @@ public class NeoNetworkAnalyzerControlPanel extends JPanel implements ActionList
         return runIt;
     }
 
-    protected void closeUp() {
+    private void closeUp() {
         dialog.setVisible(false);
     }
 
-    public boolean isSaveInGraph() {
+    boolean isSaveInGraph() {
         return saveInGraph.isSelected();
     }
 
-    public boolean isDoAsync() {
+    boolean isDoAsync() {
         return doAsync.isSelected();
     }
 
-    public boolean isBetweenness() {
+    boolean isBetweenness() {
         return betweennes.isSelected();
     }
 
-    public boolean isStress() {
+    boolean isStress() {
         return stress.isSelected();
     }
 
-    public boolean isEccentricity() {
+    boolean isEccentricity() {
         return eccentricity.isSelected();
     }
 
-    public boolean isUndirected() {
-        return undirButton.isSelected();
-    }
-
-    public boolean isAvgSP() {
+    boolean isAvgSP() {
         return avgSP.isSelected();
     }
 
-    public boolean isTopoCoeff() {
+    boolean isTopoCoeff() {
         return topoCoeff.isSelected();
     }
 
-    public boolean isRadiality() {
+    boolean isRadiality() {
         return radiality.isSelected();
     }
 
-    public boolean isMultiEdgePairs() {
+    boolean isMultiEdgePairs() {
         return multiEdgePairs.isSelected();
     }
 
-    public boolean isNeighbourhoodConn() {
+    boolean isNeighbourhoodConn() {
         return neighbourhoodConn.isSelected();
     }
 
-    public boolean isCloseness() {
+    boolean isCloseness() {
         return closeness.isSelected();
     }
 
-    public boolean isClustCoeff() {
+    boolean isClustCoeff() {
         return clustCoeff.isSelected();
     }
-
-
 }

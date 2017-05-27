@@ -31,10 +31,9 @@ public class ForceAtlas2LayoutExtMenuAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        Neo4jExtension forceAtlas2LayoutExt = getPlugin().getInteractor().supportsExtension("forceatlas2");
+        Neo4jExtension forceAtlas2LayoutExt = plugin.getInteractor().supportsExtension("forceatlas2");
 
-        ForceAtlas2LayoutExtExec exec = new ForceAtlas2LayoutExtExec();
-        exec.setPlugin(plugin);
+        ForceAtlas2LayoutExtExec exec = new ForceAtlas2LayoutExtExec(plugin);
         exec.setExtension(forceAtlas2LayoutExt);
 
         ForceAtlas2ExecutionTaskFactory factory = new ForceAtlas2ExecutionTaskFactory(exec);
@@ -50,15 +49,11 @@ public class ForceAtlas2LayoutExtMenuAction extends AbstractCyAction {
         } while (exec.doContinue());
     }
 
-    protected Plugin getPlugin() {
-        return plugin;
-    }
-
     protected class ForceAtlas2ExecutionTask extends AbstractTask {
 
-        protected ForceAtlas2LayoutExtExec exec;
+        ForceAtlas2LayoutExtExec exec;
 
-        public ForceAtlas2ExecutionTask(ForceAtlas2LayoutExtExec exec) {
+        ForceAtlas2ExecutionTask(ForceAtlas2LayoutExtExec exec) {
             this.exec = exec;
         }
 
@@ -83,9 +78,9 @@ public class ForceAtlas2LayoutExtMenuAction extends AbstractCyAction {
 
     protected class ForceAtlas2ExecutionTaskFactory extends AbstractTaskFactory {
 
-        protected ForceAtlas2LayoutExtExec exec;
+        ForceAtlas2LayoutExtExec exec;
 
-        public ForceAtlas2ExecutionTaskFactory(ForceAtlas2LayoutExtExec exec) {
+        ForceAtlas2ExecutionTaskFactory(ForceAtlas2LayoutExtExec exec) {
             this.exec = exec;
         }
 

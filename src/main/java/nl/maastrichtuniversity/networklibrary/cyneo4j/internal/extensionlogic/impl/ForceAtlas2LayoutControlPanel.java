@@ -45,7 +45,7 @@ public class ForceAtlas2LayoutControlPanel extends JPanel implements ActionListe
 
     private Map<String, Object> params;
 
-    public ForceAtlas2LayoutControlPanel(JDialog dialog, Map<String, Object> params) {
+    ForceAtlas2LayoutControlPanel(JDialog dialog, Map<String, Object> params) {
         this.dialog = dialog;
         this.params = params;
 

@@ -28,11 +28,9 @@ public class NeoNetworkAnalyzerAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        Neo4jExtension neoAnalyzer = getPlugin().getInteractor().supportsExtension("neonetworkanalyzer");
+        Neo4jExtension neoAnalyzer = plugin.getInteractor().supportsExtension("neonetworkanalyzer");
 
-        ExtensionExecutor exec = new NeoNetworkAnalyzerExec();
-
-        exec.setPlugin(plugin);
+        ExtensionExecutor exec = new NeoNetworkAnalyzerExec(plugin);
         exec.setExtension(neoAnalyzer);
 
         if (!exec.collectParameters()) {
@@ -51,10 +49,4 @@ public class NeoNetworkAnalyzerAction extends AbstractCyAction {
         time = System.currentTimeMillis() - time;
         System.out.println("runtime time cyNeo4j: " + time);
     }
-
-    protected Plugin getPlugin() {
-        return plugin;
-    }
-
-
 }

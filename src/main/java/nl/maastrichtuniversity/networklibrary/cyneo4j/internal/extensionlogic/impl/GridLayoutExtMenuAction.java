@@ -27,11 +27,9 @@ public class GridLayoutExtMenuAction extends AbstractCyAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Neo4jExtension gridLayoutExt = getPlugin().getInteractor().supportsExtension("gridlayout");
+        Neo4jExtension gridLayoutExt = plugin.getInteractor().supportsExtension("gridlayout");
 
-        ExtensionExecutor exec = new SimpleLayoutExtExec();
-
-        exec.setPlugin(plugin);
+        ExtensionExecutor exec = new SimpleLayoutExtExec(plugin);
         exec.setExtension(gridLayoutExt);
 
         if (!exec.collectParameters()) {
@@ -45,9 +43,5 @@ public class GridLayoutExtMenuAction extends AbstractCyAction {
             Object callRetValue = plugin.getInteractor().executeExtensionCall(call, false);
             exec.processCallResponse(call, callRetValue);
         }
-    }
-
-    protected Plugin getPlugin() {
-        return plugin;
     }
 }

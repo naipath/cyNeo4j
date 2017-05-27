@@ -17,34 +17,31 @@ public class CypherExtExec implements ExtensionExecutor {
     private String query;
     private CyNetwork currNet;
 
+    CypherExtExec(Plugin plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     public boolean collectParameters() {
 
+        currNet = plugin.getCyApplicationManager().getCurrentNetwork();
+
         query = JOptionPane.showInputDialog(plugin.getCySwingApplication().getJFrame(), "Cypher Query", "match (n)-[r]->(m) return n,r,m");
-//		query = "match (n)-[r]->(m) return n,r,m";
-
-        currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
-
         query = query.replaceAll("\"", "\\\\\"");
 
-        return query != null && !query.isEmpty();
+        return !query.isEmpty();
     }
 
     @Override
     public void processCallResponse(Neo4jCall call, Object callRetValue) {
         if (currNet == null) {
-            currNet = getPlugin().getCyNetworkFactory().createNetwork();
+            currNet = plugin.getCyNetworkFactory().createNetwork();
             currNet.getRow(currNet).set(CyNetwork.NAME, query);
-            getPlugin().getCyNetworkManager().addNetwork(currNet);
+            plugin.getCyNetworkManager().addNetwork(currNet);
         }
         CypherResultParser cypherResParser = new CypherResultParser(currNet);
         cypherResParser.parseRetVal(callRetValue);
 
-    }
-
-    @Override
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
     }
 
     @Override
@@ -63,9 +60,4 @@ public class CypherExtExec implements ExtensionExecutor {
 
         return calls;
     }
-
-    protected Plugin getPlugin() {
-        return plugin;
-    }
-
 }

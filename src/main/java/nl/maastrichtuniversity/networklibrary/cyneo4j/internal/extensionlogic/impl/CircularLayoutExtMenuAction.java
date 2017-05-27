@@ -28,11 +28,9 @@ public class CircularLayoutExtMenuAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        Neo4jExtension layoutExt = getPlugin().getInteractor().supportsExtension("circlelayout");
+        Neo4jExtension layoutExt = plugin.getInteractor().supportsExtension("circlelayout");
 
-        ExtensionExecutor exec = new SimpleLayoutExtExec();
-
-        exec.setPlugin(plugin);
+        ExtensionExecutor exec = new SimpleLayoutExtExec(plugin);
         exec.setExtension(layoutExt);
 
         if (!exec.collectParameters()) {
@@ -46,9 +44,5 @@ public class CircularLayoutExtMenuAction extends AbstractCyAction {
             Object callRetValue = plugin.getInteractor().executeExtensionCall(call, false);
             exec.processCallResponse(call, callRetValue);
         }
-    }
-
-    protected Plugin getPlugin() {
-        return plugin;
     }
 }

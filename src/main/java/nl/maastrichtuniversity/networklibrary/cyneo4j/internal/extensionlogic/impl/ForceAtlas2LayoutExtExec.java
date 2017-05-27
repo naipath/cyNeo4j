@@ -30,7 +30,7 @@ public class ForceAtlas2LayoutExtExec {
 
     private Map<String, Object> params;
 
-    public ForceAtlas2LayoutExtExec() {
+    ForceAtlas2LayoutExtExec(Plugin plugin) {
         params = new HashMap<>();
 
         // default parameters
@@ -49,10 +49,12 @@ public class ForceAtlas2LayoutExtExec {
 
         params.put("saveInGraph", true);
         params.put("numIterations", 1000);
+
+        this.plugin = plugin;
     }
 
     public boolean collectParameters() {
-        currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
+        currNet = plugin.getCyApplicationManager().getCurrentNetwork();
 
         JDialog dialog = new JDialog(plugin.getCySwingApplication().getJFrame());
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -71,17 +73,12 @@ public class ForceAtlas2LayoutExtExec {
         return true;
     }
 
-
-    private Plugin getPlugin() {
-        return plugin;
-    }
-
     public void processCallResponse(Object callRetValue) {
 
         List<Double> values = (List<Double>) callRetValue;
 
         CyTable defNodeTab = currNet.getDefaultNodeTable();
-        CyNetworkView networkView = getPlugin().getCyNetViewMgr().getNetworkViews(currNet).iterator().next();
+        CyNetworkView networkView = plugin.getCyNetViewMgr().getNetworkViews(currNet).iterator().next();
 
         for (int i = 0; i < (values.size() / 3); ++i) {
             Long neoid = values.get(i * 3).longValue();
@@ -95,13 +92,8 @@ public class ForceAtlas2LayoutExtExec {
             nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x);
             nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
 
-            CyUtils.updateVisualStyle(getPlugin().getVisualMappingManager(), networkView, currNet);
+            CyUtils.updateVisualStyle(plugin.getVisualMappingManager(), networkView, currNet);
         }
-    }
-
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
-
     }
 
     public void setExtension(Neo4jExtension extension) {
