@@ -1,7 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general.ReturnCodeResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.cytoscape.model.CyEdge;
@@ -29,7 +29,7 @@ public class SyncUpTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
 
-        CyNetwork currNet = getCurrentNetwork();
+        CyNetwork currNet = this.currNet;
 
         if (currNet == null) {
             JOptionPane.showMessageDialog(null, "No network selected!");
@@ -47,7 +47,10 @@ public class SyncUpTask extends AbstractTask {
                 progress = 0.1;
                 taskMonitor.setProgress(progress);
 
-                wiped = Request.Post(getCypherURL()).bodyString(wipeQuery, ContentType.APPLICATION_JSON).execute().handleResponse(new ReturnCodeResponseHandler());
+                wiped = Request.Post(cypherURL)
+                    .bodyString(wipeQuery, ContentType.APPLICATION_JSON)
+                    .execute()
+                    .handleResponse(this::hasCorrectResponseCode);
             }
 
             if (wiped == wipeRemote) {
@@ -64,7 +67,7 @@ public class SyncUpTask extends AbstractTask {
                     String params = CyUtils.convertCyAttributesToJson(node, defNodeTab);
                     String cypher = "{ \"query\" : \"CREATE (n { props }) return id(n)\", \"params\" : {   \"props\" : [ " + params + " ] } }";
 
-                    Long neoid = Request.Post(getCypherURL()).bodyString(cypher, ContentType.APPLICATION_JSON).execute().handleResponse(new CreateIdReturnResponseHandler());
+                    Long neoid = Request.Post(cypherURL).bodyString(cypher, ContentType.APPLICATION_JSON).execute().handleResponse(new CreateIdReturnResponseHandler());
                     defNodeTab.getRow(node.getSUID()).set("neoid", neoid);
 
                     progress = progress + stepSize;
@@ -87,7 +90,7 @@ public class SyncUpTask extends AbstractTask {
 
                     String cypher = "{\"query\" : \"MATCH (from { SUID: {fname}}),(to { SUID: {tname}}) CREATE (from)-[r:" + rtype + " { rprops } ]->(to) return id(r)\", \"params\" : { \"fname\" : " + from + ", \"tname\" : " + to + ", \"rprops\" : " + rparams + " }}";
 
-                    Long neoid = Request.Post(getCypherURL()).bodyString(cypher, ContentType.APPLICATION_JSON).execute().handleResponse(new CreateIdReturnResponseHandler());
+                    Long neoid = Request.Post(cypherURL).bodyString(cypher, ContentType.APPLICATION_JSON).execute().handleResponse(new CreateIdReturnResponseHandler());
                     defEdgeTab.getRow(edge.getSUID()).set("neoid", neoid);
 
                     progress = progress + stepSize;
@@ -102,21 +105,8 @@ public class SyncUpTask extends AbstractTask {
         }
     }
 
-    protected CyNetwork getCurrentNetwork() {
-        return currNet;
+    private boolean hasCorrectResponseCode(HttpResponse response) {
+        int responseCode = response.getStatusLine().getStatusCode();
+        return responseCode >= 200 && responseCode < 300;
     }
-
-    protected String getCypherURL() {
-        return cypherURL;
-    }
-
-    protected boolean isWipeRemote() {
-        return wipeRemote;
-    }
-
-    protected void setWipeRemote(boolean wipeRemote) {
-        this.wipeRemote = wipeRemote;
-    }
-
-
 }
