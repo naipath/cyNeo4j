@@ -14,21 +14,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.GRAPHDB;
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.NODE;
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget.RELATIONSHIP;
+public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<List<Neo4jExtension>> {
 
-public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<List<Extension>> {
-
-    private String extName = null;
+    private String extName;
 
     public ExtensionParametersResponseHandler(String extName) {
         this.extName = extName;
     }
 
     @Override
-    public List<Extension> handle(int responseCode, InputStream content) throws IOException {
-        List<Extension> res = new ArrayList<>();
+    public List<Neo4jExtension> handle(int responseCode, InputStream content) throws IOException {
+        List<Neo4jExtension> res = new ArrayList<>();
         if (responseCode >= 200 && responseCode < 300) {
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> targets = mapper.readValue(content, Map.class);
@@ -38,25 +34,12 @@ public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<Li
                 Map<String, Object> extensions = (Map<String, Object>) target.getValue();
 
                 for (Entry<String, Object> extension : extensions.entrySet()) {
-                    Neo4jExtension currExt = new Neo4jExtension();
 
                     Map<String, Object> extensionDesc = (Map<String, Object>) extension.getValue();
-                    ExtensionTarget type = decideExtensionType((String) extensionDesc.get("extends"));
-                    currExt.setType(type);
-
                     String name = (String) extensionDesc.get("name");
-                    currExt.setName(name);
+                    ExtensionTarget type = ExtensionTarget.map(((String) extensionDesc.get("extends")));
 
-
-                    List<Map<String, Object>> parameters = (List<Map<String, Object>>) extensionDesc.get("parameters");
-
-                    for (Map<String, Object> parameter : parameters) {
-                        currExt.addParameter(NeoUtils.parseExtParameter(parameter));
-                    }
-
-                    currExt.setEndpoint(buildEndpoint(currExt));
-
-                    res.add(currExt);
+                    res.add(new Neo4jExtension(type, name, extName));
                 }
             }
         } else {
@@ -67,32 +50,5 @@ public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<Li
         }
 
         return res;
-    }
-
-
-
-    private String buildEndpoint(Neo4jExtension currExt) {
-        String endpoint = extName + "/" + currExt.getType().toString().toLowerCase() + "/";
-
-        if (currExt.getType() == NODE || currExt.getType() == RELATIONSHIP) {
-            endpoint = endpoint + "<IDHERE>/";
-        }
-
-        endpoint = endpoint + currExt.getName();
-
-        return endpoint;
-    }
-
-    protected ExtensionTarget decideExtensionType(String target) {
-        switch (target) {
-            case "graphdb":
-                return GRAPHDB;
-            case "node":
-                return NODE;
-            case "relationship":
-                return RELATIONSHIP;
-            default:
-                return null;
-        }
     }
 }

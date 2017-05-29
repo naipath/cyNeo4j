@@ -1,9 +1,9 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.LocalExtensions;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 import org.cytoscape.application.CyApplicationManager;
@@ -34,12 +34,9 @@ public class CircularLayoutExtMenuAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        Extension layoutExt = localExtensions.supportsExtension("circlelayout");
+        Neo4jExtension layoutExt = localExtensions.supportsExtension("circlelayout");
 
-        ExtensionExecutor exec = new SimpleLayoutExtExec();
-
-        exec.setPlugin(plugin);
-        exec.setExtension(layoutExt);
+        ExtensionExecutor exec = new SimpleLayoutExtExec(plugin, layoutExt);
 
         if (!exec.collectParameters()) {
             JOptionPane.showMessageDialog(plugin.getCySwingApplication().getJFrame(), "Failed to collect parameters for " + layoutExt.getName());
@@ -52,9 +49,5 @@ public class CircularLayoutExtMenuAction extends AbstractCyAction {
             Object callRetValue = neo4jRESTServer.executeExtensionCall(call, false);
             exec.processCallResponse(call, callRetValue);
         }
-    }
-
-    protected Plugin getPlugin() {
-        return plugin;
     }
 }

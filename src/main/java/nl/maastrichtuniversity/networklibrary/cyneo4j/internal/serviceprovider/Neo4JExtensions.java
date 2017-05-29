@@ -1,8 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtParam;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.ExtensionLocationsHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.ExtensionParametersResponseHandler;
@@ -30,10 +28,10 @@ public class LocalExtensions {
         this.localExtensions = localExtensions;
     }
 
-    public Extension supportsExtension(String name) {
-        List<Extension> extensions = getExtensions();
+    public Neo4jExtension supportsExtension(String name) {
+        List<Neo4jExtension> extensions = getExtensions();
 
-        for (Extension extension : extensions) {
+        for (Neo4jExtension extension : extensions) {
             if (extension.getName().equals(name)) {
                 return extension;
             }
@@ -41,14 +39,12 @@ public class LocalExtensions {
         return null;
     }
 
-    public List<Extension> getExtensions() {
-        List<Extension> res = new ArrayList<>();
+    public List<Neo4jExtension> getExtensions() {
+        List<Neo4jExtension> res = new ArrayList<>();
 
-        Extension cypherExt = new Neo4jExtension();
-        cypherExt.setName("cypher");
-        cypherExt.setEndpoint(neo4jRESTServer.getCypherURL());
+        Neo4jExtension cypherExt = new Neo4jExtension("cypher", neo4jRESTServer.getCypherURL());
 
-        cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery", "Cypher Endpoint", false, String.class)));
+        //cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery", "Cypher Endpoint", false, String.class)));
 
         if (localExtensions.contains("cypher")) {
             res.add(cypherExt);
@@ -57,9 +53,9 @@ public class LocalExtensions {
             Set<String> extNames = Request.Get(neo4jRESTServer.getInstanceLocation() + Neo4jRESTServer.EXT_URL).execute().handleResponse(new ExtensionLocationsHandler());
 
             for (String extName : extNames) {
-                List<Extension> serverSupportedExt = Request.Get(neo4jRESTServer.getInstanceLocation() + Neo4jRESTServer.EXT_URL + extName).execute().handleResponse(new ExtensionParametersResponseHandler(neo4jRESTServer.getInstanceLocation() + Neo4jRESTServer.EXT_URL + extName));
+                List<Neo4jExtension> serverSupportedExt = Request.Get(neo4jRESTServer.getInstanceLocation() + Neo4jRESTServer.EXT_URL + extName).execute().handleResponse(new ExtensionParametersResponseHandler(neo4jRESTServer.getInstanceLocation() + Neo4jRESTServer.EXT_URL + extName));
 
-                for (Extension ext : serverSupportedExt) {
+                for (Neo4jExtension ext : serverSupportedExt) {
                     if (localExtensions.contains(ext.getName())) {
                         res.add(ext);
                     }
@@ -68,11 +64,6 @@ public class LocalExtensions {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         return res;
     }
-
-
-
 }

@@ -2,9 +2,9 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.i
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
@@ -19,7 +19,7 @@ import java.util.Map.Entry;
 public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
 
     private Plugin plugin;
-    private Extension extension;
+    private Neo4jExtension extension;
     private CyNetwork currNet;
 
     private boolean run;
@@ -38,8 +38,9 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
     private boolean closeness;
     private boolean clustCoeff;
 
-    public NeoNetworkAnalyzerExec() {
-
+    NeoNetworkAnalyzerExec(Plugin plugin, Neo4jExtension neoAnalyzer) {
+        this.plugin = plugin;
+        this.extension = neoAnalyzer;
     }
 
     @Override
@@ -129,16 +130,6 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
         }
 
         defNodeTab.getRow(n.getSUID()).set(key, val2);
-    }
-
-    @Override
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
-    }
-
-    @Override
-    public void setExtension(Extension extension) {
-        this.extension = extension;
     }
 
     @Override

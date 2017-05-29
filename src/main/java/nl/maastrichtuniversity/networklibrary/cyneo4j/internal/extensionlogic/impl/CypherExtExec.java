@@ -1,9 +1,9 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import org.cytoscape.model.CyNetwork;
 
 import javax.swing.*;
@@ -13,43 +13,36 @@ import java.util.List;
 public class CypherExtExec implements ExtensionExecutor {
 
     private Plugin plugin;
-    private Extension extension;
+    private Neo4jExtension extension;
     private String query;
     private CyNetwork currNet;
+
+    CypherExtExec(Plugin plugin, Neo4jExtension extension) {
+        this.plugin = plugin;
+        this.extension = extension;
+    }
 
     @Override
     public boolean collectParameters() {
 
+        currNet = plugin.getCyApplicationManager().getCurrentNetwork();
+
         query = JOptionPane.showInputDialog(plugin.getCySwingApplication().getJFrame(), "Cypher Query", "match (n)-[r]->(m) return n,r,m");
-//		query = "match (n)-[r]->(m) return n,r,m";
-
-        currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
-
         query = query.replaceAll("\"", "\\\\\"");
 
-        return query != null && !query.isEmpty();
+        return !query.isEmpty();
     }
 
     @Override
     public void processCallResponse(Neo4jCall call, Object callRetValue) {
         if (currNet == null) {
-            currNet = getPlugin().getCyNetworkFactory().createNetwork();
+            currNet = plugin.getCyNetworkFactory().createNetwork();
             currNet.getRow(currNet).set(CyNetwork.NAME, query);
-            getPlugin().getCyNetworkManager().addNetwork(currNet);
+            plugin.getCyNetworkManager().addNetwork(currNet);
         }
         CypherResultParser cypherResParser = new CypherResultParser(currNet);
         cypherResParser.parseRetVal(callRetValue);
 
-    }
-
-    @Override
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
-    }
-
-    @Override
-    public void setExtension(Extension extension) {
-        this.extension = extension;
     }
 
     @Override
@@ -63,9 +56,4 @@ public class CypherExtExec implements ExtensionExecutor {
 
         return calls;
     }
-
-    protected Plugin getPlugin() {
-        return plugin;
-    }
-
 }

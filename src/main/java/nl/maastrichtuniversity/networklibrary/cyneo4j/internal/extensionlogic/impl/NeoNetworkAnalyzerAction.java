@@ -1,7 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.LocalExtensions;
@@ -34,12 +33,9 @@ public class NeoNetworkAnalyzerAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        Extension neoAnalyzer = localExtensions.supportsExtension("neonetworkanalyzer");
+        Neo4jExtension neoAnalyzer = localExtensions.supportsExtension("neonetworkanalyzer");
 
-        ExtensionExecutor exec = new NeoNetworkAnalyzerExec();
-
-        exec.setPlugin(plugin);
-        exec.setExtension(neoAnalyzer);
+        ExtensionExecutor exec = new NeoNetworkAnalyzerExec(plugin, neoAnalyzer);
 
         if (!exec.collectParameters()) {
             JOptionPane.showMessageDialog(plugin.getCySwingApplication().getJFrame(), "Failed to collect parameters for " + neoAnalyzer.getName());
@@ -57,10 +53,4 @@ public class NeoNetworkAnalyzerAction extends AbstractCyAction {
         time = System.currentTimeMillis() - time;
         System.out.println("runtime time cyNeo4j: " + time);
     }
-
-    protected Plugin getPlugin() {
-        return plugin;
-    }
-
-
 }

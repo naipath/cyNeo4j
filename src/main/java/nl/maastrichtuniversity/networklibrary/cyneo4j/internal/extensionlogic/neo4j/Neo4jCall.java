@@ -19,13 +19,7 @@ public class Neo4jCall {
         this.async = async;
     }
 
-    public String toString() {
-        return "Neo4jCall [urlFragment=" + urlFragment + ", payload=" + payload + "]";
-    }
-
     public boolean isAsync() {
         return async;
     }
-
-
 }

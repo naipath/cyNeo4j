@@ -2,9 +2,8 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.i
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ContinuiousExtensionExecutor;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -17,12 +16,12 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
 
-public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
+public class ForceAtlas2LayoutExtExec {
 
     private static final int IterationStepSize = 10;
 
     private Plugin plugin;
-    private Extension extension;
+    private Neo4jExtension extension;
     private CyNetwork currNet;
 
     private boolean runIt = false;
@@ -31,7 +30,7 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
 
     private Map<String, Object> params;
 
-    public ForceAtlas2LayoutExtExec() {
+    ForceAtlas2LayoutExtExec(Plugin plugin) {
         params = new HashMap<>();
 
         // default parameters
@@ -50,11 +49,12 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
 
         params.put("saveInGraph", true);
         params.put("numIterations", 1000);
+
+        this.plugin = plugin;
     }
 
-    @Override
     public boolean collectParameters() {
-        currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
+        currNet = plugin.getCyApplicationManager().getCurrentNetwork();
 
         JDialog dialog = new JDialog(plugin.getCySwingApplication().getJFrame());
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -73,18 +73,12 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
         return true;
     }
 
-
-    private Plugin getPlugin() {
-        return plugin;
-    }
-
-    @Override
-    public void processCallResponse(Neo4jCall call, Object callRetValue) {
+    public void processCallResponse(Object callRetValue) {
 
         List<Double> values = (List<Double>) callRetValue;
 
         CyTable defNodeTab = currNet.getDefaultNodeTable();
-        CyNetworkView networkView = getPlugin().getCyNetViewMgr().getNetworkViews(currNet).iterator().next();
+        CyNetworkView networkView = plugin.getCyNetViewMgr().getNetworkViews(currNet).iterator().next();
 
         for (int i = 0; i < (values.size() / 3); ++i) {
             Long neoid = values.get(i * 3).longValue();
@@ -98,23 +92,15 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
             nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x);
             nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
 
-            CyUtils.updateVisualStyle(getPlugin().getVisualMappingManager(), networkView, currNet);
+            CyUtils.updateVisualStyle(plugin.getVisualMappingManager(), networkView);
         }
     }
 
-    @Override
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
-
-    }
-
-    @Override
-    public void setExtension(Extension extension) {
+    public void setExtension(Neo4jExtension extension) {
         this.extension = extension;
 
     }
 
-    @Override
     public List<Neo4jCall> buildExtensionCalls() {
         List<Neo4jCall> calls = new ArrayList<>();
 
@@ -153,9 +139,7 @@ public class ForceAtlas2LayoutExtExec implements ContinuiousExtensionExecutor {
         return calls;
     }
 
-
-    @Override
-    public boolean doContinue() {
+    boolean doContinue() {
         return runIt;
     }
 }

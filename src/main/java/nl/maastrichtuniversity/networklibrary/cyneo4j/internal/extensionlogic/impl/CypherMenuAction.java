@@ -6,6 +6,7 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Ex
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.LocalExtensions;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 
@@ -35,12 +36,9 @@ public class CypherMenuAction extends AbstractCyAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Extension cypherExt = localExtensions.supportsExtension("cypher");
+        Neo4jExtension cypherExt = localExtensions.supportsExtension("cypher");
 
-        ExtensionExecutor exec = new CypherExtExec();
-
-        exec.setPlugin(plugin);
-        exec.setExtension(cypherExt);
+        ExtensionExecutor exec = new CypherExtExec(plugin, cypherExt);
 
         if (!exec.collectParameters()) {
             JOptionPane.showMessageDialog(plugin.getCySwingApplication().getJFrame(), "Failed to collect parameters for " + cypherExt.getName());
@@ -54,10 +52,4 @@ public class CypherMenuAction extends AbstractCyAction {
             exec.processCallResponse(call, callRetValue);
         }
     }
-
-    protected Plugin getPlugin() {
-        return plugin;
-    }
-
-
 }

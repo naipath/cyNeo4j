@@ -126,7 +126,7 @@ public class Plugin {
         return visualMappingMgr;
     }
 
-    public void cleanUp() {
+    void cleanUp() {
         //extension actions
         unregisterActions();
     }
@@ -137,10 +137,6 @@ public class Plugin {
     }
 
     public void unregisterActions() {
-        for (AbstractCyAction action : registeredActions) {
-            getCySwingApplication().removeAction(action);
-        }
-
+        registeredActions.forEach(cyAction -> getCySwingApplication().removeAction(cyAction));
     }
-
 }

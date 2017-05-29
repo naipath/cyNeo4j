@@ -1,68 +1,36 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionParameter;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget;
 
-public class Neo4jExtension implements Extension {
+public class Neo4jExtension {
 
-    private ExtensionTarget type;
     private String name;
     private String location;
 
-    private List<ExtensionParameter> parameters = new ArrayList<>();
+    public Neo4jExtension(String name, String location) {
+        this.name = name;
+        this.location = location;
+    }
+
+    public Neo4jExtension(ExtensionTarget type, String name, String extName) {
+        this.name = name;
+        this.location = buildEndpoint(extName, type);
+    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEndpoint(String endpoint) {
-        this.location = endpoint;
-    }
-
-    public List<ExtensionParameter> getParameters() {
-        return parameters;
-    }
-
-    public void addParameter(Neo4jExtParam param) {
-        getParameters().add(param);
-    }
-
-    public String toString() {
-        StringBuilder strbuff = new StringBuilder();
-        strbuff.append("name: ").append(getName()).append(" endpoint: ").append(getEndpoint()).append(" of type: ").append(getType()).append("\n");
-        strbuff.append("\nrequired parameters: \n");
-
-        for (ExtensionParameter param : getParameters()) {
-            strbuff.append("\tparameter: ").append(param.getName()).append(" is optional? ").append(param.isOptional()).append("\n");
-        }
-
-        return strbuff.toString();
-    }
-
-    public void setType(ExtensionTarget type) {
-        this.type = type;
-    }
-
-    public ExtensionTarget getType() {
-        return type;
-    }
-
-    @Override
     public String getEndpoint() {
         return location;
     }
 
-    @Override
-    public void setParameters(List<ExtensionParameter> params) {
-        this.parameters = params;
+    private String buildEndpoint(String extName, ExtensionTarget type) {
+        String endpoint = extName + "/" + type.toString().toLowerCase() + "/";
 
+        if (!type.isGraphdb()) {
+            endpoint = endpoint + "<IDHERE>/";
+        }
+        return endpoint + name;
     }
 }

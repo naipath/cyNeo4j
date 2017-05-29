@@ -1,17 +1,15 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.maastrichtuniversity.MyHttpResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.CypherResultParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
 import org.cytoscape.model.CyNetwork;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
-public class SyncDownEdgeResponseHandler extends MyHttpResponseHandler<Long> {
+public class SyncDownEdgeResponseHandler implements ResponseHandler<Long> {
 
     private CyNetwork network;
     private String errors;
@@ -28,12 +26,13 @@ public class SyncDownEdgeResponseHandler extends MyHttpResponseHandler<Long> {
     }
 
     @Override
-    public Long handle(int responseCode, InputStream content) throws IOException {
+    public Long handleResponse(HttpResponse response) throws IOException {
+        int responseCode = response.getStatusLine().getStatusCode();
 
         Long resNet = null;
         if (responseCode >= 200 && responseCode < 300) {
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> nodes = mapper.readValue(content, Map.class);
+            Map<String, Object> nodes = mapper.readValue(response.getEntity().getContent(), Map.class);
 
             CypherResultParser cypherParser = new CypherResultParser(getNetwork());
             cypherParser.parseRetVal(nodes);
@@ -45,7 +44,7 @@ public class SyncDownEdgeResponseHandler extends MyHttpResponseHandler<Long> {
 
             ObjectMapper mapper = new ObjectMapper();
 
-            Map<String, String> error = mapper.readValue(content, Map.class);
+            Map<String, String> error = mapper.readValue(response.getEntity().getContent(), Map.class);
             errors = errors + "\n" + error.toString();
         }
 

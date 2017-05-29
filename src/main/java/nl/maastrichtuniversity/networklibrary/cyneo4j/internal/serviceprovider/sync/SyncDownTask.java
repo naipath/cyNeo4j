@@ -150,7 +150,7 @@ public class SyncDownTask extends AbstractTask {
                     CyLayoutAlgorithm layout = cyLayoutAlgorithmMgr.getLayout("force-directed");
                     insertTasksAfterCurrentTask(layout.createTaskIterator(view, layout.createLayoutContext(), nodes, null));
 
-                    CyUtils.updateVisualStyle(visualMappingMgr, view, network);
+                    CyUtils.updateVisualStyle(visualMappingMgr, view);
                 }
 
             } catch (IllegalArgumentException | IOException e) {
