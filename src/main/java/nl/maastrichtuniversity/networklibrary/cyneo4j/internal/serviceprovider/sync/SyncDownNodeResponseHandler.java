@@ -1,6 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.maastrichtuniversity.MyHttpResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.CypherResultParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
@@ -9,9 +10,10 @@ import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
-public class SyncDownNodeResponseHandler implements ResponseHandler<CyNetwork> {
+public class SyncDownNodeResponseHandler extends MyHttpResponseHandler<CyNetwork> {
 
     private String instanceLocation;
     private CyNetworkFactory cyNetworkFactory;
@@ -39,14 +41,13 @@ public class SyncDownNodeResponseHandler implements ResponseHandler<CyNetwork> {
     }
 
     @Override
-    public CyNetwork handleResponse(HttpResponse response) throws IOException {
-        int responseCode = response.getStatusLine().getStatusCode();
+    public CyNetwork handle(int responseCode, InputStream content) throws IOException {
 
         CyNetwork resNet = null;
 
         if (responseCode >= 200 && responseCode < 300) {
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> nodes = mapper.readValue(response.getEntity().getContent(), Map.class);
+            Map<String, Object> nodes = mapper.readValue(content, Map.class);
 
 
             CyNetwork myNet = getCyNetworkFactory().createNetwork();
@@ -63,12 +64,13 @@ public class SyncDownNodeResponseHandler implements ResponseHandler<CyNetwork> {
 
             ObjectMapper mapper = new ObjectMapper();
 
-            Map<String, String> error = mapper.readValue(response.getEntity().getContent(), Map.class);
+            Map<String, String> error = mapper.readValue(content, Map.class);
             errors = errors + "\n" + error.toString();
         }
 
         return resNet;
     }
+    
 
     public String getErrors() {
         return errors;

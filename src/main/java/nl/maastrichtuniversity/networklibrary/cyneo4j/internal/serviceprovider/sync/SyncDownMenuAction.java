@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 
@@ -13,28 +14,25 @@ public class SyncDownMenuAction extends AbstractCyAction {
 
     private final static String MENU_TITLE = "Sync Down";
     private final static String MENU_LOC = "Apps.cyNeo4j";
+    private final Neo4jRESTServer neo4jRESTServer;
 
-    private Plugin plugin;
 
-    public SyncDownMenuAction(CyApplicationManager cyApplicationManager, Plugin plugin) {
+    public SyncDownMenuAction(CyApplicationManager cyApplicationManager, Neo4jRESTServer neo4jRESTServer) {
         super(MENU_TITLE, cyApplicationManager, null, null);
         setPreferredMenu(MENU_LOC);
         setEnabled(false);
         setMenuGravity(0.1f);
-        this.plugin = plugin;
-    }
+        this.neo4jRESTServer = neo4jRESTServer;
 
-    protected Plugin getPlugin() {
-        return plugin;
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!plugin.getInteractor().isConnected()) {
+        if (!neo4jRESTServer.isConnected()) {
             JOptionPane.showMessageDialog(null, "Not connected to any remote instance");
             return;
         }
-        getPlugin().getInteractor().syncDown(false);
+       neo4jRESTServer.syncDown(false);
     }
 
 }

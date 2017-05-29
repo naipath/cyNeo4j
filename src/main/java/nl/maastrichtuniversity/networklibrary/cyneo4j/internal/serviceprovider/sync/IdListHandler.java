@@ -1,29 +1,25 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.maastrichtuniversity.MyHttpResponseHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class IdListHandler implements ResponseHandler<List<Long>> {
+public class IdListHandler extends MyHttpResponseHandler<List<Long>> {
 
     @Override
-    public List<Long> handleResponse(HttpResponse response) throws IOException {
-
-        int responseCode = response.getStatusLine().getStatusCode();
-
+    public List<Long> handle(int responseCode, InputStream content) throws IOException {
         List<Long> ids = null;
-
-        System.out.println("responseCode: " + responseCode);
         if (responseCode >= 200 && responseCode < 300) {
 
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> wrapper = mapper.readValue(response.getEntity().getContent(), Map.class);
-
+            Map<String, Object> wrapper = mapper.readValue(content, Map.class);
             List<List<Integer>> queryRes = (List<List<Integer>>) wrapper.get("data");
             ids = new ArrayList<>();
 
@@ -31,11 +27,8 @@ public class IdListHandler implements ResponseHandler<List<Long>> {
                 ids.add(id.get(0).longValue());
             }
         } else {
-            System.out.println("ERROR " + responseCode);
             ObjectMapper mapper = new ObjectMapper();
-
-            Map<String, String> error = mapper.readValue(response.getEntity().getContent(), Map.class);
-            System.out.println(error);
+            Map<String, String> error = mapper.readValue(content, Map.class);
         }
 
         return ids;

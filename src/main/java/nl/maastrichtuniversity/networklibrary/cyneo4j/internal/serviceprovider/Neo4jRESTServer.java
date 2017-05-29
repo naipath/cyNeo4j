@@ -32,19 +32,17 @@ public class Neo4jRESTServer {
 
     private static final String DATA_URL = "/db/data/";
     private static final String CYPHER_URL = DATA_URL + "cypher";
-    private static final String EXT_URL = DATA_URL + "ext/";
+    static final String EXT_URL = DATA_URL + "ext/";
 
     protected String instanceLocation = null;
 
-    private Plugin plugin;
-    private Map<String, AbstractCyAction> localExtensions;
+    private final Plugin plugin;
 
     protected ExecutorService threadpool;
     protected Async async;
 
     public Neo4jRESTServer(Plugin plugin) {
         this.plugin = plugin;
-
     }
 
     public void connect(String instanceLocation) {
@@ -55,17 +53,11 @@ public class Neo4jRESTServer {
 
         if (validateConnection(instanceLocation)) {
             setInstanceLocation(instanceLocation);
-            registerExtension();
+//            registerExtension();
         }
         isConnected();
     }
-
-    protected void registerExtension() {
-        for (Extension ext : getExtensions()) {
-            getPlugin().registerAction(localExtensions.get(ext.getName()));
-        }
-    }
-
+    
     public void disconnect() {
         instanceLocation = null;
         unregisterExtensions();
@@ -104,45 +96,13 @@ public class Neo4jRESTServer {
 
     }
 
-    public List<Extension> getExtensions() {
-        List<Extension> res = new ArrayList<>();
-
-        Extension cypherExt = new Neo4jExtension();
-        cypherExt.setName("cypher");
-        cypherExt.setEndpoint(getCypherURL());
-
-        cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery", "Cypher Endpoint", false, String.class)));
-
-        if (localExtensions.containsKey("cypher")) {
-            res.add(cypherExt);
-        }
-        try {
-            Set<String> extNames = Request.Get(getInstanceLocation() + EXT_URL).execute().handleResponse(new ExtensionLocationsHandler());
-
-            for (String extName : extNames) {
-                List<Extension> serverSupportedExt = Request.Get(getInstanceLocation() + EXT_URL + extName).execute().handleResponse(new ExtensionParametersResponseHandler(getInstanceLocation() + EXT_URL + extName));
-
-                for (Extension ext : serverSupportedExt) {
-                    if (localExtensions.containsKey(ext.getName())) {
-                        res.add(ext);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        return res;
-    }
-
     public void syncUp(boolean wipeRemote, CyNetwork curr) {
         TaskIterator it = new SyncUpTaskFactory(wipeRemote, getCypherURL(), getPlugin().getCyApplicationManager().getCurrentNetwork()).createTaskIterator();
         plugin.getDialogTaskManager().execute(it);
 
     }
 
-    private String getCypherURL() {
+    String getCypherURL() {
         return getInstanceLocation() + CYPHER_URL;
     }
 
@@ -189,18 +149,4 @@ public class Neo4jRESTServer {
         return plugin;
     }
 
-    public Extension supportsExtension(String name) {
-        List<Extension> extensions = getExtensions();
-
-        for (Extension extension : extensions) {
-            if (extension.getName().equals(name)) {
-                return extension;
-            }
-        }
-        return null;
-    }
-
-    public void setLocalSupportedExtension(Map<String, AbstractCyAction> localExtensions) {
-        this.localExtensions = localExtensions;
-    }
 }

@@ -1,9 +1,14 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.*;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic.ConnectInstanceMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.LocalExtensions;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.LocalExtensionsMap;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpMenuAction;
 import org.cytoscape.application.CyApplicationManager;
+import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
@@ -15,6 +20,8 @@ import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class CyActivator extends AbstractCyActivator {
@@ -34,11 +41,25 @@ public class CyActivator extends AbstractCyActivator {
         CyLayoutAlgorithmManager cyLayoutAlgorithmMgr = getService(context, CyLayoutAlgorithmManager.class);
         VisualMappingManager visualMappingMgr = getService(context, VisualMappingManager.class);
 
-        plugin = new Plugin(cyApplicationManager, cySwingApplication, cyNetworkFactory, cyNetMgr, cyNetViewMgr, diagTaskManager, cyNetworkViewFactory, cyLayoutAlgorithmMgr, visualMappingMgr);
 
-        ConnectInstanceMenuAction connectAction = new ConnectInstanceMenuAction(cyApplicationManager, plugin);
-        SyncUpMenuAction syncUpAction = new SyncUpMenuAction(cyApplicationManager, plugin);
-        SyncDownMenuAction syncDownAction = new SyncDownMenuAction(cyApplicationManager, plugin);
+        Plugin plugin = new Plugin(cyApplicationManager, cySwingApplication, cyNetworkFactory, cyNetMgr, cyNetViewMgr, diagTaskManager, cyNetworkViewFactory, cyLayoutAlgorithmMgr, visualMappingMgr);
+        Neo4jRESTServer neo4jRESTServer = Plugin.create(cyApplicationManager, cySwingApplication, cyNetworkFactory, cyNetMgr, cyNetViewMgr, diagTaskManager, cyNetworkViewFactory, cyLayoutAlgorithmMgr, visualMappingMgr);
+
+        LocalExtensions localExtensions = new LocalExtensions(null, neo4jRESTServer);
+
+        Map<String, AbstractCyAction> localExtensionsMap = new HashMap<>();
+        localExtensionsMap.put("neonetworkanalyzer", new NeoNetworkAnalyzerAction(cyApplicationManager, plugin, neo4jRESTServer, localExtensions));
+        localExtensionsMap.put("forceatlas2", new ForceAtlas2LayoutExtMenuAction(cyApplicationManager, plugin, neo4jRESTServer, localExtensions));
+        localExtensionsMap.put("circlelayout", new CircularLayoutExtMenuAction(cyApplicationManager, plugin, neo4jRESTServer, localExtensions));
+        localExtensionsMap.put("gridlayout", new GridLayoutExtMenuAction(cyApplicationManager, plugin, neo4jRESTServer, localExtensions));
+        localExtensionsMap.put("cypher", new CypherMenuAction(cyApplicationManager, plugin, neo4jRESTServer, localExtensions));
+
+        LocalExtensionsMap localExtensionsMap1 = new LocalExtensionsMap(localExtensionsMap, neo4jRESTServer, plugin);
+
+
+        ConnectInstanceMenuAction connectAction = new ConnectInstanceMenuAction(cyApplicationManager, cySwingApplication, neo4jRESTServer, localExtensionsMap1);
+        SyncUpMenuAction syncUpAction = new SyncUpMenuAction(cyApplicationManager, neo4jRESTServer);
+        SyncDownMenuAction syncDownAction = new SyncDownMenuAction(cyApplicationManager, neo4jRESTServer);
 
         registerAllServices(context, connectAction, new Properties());
         registerAllServices(context, syncUpAction, new Properties());

@@ -20,12 +20,9 @@ import java.util.Map;
 
 public class Plugin {
 
+
     private CyApplicationManager cyApplicationManager = null;
-
-    private Neo4jRESTServer interactor = null;
-
     private List<AbstractCyAction> registeredActions = null;
-
     private CySwingApplication cySwingApplication = null;
     private CyNetworkFactory cyNetworkFactory = null;
     private CyNetworkManager cyNetMgr = null;
@@ -34,6 +31,33 @@ public class Plugin {
     private CyNetworkViewFactory cyNetworkViewFactory = null;
     private CyLayoutAlgorithmManager cyLayoutAlgorithmMgr = null;
     private VisualMappingManager visualMappingMgr = null;
+
+
+    public static Neo4jRESTServer create(CyApplicationManager cyApplicationManager,
+                                         CySwingApplication cySwingApplication,
+                                         CyNetworkFactory cyNetworkFactory,
+                                         CyNetworkManager cyNetMgr, CyNetworkViewManager cyNetViewMgr,
+                                         DialogTaskManager diagTaskManager,
+                                         CyNetworkViewFactory cyNetworkViewFactory,
+                                         CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
+                                         VisualMappingManager visualMappingMgr) {
+		/*
+		 * This should eventually be replaced by a more modular system. Each of the extensions
+		 * is its own Cytoscape app and this app just serves as a entry point for them?
+		 */
+
+		/*
+		 * DEV ENTRY POINT
+		 * Link a name of a plugin on the server side with an action in the app!
+		 * The linked action will be displayed in the cyNeo4j menu item if the plugin is available on the server
+		 */
+        Plugin plugin = new Plugin(cyApplicationManager, cySwingApplication, cyNetworkFactory, cyNetMgr, cyNetViewMgr, diagTaskManager, cyNetworkViewFactory, cyLayoutAlgorithmMgr, visualMappingMgr);
+        
+        Neo4jRESTServer interactor = new Neo4jRESTServer(plugin);
+        return interactor;
+    }
+
+
 
     public Plugin(CyApplicationManager cyApplicationManager,
                   CySwingApplication cySwingApplication,
@@ -53,12 +77,6 @@ public class Plugin {
 		 * Link a name of a plugin on the server side with an action in the app!
 		 * The linked action will be displayed in the cyNeo4j menu item if the plugin is available on the server
 		 */
-        Map<String, AbstractCyAction> localExtensions = new HashMap<>();
-        localExtensions.put("neonetworkanalyzer", new NeoNetworkAnalyzerAction(cyApplicationManager, this));
-        localExtensions.put("forceatlas2", new ForceAtlas2LayoutExtMenuAction(cyApplicationManager, this));
-        localExtensions.put("circlelayout", new CircularLayoutExtMenuAction(cyApplicationManager, this));
-        localExtensions.put("gridlayout", new GridLayoutExtMenuAction(cyApplicationManager, this));
-        localExtensions.put("cypher", new CypherMenuAction(cyApplicationManager, this));
 
         this.cyApplicationManager = cyApplicationManager;
         this.cySwingApplication = cySwingApplication;
@@ -69,10 +87,6 @@ public class Plugin {
         this.cyNetworkViewFactory = cyNetworkViewFactory;
         this.cyLayoutAlgorithmMgr = cyLayoutAlgorithmMgr;
         this.visualMappingMgr = visualMappingMgr;
-
-        interactor = new Neo4jRESTServer(this);
-        interactor.setLocalSupportedExtension(localExtensions);
-
         registeredActions = new ArrayList<>();
     }
 
@@ -95,11 +109,7 @@ public class Plugin {
     public CySwingApplication getCySwingApplication() {
         return cySwingApplication;
     }
-
-    public Neo4jRESTServer getInteractor() {
-        return interactor;
-    }
-
+    
     public DialogTaskManager getDialogTaskManager() {
         return diagTaskManager;
     }
@@ -123,7 +133,6 @@ public class Plugin {
 
     public void registerAction(AbstractCyAction action) {
         registeredActions.add(action);
-
         getCySwingApplication().addAction(action);
     }
 

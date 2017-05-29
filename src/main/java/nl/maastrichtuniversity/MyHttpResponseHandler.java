@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension;
+package nl.maastrichtuniversity;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
