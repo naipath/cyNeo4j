@@ -7,18 +7,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.NeoUtils;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class CypherResultParser {
 

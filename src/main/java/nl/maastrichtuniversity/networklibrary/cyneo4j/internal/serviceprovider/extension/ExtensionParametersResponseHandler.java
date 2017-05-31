@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.maastrichtuniversity.MyHttpResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionTarget;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.NeoUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +46,6 @@ public class ExtensionParametersResponseHandler extends MyHttpResponseHandler<Li
             Map<String, String> error = mapper.readValue(content, Map.class);
             System.out.println(error); // TODO
         }
-
         return res;
     }
 
