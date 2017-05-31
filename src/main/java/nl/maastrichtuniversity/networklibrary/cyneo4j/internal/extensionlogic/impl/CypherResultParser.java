@@ -205,4 +205,8 @@ public class CypherResultParser {
     private Long extractID(String objUrl) {
         return Long.valueOf(objUrl.substring(objUrl.lastIndexOf('/') + 1));
     }
+
+    public Long edgesAdded() {
+        return null;
+    }
 }

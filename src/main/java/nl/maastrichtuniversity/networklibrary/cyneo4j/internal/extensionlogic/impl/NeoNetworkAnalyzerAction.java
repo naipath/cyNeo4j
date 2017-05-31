@@ -3,7 +3,8 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.i
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.LocalExtensions;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4JExtensions;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
@@ -18,12 +19,12 @@ public class NeoNetworkAnalyzerAction extends AbstractCyAction {
 
     private final Plugin plugin;
     private final Neo4jRESTServer neo4jRESTServer;
-    private final LocalExtensions localExtensions;
+    private final Neo4JExtensions neo4JExtensions;
 
-    public NeoNetworkAnalyzerAction(CyApplicationManager cyApplicationManager, Plugin plugin, Neo4jRESTServer neo4jRESTServer, LocalExtensions localExtensions) {
+    public NeoNetworkAnalyzerAction(CyApplicationManager cyApplicationManager, Plugin plugin, Neo4jRESTServer neo4jRESTServer, Neo4JExtensions neo4JExtensions) {
         super(MENU_TITLE, cyApplicationManager, null, null);
         this.neo4jRESTServer = neo4jRESTServer;
-        this.localExtensions = localExtensions;
+        this.neo4JExtensions = neo4JExtensions;
         setPreferredMenu(MENU_LOC);
         setEnabled(false);
         this.plugin = plugin;
@@ -33,7 +34,7 @@ public class NeoNetworkAnalyzerAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        Neo4jExtension neoAnalyzer = localExtensions.supportsExtension("neonetworkanalyzer");
+        Neo4jExtension neoAnalyzer = neo4JExtensions.supportsExtension("neonetworkanalyzer");
 
         ExtensionExecutor exec = new NeoNetworkAnalyzerExec(plugin, neoAnalyzer);
 

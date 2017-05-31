@@ -1,7 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.LocalExtensions;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.LocalExtensionsMap;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4JExtensionRegister;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 
 import javax.swing.*;
@@ -16,7 +15,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
     private static final String CANCEL_CMD = "cancel";
 
     private static final String OK_CMD = "ok";
-    private final LocalExtensionsMap localExtensions;
+    private final Neo4JExtensionRegister localExtensions;
 
     private JDialog dialog = null;
     private Neo4jRESTServer interactor = null;
@@ -27,7 +26,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
     private ImageIcon green = null;
     private ImageIcon red = null;
 
-    public ConnectPanel(JDialog dialog, Neo4jRESTServer neo4jInteractor, LocalExtensionsMap localExtensions) {
+    public ConnectPanel(JDialog dialog, Neo4jRESTServer neo4jInteractor, Neo4JExtensionRegister localExtensions) {
         this.dialog = dialog;
         this.interactor = neo4jInteractor;
         this.localExtensions = localExtensions;

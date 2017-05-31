@@ -18,12 +18,12 @@ import static java.util.Collections.singletonList;
 /**
  * Created by steven on 27-05-17.
  */
-public class LocalExtensions {
+public class Neo4JExtensions {
 
     private final Neo4jRESTServer neo4jRESTServer;
     private final Set<String> localExtensions;
 
-    public LocalExtensions(Set<String> localExtensions, Neo4jRESTServer neo4jRESTServer) {
+    public Neo4JExtensions(Set<String> localExtensions, Neo4jRESTServer neo4jRESTServer) {
         this.neo4jRESTServer = neo4jRESTServer;
         this.localExtensions = localExtensions;
     }

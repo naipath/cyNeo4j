@@ -1,32 +1,21 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtParam;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.ExtensionLocationsHandler;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.ExtensionParametersResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.PassThroughResponseHandlerMy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general.Neo4jPingHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownTaskFactory;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpTaskFactory;
 import org.apache.http.client.fluent.Async;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
-import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.work.TaskIterator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static java.util.Collections.singletonList;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 public class Neo4jRESTServer {
 
@@ -34,7 +23,7 @@ public class Neo4jRESTServer {
     private static final String CYPHER_URL = DATA_URL + "cypher";
     static final String EXT_URL = DATA_URL + "ext/";
 
-    protected String instanceLocation = null;
+    private String instanceLocation = null;
 
     private final Plugin plugin;
 
@@ -43,7 +32,6 @@ public class Neo4jRESTServer {
 
     public Neo4jRESTServer(Plugin plugin) {
         this.plugin = plugin;
-
     }
 
     public void connect(String instanceLocation) {
@@ -54,16 +42,10 @@ public class Neo4jRESTServer {
 
         if (validateConnection(instanceLocation)) {
             setInstanceLocation(instanceLocation);
-            registerExtension();
         }
         isConnected();
     }
 
-    protected void registerExtension() {
-        for (Neo4jExtension ext : getExtensions()) {
-            getPlugin().registerAction(localExtensions.get(ext.getName()));
-        }
-    }
 
     public void disconnect() {
         instanceLocation = null;
@@ -102,38 +84,19 @@ public class Neo4jRESTServer {
         plugin.getDialogTaskManager().execute(it);
 
     }
-
-    public List<Neo4jExtension> getExtensions() {
-        List<Neo4jExtension> res = new ArrayList<>();
-
-        if (localExtensions.containsKey("cypher")) {
-            Neo4jExtension cypherExt = new Neo4jExtension("cypher", getCypherURL());
-
-            res.add(cypherExt);
-        }
-        try {
-            Set<String> extNames = Request.Get(getInstanceLocation() + EXT_URL).execute().handleResponse(new ExtensionLocationsHandler());
-
-            for (String extName : extNames) {
-                List<Neo4jExtension> serverSupportedExt = Request.Get(getInstanceLocation() + EXT_URL + extName).execute().handleResponse(new ExtensionParametersResponseHandler(getInstanceLocation() + EXT_URL + extName));
-
-                serverSupportedExt.stream()
-                    .filter(extension -> localExtensions.containsKey(extension.getName()))
-                    .forEach(res::add);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
+    
     public void syncUp() {
         TaskIterator it = new SyncUpTaskFactory(true, getCypherURL(), getPlugin().getCyApplicationManager().getCurrentNetwork()).createTaskIterator();
         plugin.getDialogTaskManager().execute(it);
-
     }
 
-    private String getCypherURL() {
+    public void syncUp(boolean b, CyNetwork currentNetwork) {
+        TaskIterator it = new SyncUpTaskFactory(b, getCypherURL(), currentNetwork).createTaskIterator();
+        plugin.getDialogTaskManager().execute(it);
+    }
+
+
+    String getCypherURL() {
         return instanceLocation + CYPHER_URL;
     }
 
@@ -149,7 +112,7 @@ public class Neo4jRESTServer {
             setupAsync();
 
             String url = call.getUrlFragment();
-            Request req = Request.Post(url).bodyString(call.getPayload(), ContentType.APPLICATION_JSON);
+            Request req = Request.Post(url).bodyString(call.getPayload(), APPLICATION_JSON);
 
             async.execute(req);
         } else {
@@ -181,13 +144,5 @@ public class Neo4jRESTServer {
         return plugin;
     }
 
-    public Neo4jExtension supportsExtension(String name) {
-        return getExtensions().stream()
-            .filter(extension -> extension.getName().equals(name))
-            .findFirst().orElse(null);
-    }
 
-    public void setLocalSupportedExtension(Map<String, AbstractCyAction> localExtensions) {
-        this.localExtensions = localExtensions;
-    }
 }
