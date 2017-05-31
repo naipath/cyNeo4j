@@ -1,6 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.Extension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4JExtensions;
@@ -22,7 +23,7 @@ public class CypherMenuAction extends AbstractCyAction {
     private final Neo4jRESTServer neo4jRESTServer;
     private final Neo4JExtensions neo4JExtensions;
 
-    public CypherMenuAction(CyApplicationManager cyApplicationManager, Plugin plugin, Neo4jRESTServer neo4jRESTServer, Neo4JExtensions neo4JExtensions) {
+    public CypherMenuAction(CyApplicationManager cyApplicationManager, Plugin plugin) {
         super(MENU_TITLE, cyApplicationManager, null, null);
         this.neo4jRESTServer = neo4jRESTServer;
         this.neo4JExtensions = neo4JExtensions;

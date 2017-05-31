@@ -26,7 +26,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
     private ImageIcon green = null;
     private ImageIcon red = null;
 
-    public ConnectPanel(JDialog dialog, Neo4jRESTServer neo4jInteractor, Neo4JExtensionRegister localExtensions) {
+    ConnectPanel(JDialog dialog, Neo4jRESTServer neo4jInteractor, Neo4JExtensionRegister localExtensions) {
         this.dialog = dialog;
         this.interactor = neo4jInteractor;
         this.localExtensions = localExtensions;
@@ -95,7 +95,6 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
         if (OK_CMD.equals(e.getActionCommand())) {
             if (validURL()) {
                 interactor.connect(getUrl());
-                localExtensions.registerExtension();
             }
             closeUp();
         }

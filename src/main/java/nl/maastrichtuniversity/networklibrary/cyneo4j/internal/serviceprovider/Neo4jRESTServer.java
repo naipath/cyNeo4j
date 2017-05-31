@@ -70,21 +70,22 @@ public class Neo4jRESTServer {
 
     public void syncDown(boolean mergeInCurrent) {
 
-        TaskIterator it = new SyncDownTaskFactory(getPlugin().getCyNetworkManager(),
-            mergeInCurrent,
-            getPlugin().getCyNetworkFactory(),
-            getInstanceLocation(),
-            getCypherURL(),
-            getPlugin().getCyNetViewMgr(),
-            getPlugin().getCyNetworkViewFactory(),
-            getPlugin().getCyLayoutAlgorithmManager(),
-            getPlugin().getVisualMappingManager()
+        TaskIterator it = new SyncDownTaskFactory(
+                getPlugin().getCyNetworkManager(),
+                mergeInCurrent,
+                getPlugin().getCyNetworkFactory(),
+                getInstanceLocation(),
+                getCypherURL(),
+                getPlugin().getCyNetViewMgr(),
+                getPlugin().getCyNetworkViewFactory(),
+                getPlugin().getCyLayoutAlgorithmManager(),
+                getPlugin().getVisualMappingManager()
         ).createTaskIterator();
 
         plugin.getDialogTaskManager().execute(it);
 
     }
-    
+
     public void syncUp() {
         TaskIterator it = new SyncUpTaskFactory(true, getCypherURL(), getPlugin().getCyApplicationManager().getCurrentNetwork()).createTaskIterator();
         plugin.getDialogTaskManager().execute(it);
@@ -116,8 +117,6 @@ public class Neo4jRESTServer {
 
             async.execute(req);
         } else {
-
-
             try {
                 String url = call.getUrlFragment();
                 retVal = Request.Post(url).bodyString(call.getPayload(), APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandlerMy());
@@ -143,6 +142,4 @@ public class Neo4jRESTServer {
     protected Plugin getPlugin() {
         return plugin;
     }
-
-
 }

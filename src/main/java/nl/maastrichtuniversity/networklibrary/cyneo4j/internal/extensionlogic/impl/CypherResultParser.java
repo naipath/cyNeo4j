@@ -1,6 +1,14 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.NeoUtils;
+
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -204,9 +212,5 @@ public class CypherResultParser {
 
     private Long extractID(String objUrl) {
         return Long.valueOf(objUrl.substring(objUrl.lastIndexOf('/') + 1));
-    }
-
-    public Long edgesAdded() {
-        return null;
     }
 }
