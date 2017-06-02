@@ -40,7 +40,7 @@ public class CyActivator extends AbstractCyActivator {
         VisualMappingManager visualMappingMgr = getService(context, VisualMappingManager.class);
 
 
-        Plugin plugin = new Plugin(cyApplicationManager, cySwingApplication, cyNetworkFactory, cyNetMgr, cyNetViewMgr, diagTaskManager, cyNetworkViewFactory, cyLayoutAlgorithmMgr, visualMappingMgr);
+        plugin = new Plugin(cyApplicationManager, cySwingApplication, cyNetworkFactory, cyNetMgr, cyNetViewMgr, diagTaskManager, cyNetworkViewFactory, cyLayoutAlgorithmMgr, visualMappingMgr);
         Neo4jRESTServer neo4jRESTServer = Plugin.create(cyApplicationManager, cySwingApplication, cyNetworkFactory, cyNetMgr, cyNetViewMgr, diagTaskManager, cyNetworkViewFactory, cyLayoutAlgorithmMgr, visualMappingMgr);
 
         Neo4JExtensions neo4JExtensions = new Neo4JExtensions(neo4jRESTServer);
