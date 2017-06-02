@@ -21,11 +21,9 @@ import static java.util.Collections.singletonList;
 public class Neo4JExtensions {
 
     private final Neo4jRESTServer neo4jRESTServer;
-    private final Set<String> localExtensions;
 
-    public Neo4JExtensions(Set<String> localExtensions, Neo4jRESTServer neo4jRESTServer) {
+    public Neo4JExtensions(Neo4jRESTServer neo4jRESTServer) {
         this.neo4jRESTServer = neo4jRESTServer;
-        this.localExtensions = localExtensions;
     }
 
     public Neo4jExtension supportsExtension(String name) {
@@ -46,9 +44,7 @@ public class Neo4JExtensions {
 
         //cypherExt.setParameters(singletonList(new Neo4jExtParam("cypherQuery", "Cypher Endpoint", false, String.class)));
 
-        if (localExtensions.contains("cypher")) {
-            res.add(cypherExt);
-        }
+        res.add(cypherExt);
         try {
             Set<String> extNames = Request.Get(neo4jRESTServer.getInstanceLocation() + Neo4jRESTServer.EXT_URL).execute().handleResponse(new ExtensionLocationsHandler());
 
@@ -56,9 +52,7 @@ public class Neo4JExtensions {
                 List<Neo4jExtension> serverSupportedExt = Request.Get(neo4jRESTServer.getInstanceLocation() + Neo4jRESTServer.EXT_URL + extName).execute().handleResponse(new ExtensionParametersResponseHandler(neo4jRESTServer.getInstanceLocation() + Neo4jRESTServer.EXT_URL + extName));
 
                 for (Neo4jExtension ext : serverSupportedExt) {
-                    if (localExtensions.contains(ext.getName())) {
-                        res.add(ext);
-                    }
+                    res.add(ext);
                 }
             }
         } catch (IOException e) {

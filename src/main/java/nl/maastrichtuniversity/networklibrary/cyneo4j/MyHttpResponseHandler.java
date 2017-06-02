@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity;
+package nl.maastrichtuniversity.networklibrary.cyneo4j;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;

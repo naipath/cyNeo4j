@@ -23,8 +23,6 @@ public class Neo4JExtensionRegister {
         this.neo4JExtensions = neo4JExtensions;
     }
 
-
-
     public void registerExtension() {
         for (Neo4jExtension ext : neo4JExtensions.getExtensions()) {
             plugin.registerAction(stringAbstractCyActionMap.get(ext.getName()));

@@ -95,6 +95,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
         if (OK_CMD.equals(e.getActionCommand())) {
             if (validURL()) {
                 interactor.connect(getUrl());
+                localExtensions.registerExtension();
             }
             closeUp();
         }

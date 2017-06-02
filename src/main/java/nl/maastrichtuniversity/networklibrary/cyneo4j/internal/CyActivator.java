@@ -43,13 +43,7 @@ public class CyActivator extends AbstractCyActivator {
         Plugin plugin = new Plugin(cyApplicationManager, cySwingApplication, cyNetworkFactory, cyNetMgr, cyNetViewMgr, diagTaskManager, cyNetworkViewFactory, cyLayoutAlgorithmMgr, visualMappingMgr);
         Neo4jRESTServer neo4jRESTServer = Plugin.create(cyApplicationManager, cySwingApplication, cyNetworkFactory, cyNetMgr, cyNetViewMgr, diagTaskManager, cyNetworkViewFactory, cyLayoutAlgorithmMgr, visualMappingMgr);
 
-        Neo4JExtensions neo4JExtensions = new Neo4JExtensions(new HashSet<>(Arrays.asList(
-                "neonetworkanalyzer",
-                "forceatlas2",
-                "circlelayout",
-                "gridlayout",
-                "cypher"
-        )), neo4jRESTServer);
+        Neo4JExtensions neo4JExtensions = new Neo4JExtensions(neo4jRESTServer);
         Neo4JExtensionRegister neo4JExtensionRegister = new Neo4JExtensionRegister(neo4JExtensions, plugin);
 
         neo4JExtensionRegister.put("neonetworkanalyzer", new NeoNetworkAnalyzerAction(cyApplicationManager, plugin, neo4jRESTServer, neo4JExtensions));

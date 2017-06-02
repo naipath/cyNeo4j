@@ -1,9 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.maastrichtuniversity.MyHttpResponseHandler;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ResponseHandler;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.MyHttpResponseHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
