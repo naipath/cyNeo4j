@@ -1,7 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 
 import java.io.IOException;
@@ -11,7 +10,7 @@ public abstract class MyHttpResponseHandler<T> implements ResponseHandler<T> {
     abstract public T handle(int responseCode, InputStream content) throws IOException;
 
     @Override
-    public T handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
+    public T handleResponse(HttpResponse httpResponse) throws IOException {
         return handle(httpResponse.getStatusLine().getStatusCode(), httpResponse.getEntity().getContent());
     }
 }

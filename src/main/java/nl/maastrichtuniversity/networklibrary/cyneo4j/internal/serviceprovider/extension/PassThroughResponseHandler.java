@@ -6,7 +6,7 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.MyHttpResponseHandler;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class PassThroughResponseHandlerMy extends MyHttpResponseHandler<Object> {
+public class PassThroughResponseHandler extends MyHttpResponseHandler<Object> {
 
     @Override
     public Object handle(int responseCode, InputStream content) throws IOException {

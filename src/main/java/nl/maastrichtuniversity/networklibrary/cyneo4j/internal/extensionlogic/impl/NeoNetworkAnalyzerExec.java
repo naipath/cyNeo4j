@@ -1,11 +1,12 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
+import org.cytoscape.application.CyApplicationManager;
+import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -18,8 +19,9 @@ import java.util.Map.Entry;
 
 public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
 
-    private Plugin plugin;
-    private Neo4jExtension extension;
+    private final Neo4jExtension extension;
+    private final CyApplicationManager cyApplicationManager;
+    private final CySwingApplication cySwingApplication;
     private CyNetwork currNet;
 
     private boolean run;
@@ -38,16 +40,17 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
     private boolean closeness;
     private boolean clustCoeff;
 
-    NeoNetworkAnalyzerExec(Plugin plugin, Neo4jExtension neoAnalyzer) {
-        this.plugin = plugin;
+    NeoNetworkAnalyzerExec(Neo4jExtension neoAnalyzer, CyApplicationManager cyApplicationManager, CySwingApplication cySwingApplication) {
         this.extension = neoAnalyzer;
+        this.cyApplicationManager = cyApplicationManager;
+        this.cySwingApplication = cySwingApplication;
     }
 
     @Override
     public boolean collectParameters() {
-        currNet = getPlugin().getCyApplicationManager().getCurrentNetwork();
+        currNet = getCyApplicationManager().getCurrentNetwork();
 
-        JDialog dialog = new JDialog(plugin.getCySwingApplication().getJFrame());
+        JDialog dialog = new JDialog(getCySwingApplication().getJFrame());
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         NeoNetworkAnalyzerControlPanel p = new NeoNetworkAnalyzerControlPanel(dialog);
@@ -167,7 +170,11 @@ public class NeoNetworkAnalyzerExec implements ExtensionExecutor {
         return calls;
     }
 
-    protected Plugin getPlugin() {
-        return plugin;
+    public CyApplicationManager getCyApplicationManager() {
+        return cyApplicationManager;
+    }
+
+    public CySwingApplication getCySwingApplication() {
+        return cySwingApplication;
     }
 }

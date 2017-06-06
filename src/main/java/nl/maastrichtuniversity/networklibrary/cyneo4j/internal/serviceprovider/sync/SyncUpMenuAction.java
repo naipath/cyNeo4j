@@ -1,6 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
@@ -15,8 +15,15 @@ public class SyncUpMenuAction extends AbstractCyAction {
     private final CyApplicationManager cyApplicationManager;
     private final Neo4jRESTServer neo4jRESTServer;
 
+    public static SyncUpMenuAction create(ServiceLocator serviceLocator) {
+        return new SyncUpMenuAction(
+                serviceLocator.getService(CyApplicationManager.class),
+                serviceLocator.getService(Neo4jRESTServer.class)
+        );
+    }
 
-    public SyncUpMenuAction(CyApplicationManager cyApplicationManager, Neo4jRESTServer neo4jRESTServer) {
+
+    private SyncUpMenuAction(CyApplicationManager cyApplicationManager, Neo4jRESTServer neo4jRESTServer) {
         super(MENU_TITLE, cyApplicationManager, null, null);
         setPreferredMenu(MENU_LOC);
         setEnabled(false);

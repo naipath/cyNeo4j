@@ -1,16 +1,15 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic;
 
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4JExtensionRegister;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
 public class ConnectInstanceMenuAction extends AbstractCyAction {
@@ -22,7 +21,16 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
     private final Neo4jRESTServer neo4jRESTServer;
     private final Neo4JExtensionRegister localExtensions;
 
-    public ConnectInstanceMenuAction(CyApplicationManager cyApplicationManager, CySwingApplication cySwingApplication, Neo4jRESTServer neo4jRESTServer, Neo4JExtensionRegister localExtensions) {
+    public static ConnectInstanceMenuAction create(ServiceLocator serviceLocator) {
+        return new ConnectInstanceMenuAction(
+                serviceLocator.getService(CyApplicationManager.class),
+                serviceLocator.getService(CySwingApplication.class),
+                serviceLocator.getService(Neo4jRESTServer.class),
+                serviceLocator.getService(Neo4JExtensionRegister.class)
+        );
+    }
+
+    private ConnectInstanceMenuAction(CyApplicationManager cyApplicationManager, CySwingApplication cySwingApplication, Neo4jRESTServer neo4jRESTServer, Neo4JExtensionRegister localExtensions) {
         super(MENU_TITLE, cyApplicationManager, null, null);
         this.localExtensions = localExtensions;
         setPreferredMenu(MENU_LOC);

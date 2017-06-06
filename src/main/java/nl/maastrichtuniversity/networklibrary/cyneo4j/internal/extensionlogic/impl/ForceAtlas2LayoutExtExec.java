@@ -1,16 +1,19 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
+import org.cytoscape.application.CyApplicationManager;
+import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.view.vizmap.VisualMappingManager;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -20,7 +23,6 @@ public class ForceAtlas2LayoutExtExec {
 
     private static final int IterationStepSize = 10;
 
-    private Plugin plugin;
     private Neo4jExtension extension;
     private CyNetwork currNet;
 
@@ -29,8 +31,16 @@ public class ForceAtlas2LayoutExtExec {
 
 
     private Map<String, Object> params;
+    private final CyApplicationManager cyApplicationManager;
+    private final CySwingApplication cySwingApplication;
+    private final CyNetworkViewManager cyNetViewMgr;
+    private final VisualMappingManager visualMappingManager;
 
-    ForceAtlas2LayoutExtExec(Plugin plugin) {
+    ForceAtlas2LayoutExtExec(CyApplicationManager cyApplicationManager, CySwingApplication cySwingApplication, CyNetworkViewManager cyNetViewMgr, VisualMappingManager visualMappingManager) {
+        this.cyApplicationManager = cyApplicationManager;
+        this.cySwingApplication = cySwingApplication;
+        this.cyNetViewMgr = cyNetViewMgr;
+        this.visualMappingManager = visualMappingManager;
         params = new HashMap<>();
 
         // default parameters
@@ -50,13 +60,12 @@ public class ForceAtlas2LayoutExtExec {
         params.put("saveInGraph", true);
         params.put("numIterations", 1000);
 
-        this.plugin = plugin;
     }
 
     public boolean collectParameters() {
-        currNet = plugin.getCyApplicationManager().getCurrentNetwork();
+        currNet = getCyApplicationManager().getCurrentNetwork();
 
-        JDialog dialog = new JDialog(plugin.getCySwingApplication().getJFrame());
+        JDialog dialog = new JDialog(getCySwingApplication().getJFrame());
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         ForceAtlas2LayoutControlPanel controls = new ForceAtlas2LayoutControlPanel(dialog, params);
@@ -78,7 +87,7 @@ public class ForceAtlas2LayoutExtExec {
         List<Double> values = (List<Double>) callRetValue;
 
         CyTable defNodeTab = currNet.getDefaultNodeTable();
-        CyNetworkView networkView = plugin.getCyNetViewMgr().getNetworkViews(currNet).iterator().next();
+        CyNetworkView networkView = getCyNetViewMgr().getNetworkViews(currNet).iterator().next();
 
         for (int i = 0; i < (values.size() / 3); ++i) {
             Long neoid = values.get(i * 3).longValue();
@@ -92,7 +101,7 @@ public class ForceAtlas2LayoutExtExec {
             nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, x);
             nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, y);
 
-            CyUtils.updateVisualStyle(plugin.getVisualMappingManager(), networkView);
+            CyUtils.updateVisualStyle(getVisualMappingManager(), networkView);
         }
     }
 
@@ -141,5 +150,21 @@ public class ForceAtlas2LayoutExtExec {
 
     boolean doContinue() {
         return runIt;
+    }
+
+    public CyApplicationManager getCyApplicationManager() {
+        return cyApplicationManager;
+    }
+
+    public CySwingApplication getCySwingApplication() {
+        return cySwingApplication;
+    }
+
+    public CyNetworkViewManager getCyNetViewMgr() {
+        return cyNetViewMgr;
+    }
+
+    public VisualMappingManager getVisualMappingManager() {
+        return visualMappingManager;
     }
 }

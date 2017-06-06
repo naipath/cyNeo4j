@@ -1,15 +1,23 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Plugin;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.PassThroughResponseHandlerMy;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.PassThroughResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general.Neo4jPingHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownTaskFactory;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpTaskFactory;
 import org.apache.http.client.fluent.Async;
 import org.apache.http.client.fluent.Request;
+import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNetworkFactory;
+import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
+import org.cytoscape.view.model.CyNetworkViewFactory;
+import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.TaskIterator;
+import org.cytoscape.work.swing.DialogTaskManager;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -24,14 +32,34 @@ public class Neo4jRESTServer {
     static final String EXT_URL = DATA_URL + "ext/";
 
     private String instanceLocation = null;
-
-    private final Plugin plugin;
-
     protected ExecutorService threadpool;
     protected Async async;
+    private CyNetworkManager cyNetworkManager;
+    private CyNetworkFactory cyNetworkFactory;
+    private CyNetworkViewManager cyNetViewMgr;
+    private CyNetworkViewFactory cyNetworkViewFactory;
+    private CyLayoutAlgorithmManager cyLayoutAlgorithmManager;
+    private VisualMappingManager visualMappingManager;
+    private CyApplicationManager cyApplicationManager;
+    private DialogTaskManager dialogTaskManager;
 
-    public Neo4jRESTServer(Plugin plugin) {
-        this.plugin = plugin;
+    public static Neo4jRESTServer create(ServiceLocator serviceLocator) {
+        Neo4jRESTServer neo4jRESTServer = new Neo4jRESTServer();
+        neo4jRESTServer.cyApplicationManager = serviceLocator.getService(CyApplicationManager.class);
+        neo4jRESTServer.cyNetworkFactory = serviceLocator.getService(CyNetworkFactory.class);
+        neo4jRESTServer.cyNetViewMgr = serviceLocator.getService(CyNetworkViewManager.class);
+        neo4jRESTServer.cyNetworkViewFactory = serviceLocator.getService(CyNetworkViewFactory.class);
+        neo4jRESTServer.cyLayoutAlgorithmManager = serviceLocator.getService(CyLayoutAlgorithmManager.class);
+        neo4jRESTServer.visualMappingManager = serviceLocator.getService(VisualMappingManager.class);
+        neo4jRESTServer.cyApplicationManager = serviceLocator.getService(CyApplicationManager.class);
+        neo4jRESTServer.dialogTaskManager = serviceLocator.getService(DialogTaskManager.class);
+        return neo4jRESTServer;
+
+    }
+
+
+    private Neo4jRESTServer() {
+        
     }
 
     public void connect(String instanceLocation) {
@@ -49,12 +77,13 @@ public class Neo4jRESTServer {
 
     public void disconnect() {
         instanceLocation = null;
-        unregisterExtensions();
+//        FIXME: move to disconnect call
+//        unregisterExtensions();
     }
 
-    private void unregisterExtensions() {
-        getPlugin().unregisterActions();
-    }
+//    private void unregisterExtensions() {
+//        getPlugin().unregisterActions();
+//    }
 
     public boolean isConnected() {
         return validateConnection(getInstanceLocation());
@@ -71,29 +100,24 @@ public class Neo4jRESTServer {
     public void syncDown(boolean mergeInCurrent) {
 
         TaskIterator it = new SyncDownTaskFactory(
-                getPlugin().getCyNetworkManager(),
+                getCyNetworkManager(),
                 mergeInCurrent,
-                getPlugin().getCyNetworkFactory(),
+                getCyNetworkFactory(),
                 getInstanceLocation(),
                 getCypherURL(),
-                getPlugin().getCyNetViewMgr(),
-                getPlugin().getCyNetworkViewFactory(),
-                getPlugin().getCyLayoutAlgorithmManager(),
-                getPlugin().getVisualMappingManager()
+                getCyNetViewMgr(),
+                getCyNetworkViewFactory(),
+                getCyLayoutAlgorithmManager(),
+                getVisualMappingManager()
         ).createTaskIterator();
 
-        plugin.getDialogTaskManager().execute(it);
+        getDialogTaskManager().execute(it);
 
     }
-
-    public void syncUp() {
-        TaskIterator it = new SyncUpTaskFactory(true, getCypherURL(), getPlugin().getCyApplicationManager().getCurrentNetwork()).createTaskIterator();
-        plugin.getDialogTaskManager().execute(it);
-    }
-
+    
     public void syncUp(boolean b, CyNetwork currentNetwork) {
         TaskIterator it = new SyncUpTaskFactory(b, getCypherURL(), currentNetwork).createTaskIterator();
-        plugin.getDialogTaskManager().execute(it);
+        getDialogTaskManager().execute(it);
     }
 
 
@@ -119,7 +143,7 @@ public class Neo4jRESTServer {
         } else {
             try {
                 String url = call.getUrlFragment();
-                retVal = Request.Post(url).bodyString(call.getPayload(), APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandlerMy());
+                retVal = Request.Post(url).bodyString(call.getPayload(), APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandler());
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -139,7 +163,36 @@ public class Neo4jRESTServer {
         return false;
     }
 
-    protected Plugin getPlugin() {
-        return plugin;
+    public CyNetworkManager getCyNetworkManager() {
+        return cyNetworkManager;
+    }
+
+    public CyNetworkFactory getCyNetworkFactory() {
+        return cyNetworkFactory;
+    }
+
+    public CyNetworkViewManager getCyNetViewMgr() {
+        return cyNetViewMgr;
+    }
+
+    public CyNetworkViewFactory getCyNetworkViewFactory() {
+        return cyNetworkViewFactory;
+    }
+
+    public CyLayoutAlgorithmManager getCyLayoutAlgorithmManager() {
+        return cyLayoutAlgorithmManager;
+    }
+
+
+    public VisualMappingManager getVisualMappingManager() {
+        return visualMappingManager;
+    }
+    
+    public CyApplicationManager getCyApplicationManager() {
+        return cyApplicationManager;
+    }
+
+    public DialogTaskManager getDialogTaskManager() {
+        return dialogTaskManager;
     }
 }
