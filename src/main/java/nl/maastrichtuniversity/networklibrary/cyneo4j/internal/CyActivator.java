@@ -62,7 +62,7 @@ public class CyActivator extends AbstractCyActivator {
 
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(serviceLocator);
         SyncUpMenuAction syncUpAction = SyncUpMenuAction.create(serviceLocator);
-        SyncDownMenuAction syncDownAction = new SyncDownMenuAction(cyApplicationManager, neo4jRESTServer);
+        SyncDownMenuAction syncDownAction = SyncDownMenuAction.create(serviceLocator);
 
         registerAllServices(context, connectAction, new Properties());
         registerAllServices(context, syncUpAction, new Properties());
