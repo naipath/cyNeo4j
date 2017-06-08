@@ -4,8 +4,8 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.PassThroughResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general.Neo4jPingHandler;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownTaskFactory;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpTaskFactory;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownTask;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpTask;
 import org.apache.http.client.fluent.Async;
 import org.apache.http.client.fluent.Request;
 import org.cytoscape.application.CyApplicationManager;
@@ -99,24 +99,24 @@ public class Neo4jRESTServer {
 
     public void syncDown(boolean mergeInCurrent) {
 
-        TaskIterator it = new SyncDownTaskFactory(
-                getCyNetworkManager(),
+        TaskIterator it = new TaskIterator( new SyncDownTask(
                 mergeInCurrent,
-                getCyNetworkFactory(),
-                getInstanceLocation(),
                 getCypherURL(),
+                getInstanceLocation(),
+                getCyNetworkFactory(),
+                getCyNetworkManager(),
                 getCyNetViewMgr(),
                 getCyNetworkViewFactory(),
                 getCyLayoutAlgorithmManager(),
                 getVisualMappingManager()
-        ).createTaskIterator();
+        ));
 
         getDialogTaskManager().execute(it);
 
     }
     
     public void syncUp(boolean b, CyNetwork currentNetwork) {
-        TaskIterator it = new SyncUpTaskFactory(b, getCypherURL(), currentNetwork).createTaskIterator();
+        TaskIterator it = new TaskIterator( new SyncUpTask(b, getCypherURL(), currentNetwork));
         getDialogTaskManager().execute(it);
     }
 

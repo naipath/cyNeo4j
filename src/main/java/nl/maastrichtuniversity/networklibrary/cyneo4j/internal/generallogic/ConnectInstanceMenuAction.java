@@ -56,7 +56,6 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
         dialog.setVisible(true);
     }
 
-    // adapted from https://github.com/mkutmon/cytargetlinker/blob/master/cytargetlinker/src/main/java/org/cytargetlinker/app/internal/gui/ExtensionDialog.java
     private void locate(JDialog dialog) {
 
         Point cyLocation = cySwingApplication.getJFrame().getLocation();

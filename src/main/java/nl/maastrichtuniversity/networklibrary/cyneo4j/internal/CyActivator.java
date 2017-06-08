@@ -30,19 +30,15 @@ public class CyActivator extends AbstractCyActivator {
     public void start(BundleContext context) throws Exception {
 
         ServiceLocator serviceLocator = new ServiceLocator();
-
-        CyApplicationManager cyApplicationManager = getService(context, CyApplicationManager.class);
-        CySwingApplication cySwingApplication = getService(context, CySwingApplication.class);
-
-        serviceLocator.register(getService(context, CyApplicationManager.class));
-        serviceLocator.register(getService(context, CySwingApplication.class));
-        serviceLocator.register(getService(context, CyNetworkFactory.class));
-        serviceLocator.register(getService(context, CyNetworkManager.class));
-        serviceLocator.register(getService(context, CyNetworkViewManager.class));
-        serviceLocator.register(getService(context, DialogTaskManager.class));
-        serviceLocator.register(getService(context, CyNetworkViewFactory.class));
-        serviceLocator.register(getService(context, CyLayoutAlgorithmManager.class));
-        serviceLocator.register(getService(context, VisualMappingManager.class));
+        serviceLocator.register(CyApplicationManager.class, getService(context, CyApplicationManager.class));
+        serviceLocator.register(CySwingApplication.class, getService(context, CySwingApplication.class));
+        serviceLocator.register(CyNetworkFactory.class, getService(context, CyNetworkFactory.class));
+        serviceLocator.register(CyNetworkManager.class, getService(context, CyNetworkManager.class));
+        serviceLocator.register(CyNetworkViewManager.class, getService(context, CyNetworkViewManager.class));
+        serviceLocator.register(DialogTaskManager.class, getService(context, DialogTaskManager.class));
+        serviceLocator.register(CyNetworkViewFactory.class, getService(context, CyNetworkViewFactory.class));
+        serviceLocator.register(CyLayoutAlgorithmManager.class, getService(context, CyLayoutAlgorithmManager.class));
+        serviceLocator.register(VisualMappingManager.class, getService(context, VisualMappingManager.class));
 
         actionRegister = ActionRegister.create(serviceLocator);
         Neo4jRESTServer neo4jRESTServer = Neo4jRESTServer.create(serviceLocator);
@@ -52,6 +48,7 @@ public class CyActivator extends AbstractCyActivator {
 
         serviceLocator.register(neo4JExtensions);
         serviceLocator.register(neo4jRESTServer);
+        serviceLocator.register(neo4JExtensionRegister);
 
         neo4JExtensionRegister.put("neonetworkanalyzer", NeoNetworkAnalyzerAction.create(serviceLocator));
         neo4JExtensionRegister.put("forceatlas2", ForceAtlas2LayoutExtMenuAction.create(serviceLocator));
