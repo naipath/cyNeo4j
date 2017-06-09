@@ -9,10 +9,11 @@ import java.util.Map;
 
 public class Neo4jPingHandler extends HttpResponseHandler<Boolean> {
 
+    private ObjectMapper mapper = new ObjectMapper();
+
     @Override
     public Boolean handle(int responseCode, InputStream content) throws IOException {
         if (responseCode >= 200 && responseCode < 300) {
-            ObjectMapper mapper = new ObjectMapper();
             Map<String, String> instanceResp = mapper.readValue(content, Map.class);
             if (instanceResp.containsKey("data")) {
                 return true;

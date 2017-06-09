@@ -37,13 +37,16 @@ public class RetrieveDataTask extends AbstractTask {
     private CyLayoutAlgorithmManager cyLayoutAlgorithmMgr;
     private VisualMappingManager visualMappingMgr;
 
-    public RetrieveDataTask(String cypherURL,
-                            String instanceLocation, CyNetworkFactory cyNetworkFactory,
-                            CyNetworkManager cyNetworkMgr,
-                            CyNetworkViewManager cyNetworkViewMgr,
-                            CyNetworkViewFactory cyNetworkViewFactory,
-                            CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
-                            VisualMappingManager visualMappingMgr) {
+    private IdListHandler idListHandler = new IdListHandler();
+    private PassThroughResponseHandler passThroughResponseHandler = new PassThroughResponseHandler();
+
+    RetrieveDataTask(String cypherURL,
+                     String instanceLocation, CyNetworkFactory cyNetworkFactory,
+                     CyNetworkManager cyNetworkMgr,
+                     CyNetworkViewManager cyNetworkViewMgr,
+                     CyNetworkViewFactory cyNetworkViewFactory,
+                     CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
+                     VisualMappingManager visualMappingMgr) {
         this.cypherURL = cypherURL;
         this.instanceLocation = instanceLocation;
         this.cyNetworkFactory = cyNetworkFactory;
@@ -57,11 +60,9 @@ public class RetrieveDataTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         try {
-
             String nodeIdQuery = "{ \"query\" : \"MATCH (n) RETURN id(n)\",\"params\" : {}}";
             String edgeIdQuery = "{ \"query\" : \"MATCH ()-[r]->() RETURN id(r)\",\"params\" : {}}";
 
-            IdListHandler idListHandler = new IdListHandler();
             List<Long> nodeIds = Request.Post(cypherURL).bodyString(nodeIdQuery, ContentType.APPLICATION_JSON).execute().handleResponse(idListHandler);
             List<Long> edgeIds = Request.Post(cypherURL).bodyString(edgeIdQuery, ContentType.APPLICATION_JSON).execute().handleResponse(idListHandler);
 
@@ -81,7 +82,6 @@ public class RetrieveDataTask extends AbstractTask {
                 CyNetwork network = cyNetworkFactory.createNetwork();
                 network.getRow(network).set(CyNetwork.NAME, instanceLocation);
 
-                PassThroughResponseHandler passHandler = new PassThroughResponseHandler();
                 CypherResultParser cypherParser = new CypherResultParser(network);
 
                 taskMonitor.setStatusMessage("Downloading nodes");
@@ -93,7 +93,7 @@ public class RetrieveDataTask extends AbstractTask {
                     String array = toJSONArray(nodeIds.subList(i, end));
                     String query = "{\"query\" : \"MATCH (n) where id(n) in {toget} RETURN n\", \"params\" : { \"toget\" : " + array + "} }";
 
-                    Object responseObj = Request.Post(cypherURL).bodyString(query, ContentType.APPLICATION_JSON).execute().handleResponse(passHandler);
+                    Object responseObj = Request.Post(cypherURL).bodyString(query, ContentType.APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler);
 
                     if (responseObj == null) {
                         throw new IllegalArgumentException("query failed! " + query);
@@ -118,7 +118,7 @@ public class RetrieveDataTask extends AbstractTask {
                     String array = toJSONArray(edgeIds.subList(i, end));
                     String query = "{\"query\" : \"MATCH ()-[r]->() where id(r) in {toget} RETURN r\", \"params\" : { \"toget\" : " + array + "} }";
 
-                    Object responseObj = Request.Post(cypherURL).bodyString(query, ContentType.APPLICATION_JSON).execute().handleResponse(passHandler);
+                    Object responseObj = Request.Post(cypherURL).bodyString(query, ContentType.APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler);
                     cypherParser.parseRetVal(responseObj);
 
                     if (responseObj == null) {
@@ -148,9 +148,11 @@ public class RetrieveDataTask extends AbstractTask {
                 CyLayoutAlgorithm layout = cyLayoutAlgorithmMgr.getLayout("force-directed");
                 insertTasksAfterCurrentTask(layout.createTaskIterator(view, layout.createLayoutContext(), nodes, null));
 
-                updateVisualStyle(visualMappingMgr, view);
+                VisualStyle vs = visualMappingMgr.getDefaultVisualStyle();
+                visualMappingMgr.setVisualStyle(vs, view);
+                vs.apply(view);
+                view.updateView();
             }
-
         } catch (IllegalArgumentException | IOException e) {
             e.printStackTrace();
         }
@@ -158,12 +160,5 @@ public class RetrieveDataTask extends AbstractTask {
 
     private String toJSONArray(List<Long> ids) {
         return ids.toString();
-    }
-
-    private void updateVisualStyle(VisualMappingManager visualMappingMgr, CyNetworkView view) {
-        VisualStyle vs = visualMappingMgr.getDefaultVisualStyle();
-        visualMappingMgr.setVisualStyle(vs, view);
-        vs.apply(view);
-        view.updateView();
     }
 }

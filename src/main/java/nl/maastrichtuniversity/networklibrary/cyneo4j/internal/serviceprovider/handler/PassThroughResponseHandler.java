@@ -8,11 +8,11 @@ import java.io.InputStream;
 
 public class PassThroughResponseHandler extends HttpResponseHandler<Object> {
 
+    private ObjectMapper mapper = new ObjectMapper();
+
     @Override
     public Object handle(int responseCode, InputStream content) throws IOException {
-
         if (responseCode >= 200 && responseCode < 300) {
-            ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(content, Object.class);
         }
         return null;

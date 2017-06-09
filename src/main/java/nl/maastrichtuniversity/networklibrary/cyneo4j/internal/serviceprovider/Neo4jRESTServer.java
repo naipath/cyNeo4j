@@ -30,6 +30,8 @@ public class Neo4jRESTServer {
     private CyLayoutAlgorithmManager cyLayoutAlgorithmManager;
     private VisualMappingManager visualMappingManager;
     private DialogTaskManager dialogTaskManager;
+    private Neo4jPingHandler neo4jPingHandler = new Neo4jPingHandler();
+    private PassThroughResponseHandler passThroughResponseHandler = new PassThroughResponseHandler();
 
     public static Neo4jRESTServer create(ServiceLocator serviceLocator) {
         Neo4jRESTServer neo4jRESTServer = new Neo4jRESTServer();
@@ -55,7 +57,7 @@ public class Neo4jRESTServer {
         }
     }
 
-    public boolean isConnected() {
+    boolean isConnected() {
         return validateConnection(getInstanceLocation());
     }
 
@@ -63,7 +65,7 @@ public class Neo4jRESTServer {
         return instanceLocation;
     }
 
-    public void syncDown() {
+    void syncDown() {
         TaskIterator it = new TaskIterator(new RetrieveDataTask(
             getCypherURL(),
             getInstanceLocation(),
@@ -84,7 +86,7 @@ public class Neo4jRESTServer {
     public Object executeExtensionCall(String url, String payload) {
         Object retVal = null;
         try {
-            retVal = Request.Post(url).bodyString(payload, APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandler());
+            retVal = Request.Post(url).bodyString(payload, APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -94,7 +96,7 @@ public class Neo4jRESTServer {
 
     public boolean validateConnection(String instanceLocation) {
         try {
-            return instanceLocation != null && Request.Get(instanceLocation).execute().handleResponse(new Neo4jPingHandler());
+            return instanceLocation != null && Request.Get(instanceLocation).execute().handleResponse(neo4jPingHandler);
         } catch (IOException e) {
             e.printStackTrace();
         }
