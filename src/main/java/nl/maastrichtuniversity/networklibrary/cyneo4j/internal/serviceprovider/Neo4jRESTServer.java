@@ -54,7 +54,7 @@ public class Neo4jRESTServer {
     }
 
     public void connect(String instanceLocation) {
-        if (isConnected()) {
+        if (validateConnection(this.instanceLocation)) {
             this.instanceLocation = null;
         }
         if (validateConnection(instanceLocation)) {
