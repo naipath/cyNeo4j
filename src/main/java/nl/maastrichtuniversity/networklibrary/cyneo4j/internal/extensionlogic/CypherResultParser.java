@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
 import org.cytoscape.model.CyEdge;

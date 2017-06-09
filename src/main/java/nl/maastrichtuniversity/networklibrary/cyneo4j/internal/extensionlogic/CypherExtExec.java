@@ -1,6 +1,5 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
@@ -9,13 +8,11 @@ import org.cytoscape.model.CyNetworkManager;
 class CypherExtExec {
 
     private String query;
-    private String url;
     private final CyApplicationManager cyApplicationManager;
     private final CyNetworkFactory cyNetworkFactory;
     private final CyNetworkManager cyNetworkManager;
 
-    CypherExtExec(String url, CyApplicationManager cyApplicationManager, CyNetworkFactory cyNetworkFactory, CyNetworkManager cyNetworkManager) {
-        this.url = url;
+    CypherExtExec(CyApplicationManager cyApplicationManager, CyNetworkFactory cyNetworkFactory, CyNetworkManager cyNetworkManager) {
         this.cyApplicationManager = cyApplicationManager;
         this.cyNetworkFactory = cyNetworkFactory;
         this.cyNetworkManager = cyNetworkManager;
@@ -32,8 +29,8 @@ class CypherExtExec {
         new CypherResultParser(currNet).parseRetVal(callRetValue);
     }
 
-    Neo4jCall buildExtensionCalls(String query) {
+    String buildExtensionCalls(String query) {
         this.query = query;
-        return new Neo4jCall(url, String.format("{\"query\" : \"%s\",\"params\" : {}}", query));
+        return String.format("{\"query\" : \"%s\",\"params\" : {}}", query);
     }
 }

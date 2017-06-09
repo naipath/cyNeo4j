@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
@@ -54,7 +54,7 @@ public class CypherMenuAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         String url = neo4jRESTServer.getCypherURL();
-        CypherExtExec exec = new CypherExtExec(url, cyApplicationManager, cyNetworkFactory,  cyNetworkManager);
+        CypherExtExec exec = new CypherExtExec(cyApplicationManager, cyNetworkFactory,  cyNetworkManager);
 
         String query = JOptionPane.showInputDialog(cySwingApplication.getJFrame(), "Cypher Query", "match (n)-[r]->(m) return n,r,m");
         query = query.replaceAll("\"", "\\\\\"");
@@ -63,7 +63,7 @@ public class CypherMenuAction extends AbstractCyAction {
             JOptionPane.showMessageDialog(cySwingApplication.getJFrame(), "Failed to collect parameters for ");
             return;
         }
-        Object callRetValue = neo4jRESTServer.executeExtensionCall(exec.buildExtensionCalls(query));
+        Object callRetValue = neo4jRESTServer.executeExtensionCall(url, exec.buildExtensionCalls(query));
         exec.processCallResponse(callRetValue);
     }
 }

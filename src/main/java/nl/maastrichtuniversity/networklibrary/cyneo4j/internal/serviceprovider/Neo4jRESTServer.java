@@ -1,7 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.RetrieveDataTask;
 import org.apache.http.client.fluent.Request;
 import org.cytoscape.model.CyNetworkFactory;
@@ -81,11 +80,10 @@ public class Neo4jRESTServer {
         return instanceLocation + CYPHER_URL;
     }
 
-    public Object executeExtensionCall(Neo4jCall call) {
+    public Object executeExtensionCall(String url, String payload) {
         Object retVal = null;
         try {
-            String url = call.getUrlFragment();
-            retVal = Request.Post(url).bodyString(call.getPayload(), APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandler());
+            retVal = Request.Post(url).bodyString(payload, APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandler());
 
         } catch (IOException e) {
             e.printStackTrace();
