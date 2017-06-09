@@ -1,7 +1,8 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.RetrieveDataTask;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.handler.Neo4jPingHandler;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.handler.PassThroughResponseHandler;
 import org.apache.http.client.fluent.Request;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
