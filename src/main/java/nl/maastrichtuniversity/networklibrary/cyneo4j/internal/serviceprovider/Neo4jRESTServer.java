@@ -29,7 +29,6 @@ public class Neo4jRESTServer {
 
     private static final String DATA_URL = "/db/data/";
     private static final String CYPHER_URL = DATA_URL + "cypher";
-    static final String EXT_URL = DATA_URL + "ext/";
 
     private String instanceLocation = null;
     protected ExecutorService threadpool;
@@ -77,13 +76,7 @@ public class Neo4jRESTServer {
 
     public void disconnect() {
         instanceLocation = null;
-//        FIXME: move to disconnect call
-//        unregisterExtensions();
     }
-
-//    private void unregisterExtensions() {
-//        getPlugin().unregisterActions();
-//    }
 
     public boolean isConnected() {
         return validateConnection(getInstanceLocation());
@@ -187,7 +180,7 @@ public class Neo4jRESTServer {
     public VisualMappingManager getVisualMappingManager() {
         return visualMappingManager;
     }
-    
+
     public CyApplicationManager getCyApplicationManager() {
         return cyApplicationManager;
     }
