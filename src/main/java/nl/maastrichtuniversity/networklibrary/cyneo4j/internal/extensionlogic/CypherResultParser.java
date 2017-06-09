@@ -1,16 +1,12 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
-import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyTable;
+import org.cytoscape.model.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toSet;
 
 
 public class CypherResultParser {
@@ -75,7 +71,7 @@ public class CypherResultParser {
 
         Long self = extractID((String) node.get("self"));
 
-        CyNode cyNode = CyUtils.getNodeByNeoId(currNet, self);
+        CyNode cyNode = getNodeByNeoId(currNet, self);
 
         if (cyNode == null) {
             cyNode = currNet.addNode();
@@ -93,7 +89,7 @@ public class CypherResultParser {
                 }
             }
 
-            Object value = CyUtils.fixSpecialTypes(obj.getValue(), defNodeTab.getColumn(obj.getKey()).getType());
+            Object value = fixSpecialTypes(obj.getValue(), defNodeTab.getColumn(obj.getKey()).getType());
             defNodeTab.getRow(cyNode.getSUID()).set(obj.getKey(), value);
         }
     }
@@ -115,7 +111,7 @@ public class CypherResultParser {
         String selfURL = (String) edge.get("self");
         Long self = extractID(selfURL);
 
-        CyEdge cyEdge = CyUtils.getEdgeByNeoId(currNet, self);
+        CyEdge cyEdge = getEdgeByNeoId(currNet, self);
 
         if (cyEdge == null) {
 
@@ -127,8 +123,8 @@ public class CypherResultParser {
 
             String type = (String) edge.get("type");
 
-            CyNode startNode = CyUtils.getNodeByNeoId(currNet, start);
-            CyNode endNode = CyUtils.getNodeByNeoId(currNet, end);
+            CyNode startNode = getNodeByNeoId(currNet, start);
+            CyNode endNode = getNodeByNeoId(currNet, end);
 
             if (startNode == null) {
                 startNode = currNet.addNode();
@@ -156,7 +152,7 @@ public class CypherResultParser {
                     }
                 }
 
-                Object value = CyUtils.fixSpecialTypes(obj.getValue(), defEdgeTab.getColumn(obj.getKey()).getType());
+                Object value = fixSpecialTypes(obj.getValue(), defEdgeTab.getColumn(obj.getKey()).getType());
                 defEdgeTab.getRow(cyEdge.getSUID()).set(obj.getKey(), value);
 
             }
@@ -203,5 +199,56 @@ public class CypherResultParser {
 
     private Long extractID(String objUrl) {
         return Long.valueOf(objUrl.substring(objUrl.lastIndexOf('/') + 1));
+    }
+
+
+    private CyNode getNodeByNeoId(CyNetwork network, Long neoId) {
+        Set<CyNode> res = getNodesWithValue(network, network.getDefaultNodeTable(), "neoid", neoId);
+        if (res.size() > 1) {
+            throw new IllegalArgumentException("more than one start node found! " + res.toString());
+        }
+        if (res.size() == 0) {
+            return null;
+        }
+        return res.iterator().next();
+    }
+
+    private CyEdge getEdgeByNeoId(CyNetwork network, Long neoId) {
+        Set<CyEdge> res = getEdgeWithValue(network, network.getDefaultEdgeTable(), "neoid", neoId);
+        if (res.size() > 1) {
+            throw new IllegalArgumentException("more than one start node found! " + res.toString());
+        }
+        if (res.size() == 0) {
+            return null;
+        }
+        return res.iterator().next();
+    }
+
+    private Set<CyNode> getNodesWithValue(CyNetwork net, CyTable table, String colname, Object value) {
+        String primaryKeyColname = table.getPrimaryKey().getName();
+        return getValueFromRows(table.getMatchingRows(colname, value), primaryKeyColname, net::getNode);
+    }
+
+    private Set<CyEdge> getEdgeWithValue(CyNetwork net, CyTable table, String colname, Object value) {
+        String primaryKeyColname = table.getPrimaryKey().getName();
+        return getValueFromRows(table.getMatchingRows(colname, value), primaryKeyColname, net::getEdge);
+    }
+
+    private <T> Set<T> getValueFromRows(Collection<CyRow> matchingRows, String primaryKeyColname, Function<Long, T> mapper) {
+        return matchingRows.stream()
+            .map(cyRow -> cyRow.get(primaryKeyColname, Long.class))
+            .filter(Objects::nonNull)
+            .map(mapper)
+            .filter(Objects::nonNull)
+            .collect(toSet());
+    }
+
+    private Object fixSpecialTypes(Object val, Class<?> req) {
+        if (val.getClass() == req) {
+            return val;
+        } else if (val.getClass() == Integer.class && req == Long.class) {
+            return ((Integer) val).longValue();
+        }
+        return null;
     }
 }

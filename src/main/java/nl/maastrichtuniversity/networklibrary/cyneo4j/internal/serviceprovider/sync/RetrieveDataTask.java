@@ -2,7 +2,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.CypherResultParser;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.PassThroughResponseHandler;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.cytoscape.model.CyNetwork;
@@ -16,6 +15,7 @@ import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
@@ -147,7 +147,7 @@ public class RetrieveDataTask extends AbstractTask {
                 CyLayoutAlgorithm layout = cyLayoutAlgorithmMgr.getLayout("force-directed");
                 insertTasksAfterCurrentTask(layout.createTaskIterator(view, layout.createLayoutContext(), nodes, null));
 
-                CyUtils.updateVisualStyle(visualMappingMgr, view);
+                updateVisualStyle(visualMappingMgr, view);
             }
 
         } catch (IllegalArgumentException | IOException e) {
@@ -159,4 +159,10 @@ public class RetrieveDataTask extends AbstractTask {
         return ids.toString();
     }
 
+    private void updateVisualStyle(VisualMappingManager visualMappingMgr, CyNetworkView view) {
+        VisualStyle vs = visualMappingMgr.getDefaultVisualStyle();
+        visualMappingMgr.setVisualStyle(vs, view);
+        vs.apply(view);
+        view.updateView();
+    }
 }
