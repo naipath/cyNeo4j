@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toSet;
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ResType.Edge;
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ResType.Node;
 
 
 public class CypherResultParser {
@@ -43,18 +45,11 @@ public class CypherResultParser {
                 String col = cols.get(i);
                 ResType type = duckTypeObject(item, col);
 
-                switch (type) {
-                    case Node:
-                        parseNode(item);
-                        break;
-
-                    case Edge:
-                        parseEdge(item);
-                        break;
-
-                    default:
-                        break;
-
+                if (Node.equals(type)) {
+                    parseNode(item);
+                }
+                if (Edge.equals(type)) {
+                    parseEdge(item);
                 }
             }
         }
@@ -165,9 +160,9 @@ public class CypherResultParser {
 
         if (result == ResType.Unknown) {
             if (isNodeType(obj)) {
-                result = ResType.Node;
+                result = Node;
             } else if (isEdgeType(obj)) {
-                result = ResType.Edge;
+                result = Edge;
             } else { // this could / should be extended
                 result = ResType.Ignore;
             }
@@ -203,7 +198,7 @@ public class CypherResultParser {
 
 
     private CyNode getNodeByNeoId(CyNetwork network, Long neoId) {
-        Set<CyNode> res = getNodesWithValue(network, network.getDefaultNodeTable(), "neoid", neoId);
+        Set<CyNode> res = getNodesWithValue(network, network.getDefaultNodeTable(), neoId);
         if (res.size() > 1) {
             throw new IllegalArgumentException("more than one start node found! " + res.toString());
         }
@@ -214,7 +209,7 @@ public class CypherResultParser {
     }
 
     private CyEdge getEdgeByNeoId(CyNetwork network, Long neoId) {
-        Set<CyEdge> res = getEdgeWithValue(network, network.getDefaultEdgeTable(), "neoid", neoId);
+        Set<CyEdge> res = getEdgeWithValue(network, network.getDefaultEdgeTable(), neoId);
         if (res.size() > 1) {
             throw new IllegalArgumentException("more than one start node found! " + res.toString());
         }
@@ -224,14 +219,14 @@ public class CypherResultParser {
         return res.iterator().next();
     }
 
-    private Set<CyNode> getNodesWithValue(CyNetwork net, CyTable table, String colname, Object value) {
+    private Set<CyNode> getNodesWithValue(CyNetwork net, CyTable table, Object value) {
         String primaryKeyColname = table.getPrimaryKey().getName();
-        return getValueFromRows(table.getMatchingRows(colname, value), primaryKeyColname, net::getNode);
+        return getValueFromRows(table.getMatchingRows("neoid", value), primaryKeyColname, net::getNode);
     }
 
-    private Set<CyEdge> getEdgeWithValue(CyNetwork net, CyTable table, String colname, Object value) {
+    private Set<CyEdge> getEdgeWithValue(CyNetwork net, CyTable table, Object value) {
         String primaryKeyColname = table.getPrimaryKey().getName();
-        return getValueFromRows(table.getMatchingRows(colname, value), primaryKeyColname, net::getEdge);
+        return getValueFromRows(table.getMatchingRows("neoid", value), primaryKeyColname, net::getEdge);
     }
 
     private <T> Set<T> getValueFromRows(Collection<CyRow> matchingRows, String primaryKeyColname, Function<Long, T> mapper) {
