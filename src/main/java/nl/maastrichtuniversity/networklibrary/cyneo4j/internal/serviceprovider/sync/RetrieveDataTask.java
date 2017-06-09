@@ -1,6 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.CypherResultParser;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.CypherResultParser;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.PassThroughResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.utils.CyUtils;
 import org.apache.http.client.fluent.Request;
