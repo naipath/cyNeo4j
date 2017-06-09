@@ -1,6 +1,5 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -13,7 +12,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 
-public class CypherExtExec implements ExtensionExecutor {
+class CypherExtExec {
 
     private String query;
     private CyNetwork currNet;
@@ -31,9 +30,7 @@ public class CypherExtExec implements ExtensionExecutor {
         this.cyNetworkManager = cyNetworkManager;
     }
 
-    @Override
-    public boolean collectParameters() {
-
+    boolean collectParameters() {
         currNet = cyApplicationManager.getCurrentNetwork();
 
         query = JOptionPane.showInputDialog(cySwingApplication.getJFrame(), "Cypher Query", "match (n)-[r]->(m) return n,r,m");
@@ -42,8 +39,7 @@ public class CypherExtExec implements ExtensionExecutor {
         return !query.isEmpty();
     }
 
-    @Override
-    public void processCallResponse(Neo4jCall call, Object callRetValue) {
+    void processCallResponse(Object callRetValue) {
         if (currNet == null) {
             currNet = cyNetworkFactory.createNetwork();
             currNet.getRow(currNet).set(CyNetwork.NAME, query);
@@ -51,11 +47,9 @@ public class CypherExtExec implements ExtensionExecutor {
         }
         CypherResultParser cypherResParser = new CypherResultParser(currNet);
         cypherResParser.parseRetVal(callRetValue);
-
     }
 
-    @Override
-    public List<Neo4jCall> buildExtensionCalls() {
-        return singletonList(new Neo4jCall(url, "{\"query\" : \"" + query + "\",\"params\" : {}}"));
+    List<Neo4jCall> buildExtensionCalls() {
+        return singletonList(new Neo4jCall(url, String.format("{\"query\" : \"%s\",\"params\" : {}}", query)));
     }
 }
