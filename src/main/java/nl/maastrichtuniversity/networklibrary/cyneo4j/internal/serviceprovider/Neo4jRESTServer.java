@@ -6,7 +6,6 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.e
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general.Neo4jPingHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpTask;
-import org.apache.http.client.fluent.Async;
 import org.apache.http.client.fluent.Request;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyNetwork;
@@ -20,8 +19,6 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.swing.DialogTaskManager;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
@@ -31,8 +28,6 @@ public class Neo4jRESTServer {
     private static final String CYPHER_URL = DATA_URL + "cypher";
 
     private String instanceLocation = null;
-    protected ExecutorService threadpool;
-    protected Async async;
     private CyNetworkManager cyNetworkManager;
     private CyNetworkFactory cyNetworkFactory;
     private CyNetworkViewManager cyNetViewMgr;
@@ -53,29 +48,18 @@ public class Neo4jRESTServer {
         neo4jRESTServer.cyApplicationManager = serviceLocator.getService(CyApplicationManager.class);
         neo4jRESTServer.dialogTaskManager = serviceLocator.getService(DialogTaskManager.class);
         return neo4jRESTServer;
-
     }
 
-
     private Neo4jRESTServer() {
-        
     }
 
     public void connect(String instanceLocation) {
-
         if (isConnected()) {
-            disconnect();
+            this.instanceLocation = null;
         }
-
         if (validateConnection(instanceLocation)) {
-            setInstanceLocation(instanceLocation);
+            this.instanceLocation = instanceLocation;
         }
-        isConnected();
-    }
-
-
-    public void disconnect() {
-        instanceLocation = null;
     }
 
     public boolean isConnected() {
@@ -86,31 +70,23 @@ public class Neo4jRESTServer {
         return instanceLocation;
     }
 
-    protected void setInstanceLocation(String instanceLocation) {
-        this.instanceLocation = instanceLocation;
-    }
-
-    public void syncDown(boolean mergeInCurrent) {
-
-        TaskIterator it = new TaskIterator( new SyncDownTask(
-                mergeInCurrent,
-                getCypherURL(),
-                getInstanceLocation(),
-                getCyNetworkFactory(),
-                getCyNetworkManager(),
-                getCyNetViewMgr(),
-                getCyNetworkViewFactory(),
-                getCyLayoutAlgorithmManager(),
-                getVisualMappingManager()
+    public void syncDown() {
+        TaskIterator it = new TaskIterator(new SyncDownTask(
+            getCypherURL(),
+            getInstanceLocation(),
+            cyNetworkFactory,
+            cyNetworkManager,
+            cyNetViewMgr,
+            cyNetworkViewFactory,
+            cyLayoutAlgorithmManager,
+            visualMappingManager
         ));
-
-        getDialogTaskManager().execute(it);
-
+        dialogTaskManager.execute(it);
     }
-    
-    public void syncUp(boolean b, CyNetwork currentNetwork) {
-        TaskIterator it = new TaskIterator( new SyncUpTask(b, getCypherURL(), currentNetwork));
-        getDialogTaskManager().execute(it);
+
+    public void syncUp(CyNetwork currentNetwork) {
+        TaskIterator it = new TaskIterator(new SyncUpTask(getCypherURL(), currentNetwork));
+        dialogTaskManager.execute(it);
     }
 
 
@@ -118,31 +94,15 @@ public class Neo4jRESTServer {
         return instanceLocation + CYPHER_URL;
     }
 
-    protected void setupAsync() {
-        threadpool = Executors.newFixedThreadPool(2);
-        async = Async.newInstance().use(threadpool);
-    }
-
-    public Object executeExtensionCall(Neo4jCall call, boolean doAsync) {
+    public Object executeExtensionCall(Neo4jCall call) {
         Object retVal = null;
-
-        if (doAsync) {
-            setupAsync();
-
+        try {
             String url = call.getUrlFragment();
-            Request req = Request.Post(url).bodyString(call.getPayload(), APPLICATION_JSON);
+            retVal = Request.Post(url).bodyString(call.getPayload(), APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandler());
 
-            async.execute(req);
-        } else {
-            try {
-                String url = call.getUrlFragment();
-                retVal = Request.Post(url).bodyString(call.getPayload(), APPLICATION_JSON).execute().handleResponse(new PassThroughResponseHandler());
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
         return retVal;
     }
 
@@ -154,38 +114,5 @@ public class Neo4jRESTServer {
         }
         // TODO fix error messages | show exceptions? does the user understand the error messages?
         return false;
-    }
-
-    public CyNetworkManager getCyNetworkManager() {
-        return cyNetworkManager;
-    }
-
-    public CyNetworkFactory getCyNetworkFactory() {
-        return cyNetworkFactory;
-    }
-
-    public CyNetworkViewManager getCyNetViewMgr() {
-        return cyNetViewMgr;
-    }
-
-    public CyNetworkViewFactory getCyNetworkViewFactory() {
-        return cyNetworkViewFactory;
-    }
-
-    public CyLayoutAlgorithmManager getCyLayoutAlgorithmManager() {
-        return cyLayoutAlgorithmManager;
-    }
-
-
-    public VisualMappingManager getVisualMappingManager() {
-        return visualMappingManager;
-    }
-
-    public CyApplicationManager getCyApplicationManager() {
-        return cyApplicationManager;
-    }
-
-    public DialogTaskManager getDialogTaskManager() {
-        return dialogTaskManager;
     }
 }

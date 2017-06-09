@@ -67,7 +67,7 @@ public class CypherMenuAction extends AbstractCyAction {
         List<Neo4jCall> calls = exec.buildExtensionCalls();
 
         for (Neo4jCall call : calls) {
-            Object callRetValue = neo4jRESTServer.executeExtensionCall(call, false);
+            Object callRetValue = neo4jRESTServer.executeExtensionCall(call);
             exec.processCallResponse(call, callRetValue);
         }
     }

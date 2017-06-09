@@ -22,12 +22,10 @@ public class SyncUpTask extends AbstractTask {
     private static final String CREATE_ID_ALTERNATIVE_QUERY = "{\"query\" : \"MATCH (from { SUID: {fname}}),(to { SUID: {tname}}) CREATE (from)-[r:%s { rprops } ]->(to) return id(r)\", \"params\" : { \"fname\" : %s, \"tname\" : %s, \"rprops\" : %s }}";
     private static final String NEOID = "neoid";
 
-    private boolean wipeRemote;
     private String cypherURL;
     private CyNetwork currNet;
 
-    public SyncUpTask(boolean wipeRemote, String cypherURL, CyNetwork currNet) {
-        this.wipeRemote = wipeRemote;
+    public SyncUpTask(String cypherURL, CyNetwork currNet) {
         this.cypherURL = cypherURL;
         this.currNet = currNet;
     }
@@ -46,18 +44,14 @@ public class SyncUpTask extends AbstractTask {
         double progress = 0.0;
 
         try {
-            boolean wiped = false;
-            if (wipeRemote) {
-                taskMonitor.setStatusMessage("wiping remote network");
+            taskMonitor.setStatusMessage("wiping remote network");
+            updateProgress(taskMonitor, progress, 0.1);
 
-                updateProgress(taskMonitor, progress, 0.1);
+            boolean wiped = Request.Post(cypherURL)
+                .bodyString(WIPE_QUERY, APPLICATION_JSON)
+                .execute().handleResponse(this::hasCorrectResponseCode);
 
-                wiped = Request.Post(cypherURL)
-                    .bodyString(WIPE_QUERY, APPLICATION_JSON)
-                    .execute().handleResponse(this::hasCorrectResponseCode);
-            }
-
-            if (wiped == wipeRemote) {
+            if (wiped) {
                 CyTable defNodeTab = currNet.getDefaultNodeTable();
                 if (defNodeTab.getColumn(NEOID) == null) {
                     defNodeTab.createColumn(NEOID, Long.class, false);

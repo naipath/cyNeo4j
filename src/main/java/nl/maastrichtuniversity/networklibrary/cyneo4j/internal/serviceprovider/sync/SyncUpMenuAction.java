@@ -37,7 +37,7 @@ public class SyncUpMenuAction extends AbstractCyAction {
         if (!neo4jRESTServer.isConnected()) {
             JOptionPane.showMessageDialog(null, "Not connected to any remote instance");
         } else {
-            neo4jRESTServer.syncUp(true, cyApplicationManager.getCurrentNetwork());
+            neo4jRESTServer.syncUp(cyApplicationManager.getCurrentNetwork());
         }
     }
 }

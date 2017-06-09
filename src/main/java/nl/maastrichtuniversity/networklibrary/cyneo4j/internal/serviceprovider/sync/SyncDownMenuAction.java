@@ -37,7 +37,7 @@ public class SyncDownMenuAction extends AbstractCyAction {
             JOptionPane.showMessageDialog(null, "Not connected to any remote instance");
             return;
         }
-       neo4jRESTServer.syncDown(false);
+       neo4jRESTServer.syncDown();
     }
 
 }
