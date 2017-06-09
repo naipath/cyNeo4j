@@ -1,7 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
@@ -11,7 +10,6 @@ import org.cytoscape.model.CyNetworkManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.List;
 
 public class CypherMenuAction extends AbstractCyAction {
 
@@ -56,17 +54,16 @@ public class CypherMenuAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         String url = neo4jRESTServer.getCypherURL();
-        CypherExtExec exec = new CypherExtExec(url, cyApplicationManager,  cySwingApplication,  cyNetworkFactory,  cyNetworkManager);
+        CypherExtExec exec = new CypherExtExec(url, cyApplicationManager, cyNetworkFactory,  cyNetworkManager);
 
-        if (!exec.collectParameters()) {
+        String query = JOptionPane.showInputDialog(cySwingApplication.getJFrame(), "Cypher Query", "match (n)-[r]->(m) return n,r,m");
+        query = query.replaceAll("\"", "\\\\\"");
+
+        if (query.isEmpty()) {
             JOptionPane.showMessageDialog(cySwingApplication.getJFrame(), "Failed to collect parameters for ");
             return;
         }
-        List<Neo4jCall> calls = exec.buildExtensionCalls();
-
-        for (Neo4jCall call : calls) {
-            Object callRetValue = neo4jRESTServer.executeExtensionCall(call);
-            exec.processCallResponse(callRetValue);
-        }
+        Object callRetValue = neo4jRESTServer.executeExtensionCall(exec.buildExtensionCalls(query));
+        exec.processCallResponse(callRetValue);
     }
 }

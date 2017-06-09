@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.MyHttpResponseHandler;
