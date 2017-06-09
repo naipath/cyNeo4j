@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;

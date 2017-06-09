@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 
@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 public class ConnectPanel extends JPanel implements ActionListener, DocumentListener {
 
     private static final String CANCEL_CMD = "cancel";
-
     private static final String OK_CMD = "ok";
 
     private JDialog dialog = null;
