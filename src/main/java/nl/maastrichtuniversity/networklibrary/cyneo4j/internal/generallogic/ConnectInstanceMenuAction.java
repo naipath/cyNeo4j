@@ -1,7 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4JExtensionRegister;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
@@ -19,20 +18,17 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
 
     private final CySwingApplication cySwingApplication;
     private final Neo4jRESTServer neo4jRESTServer;
-    private final Neo4JExtensionRegister localExtensions;
 
     public static ConnectInstanceMenuAction create(ServiceLocator serviceLocator) {
         return new ConnectInstanceMenuAction(
                 serviceLocator.getService(CyApplicationManager.class),
                 serviceLocator.getService(CySwingApplication.class),
-                serviceLocator.getService(Neo4jRESTServer.class),
-                serviceLocator.getService(Neo4JExtensionRegister.class)
+                serviceLocator.getService(Neo4jRESTServer.class)
         );
     }
 
-    private ConnectInstanceMenuAction(CyApplicationManager cyApplicationManager, CySwingApplication cySwingApplication, Neo4jRESTServer neo4jRESTServer, Neo4JExtensionRegister localExtensions) {
+    private ConnectInstanceMenuAction(CyApplicationManager cyApplicationManager, CySwingApplication cySwingApplication, Neo4jRESTServer neo4jRESTServer) {
         super(MENU_TITLE, cyApplicationManager, null, null);
-        this.localExtensions = localExtensions;
         setPreferredMenu(MENU_LOC);
         setMenuGravity(0.0f);
         this.cySwingApplication = cySwingApplication;
@@ -45,7 +41,7 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
         JDialog dialog = new JDialog(cySwingApplication.getJFrame());
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        ConnectPanel p = new ConnectPanel(dialog, neo4jRESTServer, localExtensions);
+        ConnectPanel p = new ConnectPanel(dialog, neo4jRESTServer);
         p.setOpaque(true);
         locate(dialog);
         dialog.setModal(true);
