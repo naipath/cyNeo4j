@@ -10,27 +10,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 
 public class CyUtils {
-
-    public static String convertCyAttributesToJson(CyIdentifiable item, CyTable tab) {
-        String params = tab.getColumns()
-            .stream()
-            .filter(cyColumn -> !cyColumn.getName().equals("neoid"))
-            .filter(cyColumn -> tab.getRow(item.getSUID()).get(cyColumn.getName(), cyColumn.getType()) != null)
-            .map(cyColumn -> {
-                String paramName = cyColumn.getName();
-                Object paramValue = tab.getRow(item.getSUID()).get(cyColumn.getName(), cyColumn.getType());
-                String paramValueStr = cyColumn.getType() == String.class ? "\"" + paramValue.toString() + "\"" : paramValue.toString();
-
-                return String.format("\"%s\" : %s,", paramName, paramValueStr);
-            })
-            .collect(joining(","));
-
-        return String.format("{%s}", params);
-    }
 
     public static CyNode getNodeByNeoId(CyNetwork network, Long neoId) {
         Set<CyNode> res = getNodesWithValue(network, network.getDefaultNodeTable(), "neoid", neoId);

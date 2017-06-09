@@ -5,9 +5,7 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ne
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.PassThroughResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general.Neo4jPingHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownTask;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpTask;
 import org.apache.http.client.fluent.Request;
-import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
@@ -80,12 +78,6 @@ public class Neo4jRESTServer {
         ));
         dialogTaskManager.execute(it);
     }
-
-    public void syncUp(CyNetwork currentNetwork) {
-        TaskIterator it = new TaskIterator(new SyncUpTask(getCypherURL(), currentNetwork));
-        dialogTaskManager.execute(it);
-    }
-
 
     public String getCypherURL() {
         return instanceLocation + CYPHER_URL;
