@@ -3,9 +3,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by steven on 04-06-17.
- */
 public class ServiceLocator {
 
     private final Map<Class<?>,Object> services;

@@ -7,9 +7,6 @@ import org.cytoscape.application.swing.AbstractCyAction;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by steven on 27-05-17.
- */
 public class Neo4JExtensionRegister {
 
     private final Map<String, AbstractCyAction> stringAbstractCyActionMap;

@@ -50,12 +50,7 @@ public class CyActivator extends AbstractCyActivator {
         serviceLocator.register(neo4jRESTServer);
         serviceLocator.register(neo4JExtensionRegister);
 
-        neo4JExtensionRegister.put("neonetworkanalyzer", NeoNetworkAnalyzerAction.create(serviceLocator));
-        neo4JExtensionRegister.put("forceatlas2", ForceAtlas2LayoutExtMenuAction.create(serviceLocator));
-        neo4JExtensionRegister.put("circlelayout", CircularLayoutExtMenuAction.create(serviceLocator));
-        neo4JExtensionRegister.put("gridlayout", GridLayoutExtMenuAction.create(serviceLocator));
         neo4JExtensionRegister.put("cypher", CypherMenuAction.create(serviceLocator));
-
 
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(serviceLocator);
         SyncUpMenuAction syncUpAction = SyncUpMenuAction.create(serviceLocator);
@@ -74,6 +69,4 @@ public class CyActivator extends AbstractCyActivator {
             actionRegister.cleanUp();
         }
     }
-
-
 }

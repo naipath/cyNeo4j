@@ -36,9 +36,7 @@ public class CypherResultParser {
 
     private void readColumns(List<String> columns) {
         cols = columns;
-        for (String col : cols) {
-            colType.put(col, ResType.Unknown);
-        }
+        cols.forEach(s -> colType.put(s, ResType.Unknown));
     }
 
     private void readResultTable(List<List<Object>> rows) {
