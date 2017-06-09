@@ -13,6 +13,7 @@ import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionl
 
 public class CypherResultParser {
 
+    public static final String COLUMN_ID = "neoid";
     private static final String NODE_KEY = "outgoing_typed_relationships";
     private static final String EDGE_KEY = "type";
 
@@ -58,8 +59,8 @@ public class CypherResultParser {
     private void parseNode(Object nodeObj) {
 
         CyTable defNodeTab = currNet.getDefaultNodeTable();
-        if (defNodeTab.getColumn("neoid") == null) {
-            defNodeTab.createColumn("neoid", Long.class, false);
+        if (defNodeTab.getColumn(COLUMN_ID) == null) {
+            defNodeTab.createColumn(COLUMN_ID, Long.class, false);
         }
 
         Map<String, Object> node = (Map<String, Object>) nodeObj;
@@ -70,7 +71,7 @@ public class CypherResultParser {
 
         if (cyNode == null) {
             cyNode = currNet.addNode();
-            currNet.getRow(cyNode).set("neoid", self);
+            currNet.getRow(cyNode).set(COLUMN_ID, self);
         }
 
         Map<String, Object> nodeProps = (Map<String, Object>) node.get("data");
@@ -92,13 +93,13 @@ public class CypherResultParser {
     private void parseEdge(Object edgeObj) {
 
         CyTable defEdgeTab = currNet.getDefaultEdgeTable();
-        if (defEdgeTab.getColumn("neoid") == null) {
-            defEdgeTab.createColumn("neoid", Long.class, false);
+        if (defEdgeTab.getColumn(COLUMN_ID) == null) {
+            defEdgeTab.createColumn(COLUMN_ID, Long.class, false);
         }
 
         CyTable defNodeTab = currNet.getDefaultNodeTable();
-        if (defNodeTab.getColumn("neoid") == null) {
-            defNodeTab.createColumn("neoid", Long.class, false);
+        if (defNodeTab.getColumn(COLUMN_ID) == null) {
+            defNodeTab.createColumn(COLUMN_ID, Long.class, false);
         }
 
         Map<Object, Object> edge = (Map<Object, Object>) edgeObj;
@@ -123,17 +124,17 @@ public class CypherResultParser {
 
             if (startNode == null) {
                 startNode = currNet.addNode();
-                currNet.getRow(startNode).set("neoid", start);
+                currNet.getRow(startNode).set(COLUMN_ID, start);
             }
 
             if (endNode == null) {
                 endNode = currNet.addNode();
-                currNet.getRow(endNode).set("neoid", end);
+                currNet.getRow(endNode).set(COLUMN_ID, end);
             }
 
             cyEdge = currNet.addEdge(startNode, endNode, true);
 
-            currNet.getRow(cyEdge).set("neoid", self);
+            currNet.getRow(cyEdge).set(COLUMN_ID, self);
             currNet.getRow(cyEdge).set(CyEdge.INTERACTION, type);
 
             Map<String, Object> nodeProps = (Map<String, Object>) edge.get("data");
@@ -221,12 +222,12 @@ public class CypherResultParser {
 
     private Set<CyNode> getNodesWithValue(CyNetwork net, CyTable table, Object value) {
         String primaryKeyColname = table.getPrimaryKey().getName();
-        return getValueFromRows(table.getMatchingRows("neoid", value), primaryKeyColname, net::getNode);
+        return getValueFromRows(table.getMatchingRows(COLUMN_ID, value), primaryKeyColname, net::getNode);
     }
 
     private Set<CyEdge> getEdgeWithValue(CyNetwork net, CyTable table, Object value) {
         String primaryKeyColname = table.getPrimaryKey().getName();
-        return getValueFromRows(table.getMatchingRows("neoid", value), primaryKeyColname, net::getEdge);
+        return getValueFromRows(table.getMatchingRows(COLUMN_ID, value), primaryKeyColname, net::getEdge);
     }
 
     private <T> Set<T> getValueFromRows(Collection<CyRow> matchingRows, String primaryKeyColname, Function<Long, T> mapper) {
