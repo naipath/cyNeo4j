@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SyncDownTask extends AbstractTask {
+public class RetrieveDataTask extends AbstractTask {
 
     private String cypherURL;
     private String instanceLocation;
@@ -36,13 +36,13 @@ public class SyncDownTask extends AbstractTask {
     private CyLayoutAlgorithmManager cyLayoutAlgorithmMgr;
     private VisualMappingManager visualMappingMgr;
 
-    public SyncDownTask(String cypherURL,
-                        String instanceLocation, CyNetworkFactory cyNetworkFactory,
-                        CyNetworkManager cyNetworkMgr,
-                        CyNetworkViewManager cyNetworkViewMgr,
-                        CyNetworkViewFactory cyNetworkViewFactory,
-                        CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
-                        VisualMappingManager visualMappingMgr) {
+    public RetrieveDataTask(String cypherURL,
+                            String instanceLocation, CyNetworkFactory cyNetworkFactory,
+                            CyNetworkManager cyNetworkMgr,
+                            CyNetworkViewManager cyNetworkViewMgr,
+                            CyNetworkViewFactory cyNetworkViewFactory,
+                            CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
+                            VisualMappingManager visualMappingMgr) {
         this.cypherURL = cypherURL;
         this.instanceLocation = instanceLocation;
         this.cyNetworkFactory = cyNetworkFactory;

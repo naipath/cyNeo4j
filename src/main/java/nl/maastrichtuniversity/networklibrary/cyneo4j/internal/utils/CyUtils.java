@@ -36,7 +36,7 @@ public class CyUtils {
         return res.iterator().next();
     }
 
-    public static Set<CyNode> getNodesWithValue(CyNetwork net, CyTable table, String colname, Object value) {
+    private static Set<CyNode> getNodesWithValue(CyNetwork net, CyTable table, String colname, Object value) {
         String primaryKeyColname = table.getPrimaryKey().getName();
         return getValueFromRows(table.getMatchingRows(colname, value), primaryKeyColname, net::getNode);
     }

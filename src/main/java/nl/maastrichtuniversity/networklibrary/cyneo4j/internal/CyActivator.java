@@ -3,7 +3,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.impl.CypherMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic.ConnectInstanceMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.RetrieveDataMenuAction;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkFactory;
@@ -44,7 +44,7 @@ public class CyActivator extends AbstractCyActivator {
         cypherMenuAction = CypherMenuAction.create(serviceLocator);
 
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(serviceLocator);
-        SyncDownMenuAction syncDownAction = SyncDownMenuAction.create(serviceLocator);
+        RetrieveDataMenuAction syncDownAction = RetrieveDataMenuAction.create(serviceLocator);
 
         registerAllServices(context, connectAction, new Properties());
         registerAllServices(context, syncDownAction, new Properties());

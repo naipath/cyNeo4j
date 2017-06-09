@@ -8,21 +8,21 @@ import org.cytoscape.application.swing.AbstractCyAction;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class SyncDownMenuAction extends AbstractCyAction {
+public class RetrieveDataMenuAction extends AbstractCyAction {
 
-    private final static String MENU_TITLE = "Sync Down";
+    private final static String MENU_TITLE = "Retrieve data";
     private final static String MENU_LOC = "Apps.cyNeo4j";
     private final Neo4jRESTServer neo4jRESTServer;
 
-    public static SyncDownMenuAction create(ServiceLocator serviceLocator) {
-        return new SyncDownMenuAction(
+    public static RetrieveDataMenuAction create(ServiceLocator serviceLocator) {
+        return new RetrieveDataMenuAction(
                 serviceLocator.getService(CyApplicationManager.class),
                 serviceLocator.getService(Neo4jRESTServer.class)
         );
     }
 
 
-    private SyncDownMenuAction(CyApplicationManager cyApplicationManager, Neo4jRESTServer neo4jRESTServer) {
+    private RetrieveDataMenuAction(CyApplicationManager cyApplicationManager, Neo4jRESTServer neo4jRESTServer) {
         super(MENU_TITLE, cyApplicationManager, null, null);
         setPreferredMenu(MENU_LOC);
         setEnabled(false);

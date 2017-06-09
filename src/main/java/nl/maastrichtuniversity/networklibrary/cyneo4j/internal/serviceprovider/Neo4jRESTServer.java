@@ -4,7 +4,7 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.extension.PassThroughResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.general.Neo4jPingHandler;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownTask;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.RetrieveDataTask;
 import org.apache.http.client.fluent.Request;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
@@ -66,7 +66,7 @@ public class Neo4jRESTServer {
     }
 
     public void syncDown() {
-        TaskIterator it = new TaskIterator(new SyncDownTask(
+        TaskIterator it = new TaskIterator(new RetrieveDataTask(
             getCypherURL(),
             getInstanceLocation(),
             cyNetworkFactory,
