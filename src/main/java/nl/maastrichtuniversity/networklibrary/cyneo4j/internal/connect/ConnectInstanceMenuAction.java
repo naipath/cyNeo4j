@@ -5,9 +5,6 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.N
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
-
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
@@ -38,29 +35,11 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent arg0) {
 
-        JDialog dialog = new JDialog(cySwingApplication.getJFrame());
-        dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        ConnectPanel p = new ConnectPanel(dialog, neo4jRESTServer);
-        p.setOpaque(true);
-        locate(dialog);
-        dialog.setModal(true);
-        dialog.setContentPane(p);
-        dialog.setResizable(false);
-
-        dialog.pack();
-        dialog.setVisible(true);
-    }
-
-    private void locate(JDialog dialog) {
-
-        Point cyLocation = cySwingApplication.getJFrame().getLocation();
-        int cyHeight = cySwingApplication.getJFrame().getHeight();
-        int cyWidth = cySwingApplication.getJFrame().getWidth();
-
-        Point middle = new Point(cyLocation.x + (cyWidth / 4), cyLocation.y + (cyHeight / 4));
-
-        dialog.setLocation(middle);
+        ConnectDialog connectDialog = new ConnectDialog(cySwingApplication.getJFrame(), neo4jRESTServer::checkConnectionParameter );
+        connectDialog.showConnectDialog();
+        if(connectDialog.isOk()) {
+            neo4jRESTServer.connect(connectDialog.getParameters());
+        }
     }
 
 }
