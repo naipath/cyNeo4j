@@ -1,12 +1,12 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.MyHttpResponseHandler;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.HttpResponseHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class PassThroughResponseHandler extends MyHttpResponseHandler<Object> {
+public class PassThroughResponseHandler extends HttpResponseHandler<Object> {
 
     @Override
     public Object handle(int responseCode, InputStream content) throws IOException {

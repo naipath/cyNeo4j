@@ -50,7 +50,6 @@ public class CyActivator extends AbstractCyActivator {
         registerAllServices(context, syncDownAction, new Properties());
 
         cySwingApplication.addAction(cypherMenuAction);
-
     }
 
     @Override
