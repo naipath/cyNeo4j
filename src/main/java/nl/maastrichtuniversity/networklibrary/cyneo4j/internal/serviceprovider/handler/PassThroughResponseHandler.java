@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.HttpResponseHandler;
@@ -13,9 +13,8 @@ public class PassThroughResponseHandler extends HttpResponseHandler<Object> {
 
         if (responseCode >= 200 && responseCode < 300) {
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(content, Object.class);//FIXME: implicit Map
+            return mapper.readValue(content, Object.class);
         }
-        System.out.println("ERROR " + responseCode); //TODO
         return null;
     }
 

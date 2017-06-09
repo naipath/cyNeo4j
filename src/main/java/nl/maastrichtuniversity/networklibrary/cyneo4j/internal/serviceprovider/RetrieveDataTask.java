@@ -1,7 +1,8 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.CypherResultParser;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.PassThroughResponseHandler;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.handler.IdListHandler;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.handler.PassThroughResponseHandler;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.cytoscape.model.CyNetwork;
