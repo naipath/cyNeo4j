@@ -1,7 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTClient;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -16,7 +16,7 @@ public class CypherMenuAction extends AbstractCyAction {
     private final static String MENU_TITLE = "Cypher Query";
     private final static String MENU_LOC = "Apps.cyNeo4j";
 
-    private final Neo4jRESTServer neo4jRESTServer;
+    private final Neo4jRESTClient neo4JRESTClient;
     private final CyApplicationManager cyApplicationManager;
     private final CySwingApplication cySwingApplication;
     private final CyNetworkFactory cyNetworkFactory;
@@ -25,7 +25,7 @@ public class CypherMenuAction extends AbstractCyAction {
     public static CypherMenuAction create(ServiceLocator serviceLocator) {
         return new CypherMenuAction(
             serviceLocator.getService(CyApplicationManager.class),
-            serviceLocator.getService(Neo4jRESTServer.class),
+            serviceLocator.getService(Neo4jRESTClient.class),
             serviceLocator.getService(CySwingApplication.class),
             serviceLocator.getService(CyNetworkFactory.class),
             serviceLocator.getService(CyNetworkManager.class)
@@ -33,12 +33,12 @@ public class CypherMenuAction extends AbstractCyAction {
     }
 
     private CypherMenuAction(CyApplicationManager cyApplicationManager,
-                             Neo4jRESTServer neo4jRESTServer,
+                             Neo4jRESTClient neo4JRESTClient,
                              CySwingApplication cySwingApplication,
                              CyNetworkFactory cyNetworkFactory,
                              CyNetworkManager cyNetworkManager) {
         super(MENU_TITLE, cyApplicationManager, null, null);
-        this.neo4jRESTServer = neo4jRESTServer;
+        this.neo4JRESTClient = neo4JRESTClient;
         this.cyApplicationManager = cyApplicationManager;
         this.cySwingApplication = cySwingApplication;
         this.cyNetworkFactory = cyNetworkFactory;
@@ -51,7 +51,7 @@ public class CypherMenuAction extends AbstractCyAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String url = neo4jRESTServer.getCypherURL();
+        String url = neo4JRESTClient.getCypherURL();
         CypherExtExec exec = new CypherExtExec(cyApplicationManager, cyNetworkFactory, cyNetworkManager);
 
         String query = JOptionPane.showInputDialog(cySwingApplication.getJFrame(), "Cypher Query", "match (n)-[r]->(m) return n,r,m")
@@ -61,7 +61,7 @@ public class CypherMenuAction extends AbstractCyAction {
             JOptionPane.showMessageDialog(cySwingApplication.getJFrame(), "Failed to collect parameters for ");
             return;
         }
-        Object callRetValue = neo4jRESTServer.executeExtensionCall(url, exec.buildExtensionCalls(query));
+        Object callRetValue = neo4JRESTClient.executeExtensionCall(url, exec.buildExtensionCalls(query));
         exec.processCallResponse(callRetValue);
     }
 }

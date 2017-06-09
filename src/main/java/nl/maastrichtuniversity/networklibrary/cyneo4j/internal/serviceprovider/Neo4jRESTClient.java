@@ -17,7 +17,7 @@ import java.io.IOException;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
-public class Neo4jRESTServer {
+public class Neo4jRESTClient {
 
     private static final String DATA_URL = "/db/data/";
     private static final String CYPHER_URL = DATA_URL + "cypher";
@@ -33,19 +33,19 @@ public class Neo4jRESTServer {
     private Neo4jPingHandler neo4jPingHandler = new Neo4jPingHandler();
     private PassThroughResponseHandler passThroughResponseHandler = new PassThroughResponseHandler();
 
-    public static Neo4jRESTServer create(ServiceLocator serviceLocator) {
-        Neo4jRESTServer neo4jRESTServer = new Neo4jRESTServer();
-        neo4jRESTServer.cyNetworkManager = serviceLocator.getService(CyNetworkManager.class);
-        neo4jRESTServer.cyNetworkFactory = serviceLocator.getService(CyNetworkFactory.class);
-        neo4jRESTServer.cyNetViewMgr = serviceLocator.getService(CyNetworkViewManager.class);
-        neo4jRESTServer.cyNetworkViewFactory = serviceLocator.getService(CyNetworkViewFactory.class);
-        neo4jRESTServer.cyLayoutAlgorithmManager = serviceLocator.getService(CyLayoutAlgorithmManager.class);
-        neo4jRESTServer.visualMappingManager = serviceLocator.getService(VisualMappingManager.class);
-        neo4jRESTServer.dialogTaskManager = serviceLocator.getService(DialogTaskManager.class);
-        return neo4jRESTServer;
+    public static Neo4jRESTClient create(ServiceLocator serviceLocator) {
+        Neo4jRESTClient neo4JRESTClient = new Neo4jRESTClient();
+        neo4JRESTClient.cyNetworkManager = serviceLocator.getService(CyNetworkManager.class);
+        neo4JRESTClient.cyNetworkFactory = serviceLocator.getService(CyNetworkFactory.class);
+        neo4JRESTClient.cyNetViewMgr = serviceLocator.getService(CyNetworkViewManager.class);
+        neo4JRESTClient.cyNetworkViewFactory = serviceLocator.getService(CyNetworkViewFactory.class);
+        neo4JRESTClient.cyLayoutAlgorithmManager = serviceLocator.getService(CyLayoutAlgorithmManager.class);
+        neo4JRESTClient.visualMappingManager = serviceLocator.getService(VisualMappingManager.class);
+        neo4JRESTClient.dialogTaskManager = serviceLocator.getService(DialogTaskManager.class);
+        return neo4JRESTClient;
     }
 
-    private Neo4jRESTServer() {
+    private Neo4jRESTClient() {
     }
 
     public void connect(String instanceLocation) {

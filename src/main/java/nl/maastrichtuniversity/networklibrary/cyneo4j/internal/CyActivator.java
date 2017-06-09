@@ -2,7 +2,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.CypherMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic.ConnectInstanceMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.RetrieveDataMenuAction;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -38,8 +38,8 @@ public class CyActivator extends AbstractCyActivator {
         serviceLocator.register(CyLayoutAlgorithmManager.class, getService(context, CyLayoutAlgorithmManager.class));
         serviceLocator.register(VisualMappingManager.class, getService(context, VisualMappingManager.class));
 
-        Neo4jRESTServer neo4jRESTServer = Neo4jRESTServer.create(serviceLocator);
-        serviceLocator.register(neo4jRESTServer);
+        Neo4jRESTClient neo4JRESTClient = Neo4jRESTClient.create(serviceLocator);
+        serviceLocator.register(neo4JRESTClient);
 
         cypherMenuAction = CypherMenuAction.create(serviceLocator);
 

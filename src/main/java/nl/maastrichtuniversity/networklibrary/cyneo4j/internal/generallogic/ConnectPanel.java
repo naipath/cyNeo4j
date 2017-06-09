@@ -1,6 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTClient;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -16,7 +16,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
     private static final String OK_CMD = "ok";
 
     private JDialog dialog = null;
-    private Neo4jRESTServer interactor = null;
+    private Neo4jRESTClient interactor = null;
     private JTextField servURL = null;
     private JLabel status = null;
     private JButton okButton = null;
@@ -24,7 +24,7 @@ public class ConnectPanel extends JPanel implements ActionListener, DocumentList
     private ImageIcon green = null;
     private ImageIcon red = null;
 
-    ConnectPanel(JDialog dialog, Neo4jRESTServer neo4jInteractor) {
+    ConnectPanel(JDialog dialog, Neo4jRESTClient neo4jInteractor) {
         this.dialog = dialog;
         this.interactor = neo4jInteractor;
 

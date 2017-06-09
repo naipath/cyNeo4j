@@ -1,7 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTServer;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTClient;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -17,22 +17,22 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
     private final static String MENU_LOC = "Apps.cyNeo4j";
 
     private final CySwingApplication cySwingApplication;
-    private final Neo4jRESTServer neo4jRESTServer;
+    private final Neo4jRESTClient neo4JRESTClient;
 
     public static ConnectInstanceMenuAction create(ServiceLocator serviceLocator) {
         return new ConnectInstanceMenuAction(
                 serviceLocator.getService(CyApplicationManager.class),
                 serviceLocator.getService(CySwingApplication.class),
-                serviceLocator.getService(Neo4jRESTServer.class)
+                serviceLocator.getService(Neo4jRESTClient.class)
         );
     }
 
-    private ConnectInstanceMenuAction(CyApplicationManager cyApplicationManager, CySwingApplication cySwingApplication, Neo4jRESTServer neo4jRESTServer) {
+    private ConnectInstanceMenuAction(CyApplicationManager cyApplicationManager, CySwingApplication cySwingApplication, Neo4jRESTClient neo4JRESTClient) {
         super(MENU_TITLE, cyApplicationManager, null, null);
         setPreferredMenu(MENU_LOC);
         setMenuGravity(0.0f);
         this.cySwingApplication = cySwingApplication;
-        this.neo4jRESTServer = neo4jRESTServer;
+        this.neo4JRESTClient = neo4JRESTClient;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
         JDialog dialog = new JDialog(cySwingApplication.getJFrame());
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        ConnectPanel p = new ConnectPanel(dialog, neo4jRESTServer);
+        ConnectPanel p = new ConnectPanel(dialog, neo4JRESTClient);
         p.setOpaque(true);
         locate(dialog);
         dialog.setModal(true);

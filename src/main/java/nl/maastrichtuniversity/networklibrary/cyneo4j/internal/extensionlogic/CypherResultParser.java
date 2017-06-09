@@ -13,7 +13,7 @@ import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionl
 
 public class CypherResultParser {
 
-    public static final String COLUMN_ID = "neoid";
+    private static final String COLUMN_ID = "neoid";
     private static final String NODE_KEY = "outgoing_typed_relationships";
     private static final String EDGE_KEY = "type";
 
@@ -76,18 +76,7 @@ public class CypherResultParser {
 
         Map<String, Object> nodeProps = (Map<String, Object>) node.get("data");
 
-        for (Entry<String, Object> obj : nodeProps.entrySet()) {
-            if (defNodeTab.getColumn(obj.getKey()) == null) {
-                if (obj.getValue().getClass() == ArrayList.class) {
-                    defNodeTab.createListColumn(obj.getKey(), String.class, true);
-                } else {
-                    defNodeTab.createColumn(obj.getKey(), obj.getValue().getClass(), true);
-                }
-            }
-
-            Object value = fixSpecialTypes(obj.getValue(), defNodeTab.getColumn(obj.getKey()).getType());
-            defNodeTab.getRow(cyNode.getSUID()).set(obj.getKey(), value);
-        }
+        doStuff(defNodeTab, cyNode, nodeProps);
     }
 
     private void parseEdge(Object edgeObj) {
@@ -139,19 +128,21 @@ public class CypherResultParser {
 
             Map<String, Object> nodeProps = (Map<String, Object>) edge.get("data");
 
-            for (Entry<String, Object> obj : nodeProps.entrySet()) {
-                if (defEdgeTab.getColumn(obj.getKey()) == null) {
-                    if (obj.getValue().getClass() == ArrayList.class) {
-                        defEdgeTab.createListColumn(obj.getKey(), String.class, true);
-                    } else {
-                        defEdgeTab.createColumn(obj.getKey(), obj.getValue().getClass(), true);
-                    }
+            doStuff(defEdgeTab, cyEdge, nodeProps);
+        }
+    }
+
+    private void doStuff(CyTable defEdgeTab, CyIdentifiable cyEdge, Map<String, Object> nodeProps) {
+        for (Entry<String, Object> obj : nodeProps.entrySet()) {
+            if (defEdgeTab.getColumn(obj.getKey()) == null) {
+                if (obj.getValue().getClass() == ArrayList.class) {
+                    defEdgeTab.createListColumn(obj.getKey(), String.class, true);
+                } else {
+                    defEdgeTab.createColumn(obj.getKey(), obj.getValue().getClass(), true);
                 }
-
-                Object value = fixSpecialTypes(obj.getValue(), defEdgeTab.getColumn(obj.getKey()).getType());
-                defEdgeTab.getRow(cyEdge.getSUID()).set(obj.getKey(), value);
-
             }
+            Object value = fixSpecialTypes(obj.getValue(), defEdgeTab.getColumn(obj.getKey()).getType());
+            defEdgeTab.getRow(cyEdge.getSUID()).set(obj.getKey(), value);
         }
     }
 
@@ -196,7 +187,6 @@ public class CypherResultParser {
     private Long extractID(String objUrl) {
         return Long.valueOf(objUrl.substring(objUrl.lastIndexOf('/') + 1));
     }
-
 
     private CyNode getNodeByNeoId(CyNetwork network, Long neoId) {
         Set<CyNode> res = getNodesWithValue(network, network.getDefaultNodeTable(), neoId);
