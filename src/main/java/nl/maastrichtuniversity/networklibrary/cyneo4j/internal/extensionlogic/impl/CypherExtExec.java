@@ -2,7 +2,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.i
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ExtensionExecutor;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jCall;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.neo4j.Neo4jExtension;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetwork;
@@ -10,21 +9,22 @@ import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 public class CypherExtExec implements ExtensionExecutor {
 
-    private final Neo4jExtension extension;
     private String query;
     private CyNetwork currNet;
+    private String url;
     private final CyApplicationManager cyApplicationManager;
     private final CySwingApplication cySwingApplication;
     private final CyNetworkFactory cyNetworkFactory;
     private final CyNetworkManager cyNetworkManager;
 
-    CypherExtExec(Neo4jExtension extension, CyApplicationManager cyApplicationManager, CySwingApplication cySwingApplication, CyNetworkFactory cyNetworkFactory, CyNetworkManager cyNetworkManager) {
-        this.extension = extension;
+    CypherExtExec(String url, CyApplicationManager cyApplicationManager, CySwingApplication cySwingApplication, CyNetworkFactory cyNetworkFactory, CyNetworkManager cyNetworkManager) {
+        this.url = url;
         this.cyApplicationManager = cyApplicationManager;
         this.cySwingApplication = cySwingApplication;
         this.cyNetworkFactory = cyNetworkFactory;
@@ -56,13 +56,6 @@ public class CypherExtExec implements ExtensionExecutor {
 
     @Override
     public List<Neo4jCall> buildExtensionCalls() {
-        List<Neo4jCall> calls = new ArrayList<>();
-
-        String urlFragment = extension.getEndpoint();
-        String payload = "{\"query\" : \"" + query + "\",\"params\" : {}}";
-
-        calls.add(new Neo4jCall(urlFragment, payload, false));
-
-        return calls;
+        return singletonList(new Neo4jCall(url, "{\"query\" : \"" + query + "\",\"params\" : {}}", false));
     }
 }

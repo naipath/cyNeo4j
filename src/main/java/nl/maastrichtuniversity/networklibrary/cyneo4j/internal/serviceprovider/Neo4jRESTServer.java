@@ -121,7 +121,7 @@ public class Neo4jRESTServer {
     }
 
 
-    String getCypherURL() {
+    public String getCypherURL() {
         return instanceLocation + CYPHER_URL;
     }
 
