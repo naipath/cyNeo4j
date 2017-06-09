@@ -7,7 +7,6 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.g
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncDownTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.sync.SyncUpTask;
 import org.apache.http.client.fluent.Request;
-import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
@@ -34,18 +33,16 @@ public class Neo4jRESTServer {
     private CyNetworkViewFactory cyNetworkViewFactory;
     private CyLayoutAlgorithmManager cyLayoutAlgorithmManager;
     private VisualMappingManager visualMappingManager;
-    private CyApplicationManager cyApplicationManager;
     private DialogTaskManager dialogTaskManager;
 
     public static Neo4jRESTServer create(ServiceLocator serviceLocator) {
         Neo4jRESTServer neo4jRESTServer = new Neo4jRESTServer();
-        neo4jRESTServer.cyApplicationManager = serviceLocator.getService(CyApplicationManager.class);
+        neo4jRESTServer.cyNetworkManager = serviceLocator.getService(CyNetworkManager.class);
         neo4jRESTServer.cyNetworkFactory = serviceLocator.getService(CyNetworkFactory.class);
         neo4jRESTServer.cyNetViewMgr = serviceLocator.getService(CyNetworkViewManager.class);
         neo4jRESTServer.cyNetworkViewFactory = serviceLocator.getService(CyNetworkViewFactory.class);
         neo4jRESTServer.cyLayoutAlgorithmManager = serviceLocator.getService(CyLayoutAlgorithmManager.class);
         neo4jRESTServer.visualMappingManager = serviceLocator.getService(VisualMappingManager.class);
-        neo4jRESTServer.cyApplicationManager = serviceLocator.getService(CyApplicationManager.class);
         neo4jRESTServer.dialogTaskManager = serviceLocator.getService(DialogTaskManager.class);
         return neo4jRESTServer;
     }
