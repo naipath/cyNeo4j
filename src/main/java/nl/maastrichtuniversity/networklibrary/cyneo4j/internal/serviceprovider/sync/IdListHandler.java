@@ -24,11 +24,7 @@ public class IdListHandler extends MyHttpResponseHandler<List<Long>> {
             for (List<Integer> id : queryRes) {
                 ids.add(id.get(0).longValue());
             }
-        } else {
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, String> error = mapper.readValue(content, Map.class);
         }
-
         return ids;
     }
 

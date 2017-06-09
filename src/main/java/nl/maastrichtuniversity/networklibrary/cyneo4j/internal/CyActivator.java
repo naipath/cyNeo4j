@@ -26,11 +26,11 @@ public class CyActivator extends AbstractCyActivator {
 
     @Override
     public void start(BundleContext context) throws Exception {
+        cySwingApplication = getService(context, CySwingApplication.class);
 
         ServiceLocator serviceLocator = new ServiceLocator();
-        serviceLocator.register(CyApplicationManager.class, getService(context, CyApplicationManager.class));
-        cySwingApplication = getService(context, CySwingApplication.class);
         serviceLocator.register(CySwingApplication.class, cySwingApplication);
+        serviceLocator.register(CyApplicationManager.class, getService(context, CyApplicationManager.class));
         serviceLocator.register(CyNetworkFactory.class, getService(context, CyNetworkFactory.class));
         serviceLocator.register(CyNetworkManager.class, getService(context, CyNetworkManager.class));
         serviceLocator.register(CyNetworkViewManager.class, getService(context, CyNetworkViewManager.class));

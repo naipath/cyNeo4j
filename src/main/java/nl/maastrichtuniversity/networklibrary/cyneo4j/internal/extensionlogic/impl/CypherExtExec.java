@@ -56,6 +56,6 @@ public class CypherExtExec implements ExtensionExecutor {
 
     @Override
     public List<Neo4jCall> buildExtensionCalls() {
-        return singletonList(new Neo4jCall(url, "{\"query\" : \"" + query + "\",\"params\" : {}}", false));
+        return singletonList(new Neo4jCall(url, "{\"query\" : \"" + query + "\",\"params\" : {}}"));
     }
 }

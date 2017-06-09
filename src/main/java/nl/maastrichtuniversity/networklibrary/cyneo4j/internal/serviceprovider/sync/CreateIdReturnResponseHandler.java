@@ -12,8 +12,6 @@ public class CreateIdReturnResponseHandler extends MyHttpResponseHandler<Long> {
 
     @Override
     public Long handle(int responseCode, InputStream content) throws IOException {
-        Long id = null;
-
         if (responseCode >= 200 && responseCode < 300) {
 
             ObjectMapper mapper = new ObjectMapper();
