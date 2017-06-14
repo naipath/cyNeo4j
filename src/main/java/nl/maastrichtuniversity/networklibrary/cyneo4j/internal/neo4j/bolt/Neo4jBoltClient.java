@@ -1,6 +1,6 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.bolt;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect.ConnectionParameter;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.ConnectionParameter;
 import org.neo4j.driver.v1.*;
 
 public class Neo4jClient {

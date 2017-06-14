@@ -7,15 +7,15 @@ public class ServiceLocator {
 
     private final Map<Class<?>,Object> services;
 
-    public ServiceLocator() {
+    ServiceLocator() {
         services = new HashMap<>();
     }
 
-    public <T> void register(Class<T> clz, T instance) {
+    <T> void register(Class<T> clz, T instance) {
         services.put(clz, instance);
     }
 
-    public <T> void register(T instance) {
+    <T> void register(T instance) {
         services.put(instance.getClass(), instance);
     }
 
