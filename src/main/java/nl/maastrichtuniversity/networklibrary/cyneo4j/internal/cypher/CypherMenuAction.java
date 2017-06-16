@@ -1,7 +1,7 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTClient;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.Neo4jRESTClient;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;

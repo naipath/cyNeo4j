@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
 import org.cytoscape.model.*;
 
@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toSet;
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ResType.Edge;
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.ResType.Node;
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResType.Edge;
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResType.Node;
 
 
 public class CypherResultParser {

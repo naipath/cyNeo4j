@@ -1,6 +1,7 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.Neo4jRESTClient;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 

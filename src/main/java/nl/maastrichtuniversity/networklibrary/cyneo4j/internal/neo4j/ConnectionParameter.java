@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j;
 
 public class ConnectionParameter {
     private final String host;
@@ -15,6 +15,10 @@ public class ConnectionParameter {
         return "http://" + username + ":" +  new String(password) + "@" + host + ":7474";
     }
 
+    public String getBoltUrl() {
+        return "bolt://" + host;
+    }
+
     public String getHost() {
         return host;
     }
@@ -25,10 +29,6 @@ public class ConnectionParameter {
 
     public char[] getPassword() {
         return password;
-    }
-
-    public String getBoltUrl() {
-        return "bolt://" + host;
     }
 
     public String getPasswordAsString() {

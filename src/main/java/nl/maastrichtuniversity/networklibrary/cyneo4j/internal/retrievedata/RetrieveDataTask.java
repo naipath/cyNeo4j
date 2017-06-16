@@ -1,10 +1,8 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.CypherResultParser;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.handler.IdListHandler;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.handler.PassThroughResponseHandler;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CypherResultParser;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
@@ -21,14 +19,14 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toList;
 
 public class RetrieveDataTask extends AbstractTask {
 
-    private String cypherURL;
+    private final Neo4jClient neo4jClient;
     private String instanceLocation;
     private CyNetworkFactory cyNetworkFactory;
     private CyNetworkManager cyNetworkMgr;
@@ -37,18 +35,16 @@ public class RetrieveDataTask extends AbstractTask {
     private CyLayoutAlgorithmManager cyLayoutAlgorithmMgr;
     private VisualMappingManager visualMappingMgr;
 
-    private IdListHandler idListHandler = new IdListHandler();
-    private PassThroughResponseHandler passThroughResponseHandler = new PassThroughResponseHandler();
-
-    RetrieveDataTask(String cypherURL,
-                     String instanceLocation, CyNetworkFactory cyNetworkFactory,
-                     CyNetworkManager cyNetworkMgr,
-                     CyNetworkViewManager cyNetworkViewMgr,
-                     CyNetworkViewFactory cyNetworkViewFactory,
-                     CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
-                     VisualMappingManager visualMappingMgr) {
-        this.cypherURL = cypherURL;
+    public RetrieveDataTask(
+            String instanceLocation,
+            Neo4jClient neo4jClient, CyNetworkFactory cyNetworkFactory,
+            CyNetworkManager cyNetworkMgr,
+            CyNetworkViewManager cyNetworkViewMgr,
+            CyNetworkViewFactory cyNetworkViewFactory,
+            CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
+            VisualMappingManager visualMappingMgr) {
         this.instanceLocation = instanceLocation;
+        this.neo4jClient = neo4jClient;
         this.cyNetworkFactory = cyNetworkFactory;
         this.cyNetworkMgr = cyNetworkMgr;
         this.cyNetworkViewMgr = cyNetworkViewMgr;
@@ -60,11 +56,19 @@ public class RetrieveDataTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         try {
-            String nodeIdQuery = "{ \"query\" : \"MATCH (n) RETURN id(n)\",\"params\" : {}}";
-            String edgeIdQuery = "{ \"query\" : \"MATCH ()-[r]->() RETURN id(r)\",\"params\" : {}}";
+            CypherQuery nodeIdQuery = CypherQuery.builder()
+                    .query("MATCH (n) RETURN id(n)")
+                    .build(); //"{ \"query\" : \"MATCH (n) RETURN id(n)\",\"params\" : {}}";
 
-            List<Long> nodeIds = Request.Post(cypherURL).bodyString(nodeIdQuery, ContentType.APPLICATION_JSON).execute().handleResponse(idListHandler);
-            List<Long> edgeIds = Request.Post(cypherURL).bodyString(edgeIdQuery, ContentType.APPLICATION_JSON).execute().handleResponse(idListHandler);
+            CypherQuery edgeIdQuery =
+                    CypherQuery.builder()
+                    .query("MATCH ()-[r]->() RETURN id(r)")
+                    .build();
+
+//                    "{ \"query\" : \"MATCH ()-[r]->() RETURN id(r)\",\"params\" : {}}";
+
+            List<Long> nodeIds = executeQuery(nodeIdQuery, this::toLongList);
+            List<Long> edgeIds = executeQuery(edgeIdQuery, this::toLongList);
 
             int numQueries = nodeIds.size() + edgeIds.size();
 
@@ -76,7 +80,7 @@ public class RetrieveDataTask extends AbstractTask {
 
             if (nodeIds.size() > 0) {
 
-                taskMonitor.setTitle("Synchronizing the remote network DOWN");
+                taskMonitor.setTitle("Importing the Neo4j Graph");
 
                 // setup network
                 CyNetwork network = cyNetworkFactory.createNetwork();
@@ -91,9 +95,12 @@ public class RetrieveDataTask extends AbstractTask {
                     if (end > nodeIds.size())
                         end = nodeIds.size();
                     String array = toJSONArray(nodeIds.subList(i, end));
-                    String query = "{\"query\" : \"MATCH (n) where id(n) in {toget} RETURN n\", \"params\" : { \"toget\" : " + array + "} }";
+                    CypherQuery query = CypherQuery.builder()
+                            .query("MATCH (n) where id(n) in {toget} RETURN n")
+                            .params("toget", array)
+                            .build();
 
-                    Object responseObj = Request.Post(cypherURL).bodyString(query, ContentType.APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler);
+                    Object responseObj = executeQuery(query, this::identity);
 
                     if (responseObj == null) {
                         throw new IllegalArgumentException("query failed! " + query);
@@ -116,9 +123,14 @@ public class RetrieveDataTask extends AbstractTask {
                         end = edgeIds.size();
 
                     String array = toJSONArray(edgeIds.subList(i, end));
-                    String query = "{\"query\" : \"MATCH ()-[r]->() where id(r) in {toget} RETURN r\", \"params\" : { \"toget\" : " + array + "} }";
+//                    String query = "{\"query\" : \"MATCH ()-[r]->() where id(r) in {toget} RETURN r\", \"params\" : { \"toget\" : " + array + "} }";
 
-                    Object responseObj = Request.Post(cypherURL).bodyString(query, ContentType.APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler);
+                    CypherQuery query = CypherQuery.builder()
+                            .query("MATCH ()-[r]->() where id(r) in {toget} RETURN r")
+                            .params("toget", array)
+                            .build();
+
+                    Object responseObj = executeQuery(query, this::identity);
                     cypherParser.parseRetVal(responseObj);
 
                     if (responseObj == null) {
@@ -156,6 +168,28 @@ public class RetrieveDataTask extends AbstractTask {
         } catch (IllegalArgumentException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private Object identity(Object o) {
+        return o;
+    }
+
+    private List<Long> toLongList(Object result) {
+        if(result instanceof Map) {
+            Map<String,Object> map = (Map<String, Object>) result;
+            List<List<Integer>> queryRes = (List<List<Integer>>) map.get("data");
+
+            return queryRes.stream()
+                    .map(ids -> ids.get(0))
+                    .map(Integer::longValue)
+                    .collect(toList());
+
+        }
+        throw new IllegalStateException();
+    }
+
+    private <T> T executeQuery(CypherQuery query, Function<Object, T> converter) throws IOException {
+        return neo4jClient.executeQuery(query, converter);
     }
 
     private String toJSONArray(List<Long> ids) {

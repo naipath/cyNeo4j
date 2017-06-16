@@ -1,10 +1,15 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect.ConnectionParameter;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.handler.Neo4jPingHandler;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.handler.PassThroughResponseHandler;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.ConnectionParameter;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.handler.Neo4jPingHandler;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.handler.PassThroughResponseHandler;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata.RetrieveDataTask;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
@@ -15,10 +20,11 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.swing.DialogTaskManager;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
-public class Neo4jRESTClient {
+public class Neo4jRESTClient implements Neo4jClient {
 
     private static final String DATA_URL = "/db/data/";
     private static final String CYPHER_URL = DATA_URL + "cypher";
@@ -58,6 +64,25 @@ public class Neo4jRESTClient {
         connect(parameters.getHttpUrl());
     }
 
+    @Override
+    public <T> T executeQuery(CypherQuery query, Function<Object, T> converter) throws IOException {
+        return executeQuery(query.toJsonString(), converter);
+    }
+
+    private <T> T executeQuery(String query, Function<Object, T> converter) throws IOException {
+        return converter.apply(Request.Post(getCypherURL()).bodyString(query, ContentType.APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler));
+    }
+
+    @Override
+    public Neo4jGraph retrieveData() {
+        return null;
+    }
+
+    @Override
+    public Neo4jGraph executeQuery(CypherQuery cypherQuery) {
+        return null;
+    }
+
     public void connect(String instanceLocation) {
         if (validateConnection(this.instanceLocation)) {
             this.instanceLocation = null;
@@ -67,7 +92,7 @@ public class Neo4jRESTClient {
         }
     }
 
-    boolean isConnected() {
+    public boolean isConnected() {
         return validateConnection(getInstanceLocation());
     }
 
@@ -75,10 +100,10 @@ public class Neo4jRESTClient {
         return instanceLocation;
     }
 
-    void syncDown() {
+    public void syncDown() {
         TaskIterator it = new TaskIterator(new RetrieveDataTask(
-            getCypherURL(),
             getInstanceLocation(),
+            this,
             cyNetworkFactory,
             cyNetworkManager,
             cyNetViewMgr,

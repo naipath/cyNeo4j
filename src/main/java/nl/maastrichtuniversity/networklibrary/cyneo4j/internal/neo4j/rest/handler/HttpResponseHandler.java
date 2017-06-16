@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.handler;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;

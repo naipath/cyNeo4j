@@ -1,5 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.ConnectionParameter;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -44,7 +46,7 @@ public class ConnectDialog extends JDialog {
     private void init() {
 
         JButton okButton = new JButton("OK");
-        okButton.addActionListener(ae -> ok(ae));
+        okButton.addActionListener(this::ok);
         okButton.setActionCommand(OK_CMD);
 
         JButton cancelButton = new JButton("Cancel");

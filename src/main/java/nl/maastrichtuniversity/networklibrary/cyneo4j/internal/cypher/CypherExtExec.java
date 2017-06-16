@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyNetwork;

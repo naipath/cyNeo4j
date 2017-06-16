@@ -1,7 +1,12 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j;
 
-/**
- * Created by sdi20386 on 09/06/2017.
- */
-public class Neo4jClient {
+import java.io.IOException;
+import java.util.function.Function;
+
+public interface Neo4jClient {
+
+    void connect(ConnectionParameter connectionParameter);
+    <T> T executeQuery(CypherQuery query, Function<Object, T> converter) throws IOException;
+    Neo4jGraph retrieveData();
+    Neo4jGraph executeQuery(CypherQuery cypherQuery);
 }

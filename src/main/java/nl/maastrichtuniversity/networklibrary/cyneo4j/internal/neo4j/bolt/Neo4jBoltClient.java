@@ -1,18 +1,27 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.bolt;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.ConnectionParameter;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
 import org.neo4j.driver.v1.*;
 
-public class Neo4jClient {
+import java.util.function.Function;
 
-    private final ConnectionParameter connectionParameter;
+public class Neo4jBoltClient implements Neo4jClient {
+
     private Driver driver;
 
-    public Neo4jClient(ConnectionParameter connectionParameter) {
-        this.connectionParameter = connectionParameter;
+
+    public void execute(String query) {
+        try (Session session = driver.session()) {
+            StatementResult statementResult = session.run(query);
+            statementResult.forEachRemaining(record -> record.asMap());
+        }
     }
 
-    public void connect() {
+    @Override
+    public void connect(ConnectionParameter connectionParameter) {
         Config noSSL = Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE).toConfig();
         driver = GraphDatabase.driver(
                 connectionParameter.getBoltUrl(),
@@ -23,9 +32,18 @@ public class Neo4jClient {
         );
     }
 
-    public void execute(String query) {
-        try (Session session = driver.session()) {
-            session.run(query);
-        }
+    @Override
+    public <T> T executeQuery(CypherQuery query, Function<Object, T> converter) {
+        return null;
+    }
+
+    @Override
+    public Neo4jGraph retrieveData() {
+        return null;
+    }
+
+    @Override
+    public Neo4jGraph executeQuery(CypherQuery cypherQuery) {
+        return null;
     }
 }
