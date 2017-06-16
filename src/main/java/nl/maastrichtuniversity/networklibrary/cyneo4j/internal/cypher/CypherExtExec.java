@@ -28,9 +28,4 @@ class CypherExtExec {
         }
         new CypherResultParser(currNet).parseRetVal(callRetValue);
     }
-
-    String buildExtensionCalls(String query) {
-        this.query = query;
-        return String.format("{\"query\" : \"%s\",\"params\" : {}}", query);
-    }
 }

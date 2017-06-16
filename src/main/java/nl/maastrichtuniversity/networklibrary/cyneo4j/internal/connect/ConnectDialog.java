@@ -7,9 +7,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.function.Predicate;
 
-/**
- * Created by sdi20386 on 08/06/2017.
- */
 public class ConnectDialog extends JDialog {
 
     private static final String CANCEL_CMD = "cancel";
