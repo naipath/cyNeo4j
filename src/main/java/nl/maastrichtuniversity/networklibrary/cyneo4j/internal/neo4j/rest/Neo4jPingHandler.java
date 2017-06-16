@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.handler;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-public class Neo4jPingHandler extends HttpResponseHandler<Boolean> {
+class Neo4jPingHandler extends HttpResponseHandler<Boolean> {
 
     private ObjectMapper mapper = new ObjectMapper();
 

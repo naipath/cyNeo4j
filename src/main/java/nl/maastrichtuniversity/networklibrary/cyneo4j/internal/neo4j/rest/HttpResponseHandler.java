@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.handler;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
@@ -6,7 +6,7 @@ import org.apache.http.client.ResponseHandler;
 import java.io.IOException;
 import java.io.InputStream;
 
-public abstract class HttpResponseHandler<T> implements ResponseHandler<T> {
+abstract class HttpResponseHandler<T> implements ResponseHandler<T> {
     abstract public T handle(int responseCode, InputStream content) throws IOException;
 
     @Override

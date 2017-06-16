@@ -5,8 +5,6 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.ConnectionP
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.handler.Neo4jPingHandler;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.handler.PassThroughResponseHandler;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata.RetrieveDataTask;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
@@ -21,8 +19,6 @@ import org.cytoscape.work.swing.DialogTaskManager;
 
 import java.io.IOException;
 import java.util.function.Function;
-
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 public class Neo4jRESTClient implements Neo4jClient {
 
@@ -118,16 +114,6 @@ public class Neo4jRESTClient implements Neo4jClient {
         return instanceLocation + CYPHER_URL;
     }
 
-    public Object executeExtensionCall(String url, String payload) {
-        Object retVal = null;
-        try {
-            retVal = Request.Post(url).bodyString(payload, APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return retVal;
-    }
 
     public boolean validateConnection(String instanceLocation) {
         try {

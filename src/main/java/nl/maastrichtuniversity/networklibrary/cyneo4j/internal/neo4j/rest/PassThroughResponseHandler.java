@@ -1,11 +1,11 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.handler;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class PassThroughResponseHandler extends HttpResponseHandler<Object> {
+class PassThroughResponseHandler extends HttpResponseHandler<Object> {
 
     private ObjectMapper mapper = new ObjectMapper();
 
