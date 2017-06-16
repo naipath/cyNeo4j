@@ -46,4 +46,19 @@ public class Neo4jBoltClient implements Neo4jClient {
     public Neo4jGraph executeQuery(CypherQuery cypherQuery) {
         return null;
     }
+
+    @Override
+    public boolean checkConnectionParameter(ConnectionParameter connectionParameter) {
+        return false;
+    }
+
+    @Override
+    public boolean isConnected() {
+        return false;
+    }
+
+    @Override
+    public void syncDown() {
+
+    }
 }

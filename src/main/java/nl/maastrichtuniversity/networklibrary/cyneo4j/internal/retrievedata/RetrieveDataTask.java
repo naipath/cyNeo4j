@@ -37,7 +37,8 @@ public class RetrieveDataTask extends AbstractTask {
 
     public RetrieveDataTask(
             String instanceLocation,
-            Neo4jClient neo4jClient, CyNetworkFactory cyNetworkFactory,
+            Neo4jClient neo4jClient,
+            CyNetworkFactory cyNetworkFactory,
             CyNetworkManager cyNetworkMgr,
             CyNetworkViewManager cyNetworkViewMgr,
             CyNetworkViewFactory cyNetworkViewFactory,

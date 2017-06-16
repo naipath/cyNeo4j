@@ -9,4 +9,7 @@ public interface Neo4jClient {
     <T> T executeQuery(CypherQuery query, Function<Object, T> converter) throws IOException;
     Neo4jGraph retrieveData();
     Neo4jGraph executeQuery(CypherQuery cypherQuery);
+    boolean checkConnectionParameter(ConnectionParameter connectionParameter);
+    boolean isConnected();
+    void syncDown();
 }
