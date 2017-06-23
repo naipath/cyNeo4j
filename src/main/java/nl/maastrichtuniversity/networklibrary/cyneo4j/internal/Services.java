@@ -30,7 +30,7 @@ public class Services {
         return cySwingApplication;
     }
 
-    public void setCySwingApplication(CySwingApplication cySwingApplication) {
+    void setCySwingApplication(CySwingApplication cySwingApplication) {
         this.cySwingApplication = cySwingApplication;
     }
 
@@ -38,7 +38,7 @@ public class Services {
         return cyApplicationManager;
     }
 
-    public void setCyApplicationManager(CyApplicationManager cyApplicationManager) {
+    void setCyApplicationManager(CyApplicationManager cyApplicationManager) {
         this.cyApplicationManager = cyApplicationManager;
     }
 
@@ -46,7 +46,7 @@ public class Services {
         return cyNetworkFactory;
     }
 
-    public void setCyNetworkFactory(CyNetworkFactory cyNetworkFactory) {
+    void setCyNetworkFactory(CyNetworkFactory cyNetworkFactory) {
         this.cyNetworkFactory = cyNetworkFactory;
     }
 
@@ -54,7 +54,7 @@ public class Services {
         return cyNetworkManager;
     }
 
-    public void setCyNetworkManager(CyNetworkManager cyNetworkManager) {
+    void setCyNetworkManager(CyNetworkManager cyNetworkManager) {
         this.cyNetworkManager = cyNetworkManager;
     }
 
@@ -62,15 +62,15 @@ public class Services {
         return cyNetworkViewManager;
     }
 
-    public void setCyNetworkViewManager(CyNetworkViewManager cyNetworkViewManager) {
+    void setCyNetworkViewManager(CyNetworkViewManager cyNetworkViewManager) {
         this.cyNetworkViewManager = cyNetworkViewManager;
     }
 
-    public DialogTaskManager getDialogTaskManager() {
+    DialogTaskManager getDialogTaskManager() {
         return dialogTaskManager;
     }
 
-    public void setDialogTaskManager(DialogTaskManager dialogTaskManager) {
+    void setDialogTaskManager(DialogTaskManager dialogTaskManager) {
         this.dialogTaskManager = dialogTaskManager;
     }
 
@@ -78,7 +78,7 @@ public class Services {
         return cyNetworkViewFactory;
     }
 
-    public void setCyNetworkViewFactory(CyNetworkViewFactory cyNetworkViewFactory) {
+    void setCyNetworkViewFactory(CyNetworkViewFactory cyNetworkViewFactory) {
         this.cyNetworkViewFactory = cyNetworkViewFactory;
     }
 
@@ -86,7 +86,7 @@ public class Services {
         return cyLayoutAlgorithmManager;
     }
 
-    public void setCyLayoutAlgorithmManager(CyLayoutAlgorithmManager cyLayoutAlgorithmManager) {
+    void setCyLayoutAlgorithmManager(CyLayoutAlgorithmManager cyLayoutAlgorithmManager) {
         this.cyLayoutAlgorithmManager = cyLayoutAlgorithmManager;
     }
 
@@ -94,11 +94,11 @@ public class Services {
         return visualMappingManager;
     }
 
-    public void setVisualMappingManager(VisualMappingManager visualMappingManager) {
+    void setVisualMappingManager(VisualMappingManager visualMappingManager) {
         this.visualMappingManager = visualMappingManager;
     }
 
-    public void setNeo4jClient(Neo4jClient neo4jClient) {
+    void setNeo4jClient(Neo4jClient neo4jClient) {
         this.neo4jClient = neo4jClient;
     }
 
@@ -106,7 +106,7 @@ public class Services {
         return neo4jClient;
     }
 
-    public void setCommandFactory(CommandFactory commandFactory) {
+    void setCommandFactory(CommandFactory commandFactory) {
         this.commandFactory = commandFactory;
     }
 
@@ -114,7 +114,7 @@ public class Services {
         return commandFactory;
     }
 
-    public void setCommandRunner(CommandRunner commandRunner) {
+    void setCommandRunner(CommandRunner commandRunner) {
         this.commandRunner = commandRunner;
     }
 
