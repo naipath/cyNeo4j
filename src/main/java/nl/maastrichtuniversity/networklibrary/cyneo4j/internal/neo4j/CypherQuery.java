@@ -7,6 +7,7 @@ public class CypherQuery {
 
     private final String query;
     private final Map<String, String> params;
+    private Map<String, Object> parameters;
 
     public CypherQuery(String query, Map<String, String> params) {
         this.query = query;
@@ -22,6 +23,14 @@ public class CypherQuery {
 
     private String paramEntryToString(Map.Entry<String, String> entry) {
         return "\"" + entry.getKey() + "\": " + entry.getValue();
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public String getQuery() {
+        return query;
     }
 
     public static final class Builder {

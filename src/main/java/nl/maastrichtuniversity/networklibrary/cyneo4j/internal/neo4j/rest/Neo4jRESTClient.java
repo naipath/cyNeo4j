@@ -96,7 +96,7 @@ public class Neo4jRESTClient implements Neo4jClient {
         return instanceLocation;
     }
 
-    public void syncDown() {
+    private void syncDown() {
         TaskIterator it = new TaskIterator(new RetrieveDataTask(
             getInstanceLocation(),
             this,

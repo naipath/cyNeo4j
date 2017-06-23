@@ -11,5 +11,4 @@ public interface Neo4jClient {
     Neo4jGraph executeQuery(CypherQuery cypherQuery);
     boolean checkConnectionParameter(ConnectionParameter connectionParameter);
     boolean isConnected();
-    void syncDown();
 }

@@ -19,13 +19,15 @@ import org.osgi.framework.BundleContext;
 
 import java.util.Properties;
 
-public class CyActivator extends AbstractCyActivator {
+public class CyActivator extends AbstractCyActivator  {
 
     private CypherMenuAction cypherMenuAction;
     private CySwingApplication cySwingApplication;
 
     @Override
     public void start(BundleContext context) throws Exception {
+
+
         cySwingApplication = getService(context, CySwingApplication.class);
 
         ServiceLocator serviceLocator = new ServiceLocator();
@@ -42,6 +44,12 @@ public class CyActivator extends AbstractCyActivator {
         Neo4jRESTClient neo4JRESTClient = Neo4jRESTClient.create(serviceLocator);
         serviceLocator.register(Neo4jClient.class, neo4JRESTClient);
 
+        CommandFactory commandFactory = CommandFactory.create(serviceLocator);
+        serviceLocator.register(commandFactory);
+
+        CommandRunner commandRunner = CommandRunner.create(serviceLocator);
+        serviceLocator.register(commandRunner);
+
         cypherMenuAction = CypherMenuAction.create(serviceLocator);
 
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(serviceLocator);
@@ -57,4 +65,5 @@ public class CyActivator extends AbstractCyActivator {
     public void shutDown() {
         cySwingApplication.removeAction(cypherMenuAction);
     }
+
 }

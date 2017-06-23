@@ -12,14 +12,6 @@ public class Neo4jBoltClient implements Neo4jClient {
 
     private Driver driver;
 
-
-    public void execute(String query) {
-        try (Session session = driver.session()) {
-            StatementResult statementResult = session.run(query);
-            statementResult.forEachRemaining(record -> record.asMap());
-        }
-    }
-
     @Override
     public void connect(ConnectionParameter connectionParameter) {
         Config noSSL = Config.build().withEncryptionLevel(Config.EncryptionLevel.NONE).toConfig();
@@ -34,6 +26,11 @@ public class Neo4jBoltClient implements Neo4jClient {
 
     @Override
     public <T> T executeQuery(CypherQuery query, Function<Object, T> converter) {
+        try (Session session = driver.session()) {
+            StatementResult statementResult = session.run(query.getQuery(), query.getParameters());
+            statementResult.forEachRemaining(record -> record.asMap());
+        }
+
         return null;
     }
 
@@ -49,16 +46,12 @@ public class Neo4jBoltClient implements Neo4jClient {
 
     @Override
     public boolean checkConnectionParameter(ConnectionParameter connectionParameter) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isConnected() {
-        return false;
+        return driver != null && driver.session().isOpen();
     }
 
-    @Override
-    public void syncDown() {
-
-    }
 }
