@@ -6,8 +6,7 @@ public class CommandFactory {
 
     private final Services services;
 
-
-    public CommandFactory(Services services) {
+    private CommandFactory(Services services) {
         this.services = services;
     }
 
@@ -15,7 +14,7 @@ public class CommandFactory {
         return new RetrieveDataTask(services);
     }
 
-    public static CommandFactory create(Services services) {
+    static CommandFactory create(Services services) {
         return new CommandFactory(services);
     }
 }
