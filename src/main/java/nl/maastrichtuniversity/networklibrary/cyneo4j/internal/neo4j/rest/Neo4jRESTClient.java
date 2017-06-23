@@ -15,7 +15,7 @@ public class Neo4jRESTClient implements Neo4jClient {
     private static final String DATA_URL = "/db/data/";
     private static final String CYPHER_URL = DATA_URL + "cypher";
 
-    private String instanceLocation = null;
+    private String httpUrl = null;
     private Neo4jPingHandler neo4jPingHandler = new Neo4jPingHandler();
     private PassThroughResponseHandler passThroughResponseHandler = new PassThroughResponseHandler();
 
@@ -40,20 +40,20 @@ public class Neo4jRESTClient implements Neo4jClient {
     }
 
     private void connect(String instanceLocation) {
-        if (validateConnection(this.instanceLocation)) {
-            this.instanceLocation = null;
+        if (validateConnection(this.httpUrl)) {
+            this.httpUrl = null;
         }
         if (validateConnection(instanceLocation)) {
-            this.instanceLocation = instanceLocation;
+            this.httpUrl = instanceLocation;
         }
     }
 
     public boolean isConnected() {
-        return validateConnection(instanceLocation);
+        return validateConnection(httpUrl);
     }
 
     public String getCypherURL() {
-        return instanceLocation + CYPHER_URL;
+        return httpUrl + CYPHER_URL;
     }
 
 
