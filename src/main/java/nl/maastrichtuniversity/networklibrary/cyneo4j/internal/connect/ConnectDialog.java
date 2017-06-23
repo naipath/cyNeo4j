@@ -88,9 +88,9 @@ class ConnectDialog extends JDialog {
 
     private void center() {
         Point cyLocation = getParent().getLocation();
-        int cyHeight = getParent().getHeight();
-        int cyWidth = getParent().getWidth();
-        Point middle = new Point(cyLocation.x + (cyWidth / 4), cyLocation.y + (cyHeight / 4));
-        this.setLocation(middle);
+        int height = getParent().getHeight();
+        int width = getParent().getWidth();
+
+        this.setLocation(new Point(cyLocation.x + (width / 4), cyLocation.y + (height / 4)));
     }
 }

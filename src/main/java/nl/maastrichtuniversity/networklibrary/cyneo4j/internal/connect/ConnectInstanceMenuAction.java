@@ -25,10 +25,10 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
 
     private ConnectInstanceMenuAction(Neo4jClient neo4jClient, CySwingApplication cySwingApplication) {
         super(MENU_TITLE);
+        this.neo4jClient = neo4jClient;
         this.cySwingApplication = cySwingApplication;
         setPreferredMenu(MENU_LOC);
         setMenuGravity(0.0f);
-        this.neo4jClient = neo4jClient;
     }
 
     @Override
