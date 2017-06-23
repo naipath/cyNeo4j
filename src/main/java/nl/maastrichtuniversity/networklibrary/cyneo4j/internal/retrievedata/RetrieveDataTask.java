@@ -21,7 +21,10 @@ import java.util.Set;
 
 public class RetrieveDataTask extends AbstractTask {
 
-    private final Services services;
+    private static final String NODE_ID_QUERY = "MATCH (n) RETURN id(n)";
+    private static final String EDGE_ID_QUERY = "MATCH ()-[r]->() RETURN id(r)";
+
+    private Services services;
 
     public RetrieveDataTask(Services services) {
         this.services = services;
@@ -30,14 +33,8 @@ public class RetrieveDataTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         try {
-            CypherQuery nodeIdQuery = CypherQuery.builder()
-                    .query("MATCH (n) RETURN id(n)")
-                    .build();
-
-            CypherQuery edgeIdQuery =
-                    CypherQuery.builder()
-                            .query("MATCH ()-[r]->() RETURN id(r)")
-                            .build();
+            CypherQuery nodeIdQuery = CypherQuery.builder().query(NODE_ID_QUERY).build();
+            CypherQuery edgeIdQuery = CypherQuery.builder().query(EDGE_ID_QUERY).build();
 
             List<Long> nodeIds = executeQueryNodeId(nodeIdQuery).getData();
             List<Long> edgeIds = executeQueryNodeId(edgeIdQuery).getData();
