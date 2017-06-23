@@ -12,7 +12,7 @@ public class ConnectionParameter {
     }
 
     public String getHttpUrl() {
-        return "http://" + username + ":" +  new String(password) + "@" + host + ":7474";
+        return String.format("http://%s:%s@%s:7474", username, new String(password), host);
     }
 
     public String getBoltUrl() {

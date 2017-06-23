@@ -3,6 +3,8 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.stream.Collectors.joining;
+
 public class CypherQuery {
 
     private final String query;
@@ -14,7 +16,9 @@ public class CypherQuery {
     }
 
     public String toJsonString() {
-        String jsonParams = params.entrySet().stream().map(this::paramEntryToString).reduce( (a,b) -> a + "," + b).orElse("");
+        String jsonParams = params.entrySet().stream()
+            .map(this::paramEntryToString)
+            .collect(joining(","));
         return "{ \"query\" : \""+ query +"\",\"params\" : {" + jsonParams + "}}";
     }
 
