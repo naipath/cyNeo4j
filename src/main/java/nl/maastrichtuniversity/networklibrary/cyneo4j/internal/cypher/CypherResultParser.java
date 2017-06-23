@@ -8,15 +8,10 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toSet;
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResType.*;
-
 
 public class CypherResultParser {
 
     private static final String COLUMN_ID = "neoid";
-    private static final String NODE_KEY = "outgoing_typed_relationships";
-    private static final String EDGE_KEY = "type";
-
     private CyNetwork currNet;
 
     public CypherResultParser(CyNetwork network) {
@@ -28,15 +23,14 @@ public class CypherResultParser {
     }
 
     private void readResultTable(List<ResultObject> rows) {
-        for (ResultObject item : rows) {
-            ResType type = duckTypeObject(item);
-            if (Node.equals(type)) {
+        rows.forEach(item -> {
+            if (item.isNode()) {
                 parseNode(item);
             }
-            if (Edge.equals(type)) {
+            if (item.isEdge()) {
                 parseEdge(item);
             }
-        }
+        });
     }
 
     private void parseNode(ResultObject nodeObj) {
@@ -55,7 +49,7 @@ public class CypherResultParser {
             currNet.getRow(cyNode).set(COLUMN_ID, self);
         }
 
-        Map<String, Object> nodeProps =  nodeObj.getNodeProperties();//DATA
+        Map<String, Object> nodeProps = nodeObj.getNodeProperties();//DATA
 
         doStuff(defNodeTab, cyNode, nodeProps);
     }
@@ -121,27 +115,6 @@ public class CypherResultParser {
         }
     }
 
-    private ResType duckTypeObject(ResultObject obj) {
-        if (isNodeType(obj)) {
-            return Node;
-        } else if (isEdgeType(obj)) {
-            return Edge;
-        }
-        return Ignore;
-    }
-
-    private boolean isNodeType(ResultObject obj) {
-        return ResType.Node.equals(obj.getResType());
-    }
-
-    private boolean isEdgeType(ResultObject obj) {
-        return ResType.Edge.equals(obj.getResType());
-    }
-
-    private Long extractID(String objUrl) {
-        return Long.valueOf(objUrl.substring(objUrl.lastIndexOf('/') + 1));
-    }
-
     private CyNode getNodeByNeoId(CyNetwork network, Long neoId) {
         Set<CyNode> res = getNodesWithValue(network, network.getDefaultNodeTable(), neoId);
         if (res.size() > 1) {
@@ -176,11 +149,11 @@ public class CypherResultParser {
 
     private <T> Set<T> getValueFromRows(Collection<CyRow> matchingRows, String primaryKeyColname, Function<Long, T> mapper) {
         return matchingRows.stream()
-            .map(cyRow -> cyRow.get(primaryKeyColname, Long.class))
-            .filter(Objects::nonNull)
-            .map(mapper)
-            .filter(Objects::nonNull)
-            .collect(toSet());
+                .map(cyRow -> cyRow.get(primaryKeyColname, Long.class))
+                .filter(Objects::nonNull)
+                .map(mapper)
+                .filter(Objects::nonNull)
+                .collect(toSet());
     }
 
     private Object fixSpecialTypes(Object val, Class<?> req) {

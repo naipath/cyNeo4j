@@ -11,6 +11,7 @@ public class CypherMenuAction extends AbstractCyAction {
 
     private final static String MENU_TITLE = "Cypher Query";
     private final static String MENU_LOC = "Apps.cyNeo4j";
+    private final static String INITIAL_QUERY = "match (n)-[r]->(m) return n,r,m";
 
     private final Services services;
 
@@ -30,7 +31,7 @@ public class CypherMenuAction extends AbstractCyAction {
     public void actionPerformed(ActionEvent e) {
         CypherExtExec exec = new CypherExtExec(services);
 
-        String query = JOptionPane.showInputDialog( services.getCySwingApplication().getJFrame(), "Cypher Query", "match (n)-[r]->(m) return n,r,m")
+        String query = JOptionPane.showInputDialog( services.getCySwingApplication().getJFrame(), MENU_TITLE, INITIAL_QUERY)
             .replaceAll("\"", "\\\\\"");
 
         if (query.isEmpty()) {

@@ -2,6 +2,9 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
 import java.util.Map;
 
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResType.Edge;
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResType.Node;
+
 public class ResultObject {
 
     private ResType resType;
@@ -16,8 +19,12 @@ public class ResultObject {
 
     private Long id;
 
-    ResType getResType() {
-        return resType;
+    boolean isEdge() {
+        return resType == Edge;
+    }
+
+    boolean isNode() {
+        return resType == Node;
     }
 
     Map<String, Object> getNodeProperties() {
