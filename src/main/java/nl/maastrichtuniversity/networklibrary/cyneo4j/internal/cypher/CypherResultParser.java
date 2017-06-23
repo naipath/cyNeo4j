@@ -1,5 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
 import org.cytoscape.model.*;
 
 import java.util.*;
@@ -7,8 +8,7 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toSet;
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResType.Edge;
-import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResType.Node;
+import static nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResType.*;
 
 
 public class CypherResultParser {
@@ -17,25 +17,14 @@ public class CypherResultParser {
     private static final String NODE_KEY = "outgoing_typed_relationships";
     private static final String EDGE_KEY = "type";
 
-    private List<String> cols;
-    private Map<String, ResType> colType = new HashMap<>();
     private CyNetwork currNet;
 
     public CypherResultParser(CyNetwork network) {
         this.currNet = network;
     }
 
-    public void parseRetVal(Object callRetValue) {
-        Map<String, Object> retVal = (Map<String, Object>) callRetValue;
-
-        readColumns((List<String>) retVal.get("columns"));
-
-        readResultTable((List<List<Object>>) retVal.get("data"));
-    }
-
-    private void readColumns(List<String> columns) {
-        cols = columns;
-        cols.forEach(s -> colType.put(s, ResType.Unknown));
+    public void parseRetVal(Neo4jGraph graph) {
+        readResultTable(graph.getData());
     }
 
     private void readResultTable(List<List<Object>> rows) {
@@ -43,8 +32,7 @@ public class CypherResultParser {
             for (int i = 0; i < row.size(); ++i) {
 
                 Object item = row.get(i);
-                String col = cols.get(i);
-                ResType type = duckTypeObject(item, col);
+                ResType type = duckTypeObject(item);
 
                 if (Node.equals(type)) {
                     parseNode(item);
@@ -146,22 +134,13 @@ public class CypherResultParser {
         }
     }
 
-    private ResType duckTypeObject(Object obj, String column) {
-
-        ResType result = colType.get(column);
-
-        if (result == ResType.Unknown) {
-            if (isNodeType(obj)) {
-                result = Node;
-            } else if (isEdgeType(obj)) {
-                result = Edge;
-            } else { // this could / should be extended
-                result = ResType.Ignore;
-            }
-            colType.put(column, result);
+    private ResType duckTypeObject(Object obj) {
+        if (isNodeType(obj)) {
+            return Node;
+        } else if (isEdgeType(obj)) {
+            return Edge;
         }
-
-        return result;
+        return Ignore;
     }
 
     private boolean isNodeType(Object obj) {

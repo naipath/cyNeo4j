@@ -7,8 +7,12 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
 import org.neo4j.driver.v1.*;
 import org.neo4j.driver.v1.exceptions.AuthenticationException;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
+import org.neo4j.driver.v1.types.MapAccessor;
+import org.neo4j.driver.v1.util.Pair;
 
 import java.util.function.Function;
+
+import static java.util.stream.Collectors.toList;
 
 public class Neo4jBoltClient implements Neo4jClient {
 
@@ -49,9 +53,15 @@ public class Neo4jBoltClient implements Neo4jClient {
     public Neo4jGraph executeQuery(CypherQuery cypherQuery) {
         try (Session session = driver.session()) {
             StatementResult statementResult = session.run(cypherQuery.getQuery());
-            statementResult.forEachRemaining(Record::asMap);
+            new Neo4jGraph(
+                statementResult.list(record -> record.fields()
+                    .stream()
+                    .map(Pair::value)
+                    .map(MapAccessor::asMap)
+                    .collect(toList()))
+            );
         }
-        return null;
+        throw new IllegalStateException("There are no results");
     }
 
     @Override
