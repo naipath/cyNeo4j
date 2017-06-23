@@ -1,9 +1,9 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.extensionlogic.CypherMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.generallogic.ConnectInstanceMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.Neo4jRESTClient;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.serviceprovider.RetrieveDataMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect.ConnectInstanceMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CypherMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata.RetrieveDataMenuAction;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkFactory;
@@ -18,42 +18,44 @@ import org.osgi.framework.BundleContext;
 
 import java.util.Properties;
 
-public class CyActivator extends AbstractCyActivator {
+public class CyActivator extends AbstractCyActivator  {
 
+    private Services services = new Services();
     private CypherMenuAction cypherMenuAction;
-    private CySwingApplication cySwingApplication;
 
     @Override
     public void start(BundleContext context) throws Exception {
-        cySwingApplication = getService(context, CySwingApplication.class);
 
-        ServiceLocator serviceLocator = new ServiceLocator();
-        serviceLocator.register(CySwingApplication.class, cySwingApplication);
-        serviceLocator.register(CyApplicationManager.class, getService(context, CyApplicationManager.class));
-        serviceLocator.register(CyNetworkFactory.class, getService(context, CyNetworkFactory.class));
-        serviceLocator.register(CyNetworkManager.class, getService(context, CyNetworkManager.class));
-        serviceLocator.register(CyNetworkViewManager.class, getService(context, CyNetworkViewManager.class));
-        serviceLocator.register(DialogTaskManager.class, getService(context, DialogTaskManager.class));
-        serviceLocator.register(CyNetworkViewFactory.class, getService(context, CyNetworkViewFactory.class));
-        serviceLocator.register(CyLayoutAlgorithmManager.class, getService(context, CyLayoutAlgorithmManager.class));
-        serviceLocator.register(VisualMappingManager.class, getService(context, VisualMappingManager.class));
+        services.setCySwingApplication(getService(context, CySwingApplication.class));
+        services.setCyApplicationManager(getService(context, CyApplicationManager.class));
+        services.setCyNetworkFactory(getService(context, CyNetworkFactory.class));
+        services.setCyNetworkManager(getService(context, CyNetworkManager.class));
+        services.setCyNetworkViewManager(getService(context, CyNetworkViewManager.class));
+        services.setDialogTaskManager(getService(context, DialogTaskManager.class));
+        services.setCyNetworkViewFactory(getService(context, CyNetworkViewFactory.class));
+        services.setCyLayoutAlgorithmManager(getService(context, CyLayoutAlgorithmManager.class));
+        services.setVisualMappingManager(getService(context, VisualMappingManager.class));
+        services.setNeo4jClient(new Neo4jClient());
 
-        Neo4jRESTClient neo4JRESTClient = Neo4jRESTClient.create(serviceLocator);
-        serviceLocator.register(neo4JRESTClient);
+        CommandFactory commandFactory = CommandFactory.create(services);
+        services.setCommandFactory(commandFactory);
 
-        cypherMenuAction = CypherMenuAction.create(serviceLocator);
+        CommandRunner commandRunner = CommandRunner.create(services);
+        services.setCommandRunner(commandRunner);
 
-        ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(serviceLocator);
-        RetrieveDataMenuAction syncDownAction = RetrieveDataMenuAction.create(serviceLocator);
+        cypherMenuAction = CypherMenuAction.create(services);
+
+        ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
+        RetrieveDataMenuAction syncDownAction = RetrieveDataMenuAction.create(services);
 
         registerAllServices(context, connectAction, new Properties());
         registerAllServices(context, syncDownAction, new Properties());
 
-        cySwingApplication.addAction(cypherMenuAction);
+        services.getCySwingApplication().addAction(cypherMenuAction);
     }
 
     @Override
     public void shutDown() {
-        cySwingApplication.removeAction(cypherMenuAction);
+        services.getCySwingApplication().removeAction(cypherMenuAction);
     }
 }
