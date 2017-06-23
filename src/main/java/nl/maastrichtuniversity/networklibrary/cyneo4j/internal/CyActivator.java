@@ -2,7 +2,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect.ConnectInstanceMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CypherMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.bolt.Neo4jBoltClient;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata.RetrieveDataMenuAction;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -20,7 +20,7 @@ import java.util.Properties;
 
 public class CyActivator extends AbstractCyActivator  {
 
-    Services services = new Services();
+    private Services services = new Services();
     private CypherMenuAction cypherMenuAction;
 
     @Override
@@ -35,7 +35,7 @@ public class CyActivator extends AbstractCyActivator  {
         services.setCyNetworkViewFactory(getService(context, CyNetworkViewFactory.class));
         services.setCyLayoutAlgorithmManager(getService(context, CyLayoutAlgorithmManager.class));
         services.setVisualMappingManager(getService(context, VisualMappingManager.class));
-        services.setNeo4jClient(new Neo4jBoltClient());
+        services.setNeo4jClient(new Neo4jClient());
 
         CommandFactory commandFactory = CommandFactory.create(services);
         services.setCommandFactory(commandFactory);

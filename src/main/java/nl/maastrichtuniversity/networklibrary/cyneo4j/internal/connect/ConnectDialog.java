@@ -5,7 +5,11 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.ConnectionP
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.function.Predicate;
+
+import static java.awt.Color.BLACK;
 
 class ConnectDialog extends JDialog {
 
@@ -51,10 +55,44 @@ class ConnectDialog extends JDialog {
         cancelButton.setActionCommand(CANCEL_CMD);
 
         JLabel urlLabel = new JLabel("URL");
-        url = new JTextField();
+        url = new JTextField("localhost");
+        url.setForeground(Color.GRAY);
+        url.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (url.getText().equals("localhost")) {
+                    url.setText("");
+                    url.setForeground(BLACK);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (url.getText().isEmpty()) {
+                    url.setForeground(Color.GRAY);
+                    url.setText("localhost");
+                }
+            }
+        });
 
         JLabel usernameLabel = new JLabel("Username");
-        username = new JTextField();
+        username = new JTextField("neo4j");
+        username.setForeground(Color.GRAY);
+        username.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (username.getText().equals("neo4j")) {
+                    username.setText("");
+                    username.setForeground(BLACK);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (username.getText().isEmpty()) {
+                    username.setForeground(Color.GRAY);
+                    username.setText("neo4j");
+                }
+            }
+        });
 
         JLabel passwordLabel = new JLabel("Password");
         password = new JPasswordField();
@@ -82,7 +120,7 @@ class ConnectDialog extends JDialog {
             ok = true;
             dispose();
         } else {
-            JOptionPane.showInputDialog("Invalid connection parameters");
+            JOptionPane.showMessageDialog(this, " Invalid connection parameters");
         }
     }
 
