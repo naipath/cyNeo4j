@@ -1,21 +1,11 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.ConnectionParameter;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata.RetrieveDataTask;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
-import org.cytoscape.model.CyNetworkFactory;
-import org.cytoscape.model.CyNetworkManager;
-import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
-import org.cytoscape.view.model.CyNetworkViewFactory;
-import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.work.TaskIterator;
-import org.cytoscape.work.swing.DialogTaskManager;
 
 import java.io.IOException;
 import java.util.function.Function;
@@ -26,26 +16,11 @@ public class Neo4jRESTClient implements Neo4jClient {
     private static final String CYPHER_URL = DATA_URL + "cypher";
 
     private String instanceLocation = null;
-    private CyNetworkManager cyNetworkManager;
-    private CyNetworkFactory cyNetworkFactory;
-    private CyNetworkViewManager cyNetViewMgr;
-    private CyNetworkViewFactory cyNetworkViewFactory;
-    private CyLayoutAlgorithmManager cyLayoutAlgorithmManager;
-    private VisualMappingManager visualMappingManager;
-    private DialogTaskManager dialogTaskManager;
     private Neo4jPingHandler neo4jPingHandler = new Neo4jPingHandler();
     private PassThroughResponseHandler passThroughResponseHandler = new PassThroughResponseHandler();
 
-    public static Neo4jRESTClient create(ServiceLocator serviceLocator) {
-        Neo4jRESTClient neo4JRESTClient = new Neo4jRESTClient();
-        neo4JRESTClient.cyNetworkManager = serviceLocator.getService(CyNetworkManager.class);
-        neo4JRESTClient.cyNetworkFactory = serviceLocator.getService(CyNetworkFactory.class);
-        neo4JRESTClient.cyNetViewMgr = serviceLocator.getService(CyNetworkViewManager.class);
-        neo4JRESTClient.cyNetworkViewFactory = serviceLocator.getService(CyNetworkViewFactory.class);
-        neo4JRESTClient.cyLayoutAlgorithmManager = serviceLocator.getService(CyLayoutAlgorithmManager.class);
-        neo4JRESTClient.visualMappingManager = serviceLocator.getService(VisualMappingManager.class);
-        neo4JRESTClient.dialogTaskManager = serviceLocator.getService(DialogTaskManager.class);
-        return neo4JRESTClient;
+    public static Neo4jRESTClient create() {
+        return new Neo4jRESTClient();
     }
 
     private Neo4jRESTClient() {
@@ -94,20 +69,6 @@ public class Neo4jRESTClient implements Neo4jClient {
 
     public String getInstanceLocation() {
         return instanceLocation;
-    }
-
-    private void syncDown() {
-        TaskIterator it = new TaskIterator(new RetrieveDataTask(
-            getInstanceLocation(),
-            this,
-            cyNetworkFactory,
-            cyNetworkManager,
-            cyNetViewMgr,
-            cyNetworkViewFactory,
-            cyLayoutAlgorithmManager,
-            visualMappingManager
-        ));
-        dialogTaskManager.execute(it);
     }
 
     public String getCypherURL() {

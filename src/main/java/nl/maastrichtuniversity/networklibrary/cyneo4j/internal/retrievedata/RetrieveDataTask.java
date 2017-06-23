@@ -1,19 +1,13 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CypherResultParser;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNetworkFactory;
-import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
-import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
-import org.cytoscape.view.model.CyNetworkViewFactory;
-import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
-import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
@@ -26,32 +20,10 @@ import static java.util.stream.Collectors.toList;
 
 public class RetrieveDataTask extends AbstractTask {
 
-    private final Neo4jClient neo4jClient;
-    private String instanceLocation;
-    private CyNetworkFactory cyNetworkFactory;
-    private CyNetworkManager cyNetworkMgr;
-    private CyNetworkViewManager cyNetworkViewMgr;
-    private CyNetworkViewFactory cyNetworkViewFactory;
-    private CyLayoutAlgorithmManager cyLayoutAlgorithmMgr;
-    private VisualMappingManager visualMappingMgr;
+    private final ServiceLocator serviceLocator;
 
-    public RetrieveDataTask(
-            String instanceLocation,
-            Neo4jClient neo4jClient,
-            CyNetworkFactory cyNetworkFactory,
-            CyNetworkManager cyNetworkMgr,
-            CyNetworkViewManager cyNetworkViewMgr,
-            CyNetworkViewFactory cyNetworkViewFactory,
-            CyLayoutAlgorithmManager cyLayoutAlgorithmMgr,
-            VisualMappingManager visualMappingMgr) {
-        this.instanceLocation = instanceLocation;
-        this.neo4jClient = neo4jClient;
-        this.cyNetworkFactory = cyNetworkFactory;
-        this.cyNetworkMgr = cyNetworkMgr;
-        this.cyNetworkViewMgr = cyNetworkViewMgr;
-        this.cyNetworkViewFactory = cyNetworkViewFactory;
-        this.cyLayoutAlgorithmMgr = cyLayoutAlgorithmMgr;
-        this.visualMappingMgr = visualMappingMgr;
+    public RetrieveDataTask(ServiceLocator serviceLocator) {
+        this.serviceLocator = serviceLocator;
     }
 
     @Override
@@ -84,8 +56,8 @@ public class RetrieveDataTask extends AbstractTask {
                 taskMonitor.setTitle("Importing the Neo4j Graph");
 
                 // setup network
-                CyNetwork network = cyNetworkFactory.createNetwork();
-                network.getRow(network).set(CyNetwork.NAME, instanceLocation);
+                CyNetwork network = serviceLocator.getCyNetworkFactory().createNetwork();
+                network.getRow(network).set(CyNetwork.NAME, "neo4j network");
 
                 CypherResultParser cypherParser = new CypherResultParser(network);
 
@@ -113,7 +85,7 @@ public class RetrieveDataTask extends AbstractTask {
                     taskMonitor.setProgress(progress);
                 }
 
-                cyNetworkMgr.addNetwork(network);
+                serviceLocator.getCyNetworkManager().addNetwork(network);
 
                 cypherParser = new CypherResultParser(network);
                 taskMonitor.setStatusMessage("Downloading edges");
@@ -145,24 +117,24 @@ public class RetrieveDataTask extends AbstractTask {
                 taskMonitor.setStatusMessage("Creating View");
                 taskMonitor.setProgress(0.8);
 
-                Collection<CyNetworkView> views = cyNetworkViewMgr.getNetworkViews(network);
+                Collection<CyNetworkView> views = serviceLocator.getCyNetworkViewManager().getNetworkViews(network);
                 CyNetworkView view;
                 if (!views.isEmpty()) {
                     view = views.iterator().next();
                 } else {
-                    view = cyNetworkViewFactory.createNetworkView(network);
-                    cyNetworkViewMgr.addNetworkView(view);
+                    view = serviceLocator.getCyNetworkViewFactory().createNetworkView(network);
+                    serviceLocator.getCyNetworkViewManager().addNetworkView(view);
                 }
 
                 taskMonitor.setStatusMessage("Applying Layout");
                 taskMonitor.setProgress(0.9);
 
                 Set<View<CyNode>> nodes = new HashSet<>();
-                CyLayoutAlgorithm layout = cyLayoutAlgorithmMgr.getLayout("force-directed");
+                CyLayoutAlgorithm layout = serviceLocator.getCyLayoutAlgorithmManager().getLayout("force-directed");
                 insertTasksAfterCurrentTask(layout.createTaskIterator(view, layout.createLayoutContext(), nodes, null));
 
-                VisualStyle vs = visualMappingMgr.getDefaultVisualStyle();
-                visualMappingMgr.setVisualStyle(vs, view);
+                VisualStyle vs = serviceLocator.getVisualMappingManager().getDefaultVisualStyle();
+                serviceLocator.getVisualMappingManager().setVisualStyle(vs, view);
                 vs.apply(view);
                 view.updateView();
             }
@@ -190,7 +162,7 @@ public class RetrieveDataTask extends AbstractTask {
     }
 
     private <T> T executeQuery(CypherQuery query, Function<Object, T> converter) throws IOException {
-        return neo4jClient.executeQuery(query, converter);
+        return serviceLocator.getNeo4jClient().executeQuery(query, converter);
     }
 
     private String toJSONArray(List<Long> ids) {
