@@ -2,6 +2,8 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CypherResultParser;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResType;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResultObject;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
 import org.cytoscape.model.CyNetwork;
@@ -13,10 +15,8 @@ import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,18 +32,18 @@ public class RetrieveDataTask extends AbstractTask {
     public void run(TaskMonitor taskMonitor) throws Exception {
         try {
             CypherQuery nodeIdQuery = CypherQuery.builder()
-                .query("MATCH (n) RETURN id(n)")
-                .build(); //"{ \"query\" : \"MATCH (n) RETURN id(n)\",\"params\" : {}}";
+                    .query("MATCH (n) RETURN id(n)")
+                    .build(); //"{ \"query\" : \"MATCH (n) RETURN id(n)\",\"params\" : {}}";
 
             CypherQuery edgeIdQuery =
-                CypherQuery.builder()
-                    .query("MATCH ()-[r]->() RETURN id(r)")
-                    .build();
+                    CypherQuery.builder()
+                            .query("MATCH ()-[r]->() RETURN id(r)")
+                            .build();
 
 //                    "{ \"query\" : \"MATCH ()-[r]->() RETURN id(r)\",\"params\" : {}}";
 
-            List<Long> nodeIds = toLongList(executeQuery(nodeIdQuery));
-            List<Long> edgeIds = toLongList(executeQuery(edgeIdQuery));
+            List<Long> nodeIds = executeQueryNodeId(nodeIdQuery).getData();
+            List<Long> edgeIds = executeQueryNodeId(edgeIdQuery).getData();
 
             int numQueries = nodeIds.size() + edgeIds.size();
 
@@ -69,11 +69,10 @@ public class RetrieveDataTask extends AbstractTask {
 
                     if (end > nodeIds.size())
                         end = nodeIds.size();
-                    String array = toJSONArray(nodeIds.subList(i, end));
                     CypherQuery query = CypherQuery.builder()
-                        .query("MATCH (n) where id(n) in {toget} RETURN n")
-                        .params("toget", array)
-                        .build();
+                            .query("MATCH (n) where id(n) in {toget} RETURN n")
+                            .params("toget", nodeIds.subList(i, end))
+                            .build();
 
                     cypherParser.parseRetVal(executeQuery(query));
 
@@ -91,13 +90,12 @@ public class RetrieveDataTask extends AbstractTask {
                     if (end > edgeIds.size())
                         end = edgeIds.size();
 
-                    String array = toJSONArray(edgeIds.subList(i, end));
 //                    String query = "{\"query\" : \"MATCH ()-[r]->() where id(r) in {toget} RETURN r\", \"params\" : { \"toget\" : " + array + "} }";
 
                     CypherQuery query = CypherQuery.builder()
-                        .query("MATCH ()-[r]->() where id(r) in {toget} RETURN r")
-                        .params("toget", array)
-                        .build();
+                            .query("MATCH ()-[r]->() where id(r) in {toget} RETURN r")
+                            .params("toget", edgeIds.subList(i, end))
+                            .build();
 
                     cypherParser.parseRetVal(executeQuery(query));
 
@@ -134,19 +132,13 @@ public class RetrieveDataTask extends AbstractTask {
         }
     }
 
-    private List<Long> toLongList(Neo4jGraph result) {
-        return result.getData().stream()
-            .map(ids -> (Integer) ids.get(0))
-            .map(Integer::longValue)
-            .collect(toList());
-
+    private Neo4jGraph<Long> executeQueryNodeId(CypherQuery query) {
+        return services.getNeo4jClient().executeQueryIdList(query);
     }
 
-    private Neo4jGraph executeQuery(CypherQuery query) {
-        return services.getNeo4jClient().executeQuery(query);
+
+    private  Neo4jGraph<ResultObject> executeQuery(CypherQuery query) {
+        return services.getNeo4jClient().executeQueryResultObject(query);
     }
 
-    private String toJSONArray(List<Long> ids) {
-        return ids.toString();
-    }
 }

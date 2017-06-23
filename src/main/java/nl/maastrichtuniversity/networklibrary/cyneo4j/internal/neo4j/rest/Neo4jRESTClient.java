@@ -1,5 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResultObject;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.ConnectionParameter;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
@@ -10,6 +11,7 @@ import org.apache.http.entity.ContentType;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class Neo4jRESTClient implements Neo4jClient {
 
@@ -30,13 +32,23 @@ public class Neo4jRESTClient implements Neo4jClient {
     }
 
     @Override
-    public Neo4jGraph executeQuery(CypherQuery query) {
+    public <T> Neo4jGraph<T> executeQuery(CypherQuery query, Function<Map<String,Object>, T> fn) {
         try {
             return (Neo4jGraph)Request.Post(getCypherURL()).bodyString(query.toJsonString(), ContentType.APPLICATION_JSON)
                 .execute().handleResponse(passThroughResponseHandler);
         } catch (IOException e) {
             throw new IllegalStateException();
         }
+    }
+
+    @Override
+    public Neo4jGraph<Long> executeQueryIdList(CypherQuery cypherQuery) {
+        return null;
+    }
+
+    @Override
+    public Neo4jGraph<ResultObject> executeQueryResultObject(CypherQuery cypherQuery) {
+        return null;
     }
 
     private void connect(String instanceLocation) {

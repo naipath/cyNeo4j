@@ -12,7 +12,7 @@ class CypherExtExec {
         this.services = services;
     }
 
-    void processCallResponse(Neo4jGraph graph) {
+    void processCallResponse(Neo4jGraph<ResultObject> graph) {
         CyNetwork currNet = services.getCyApplicationManager().getCurrentNetwork();
 
         if (currNet == null) {

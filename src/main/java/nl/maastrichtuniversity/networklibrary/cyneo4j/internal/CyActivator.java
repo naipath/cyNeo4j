@@ -2,6 +2,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect.ConnectInstanceMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CypherMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.bolt.Neo4jBoltClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.Neo4jRESTClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata.RetrieveDataMenuAction;
 import org.cytoscape.application.CyApplicationManager;
@@ -20,10 +21,11 @@ import java.util.Properties;
 
 public class CyActivator extends AbstractCyActivator  {
 
+    Services services = new Services();
+    private CypherMenuAction cypherMenuAction;
+
     @Override
     public void start(BundleContext context) throws Exception {
-
-        Services services = new Services();
 
         services.setCySwingApplication(getService(context, CySwingApplication.class));
         services.setCyApplicationManager(getService(context, CyApplicationManager.class));
@@ -34,7 +36,7 @@ public class CyActivator extends AbstractCyActivator  {
         services.setCyNetworkViewFactory(getService(context, CyNetworkViewFactory.class));
         services.setCyLayoutAlgorithmManager(getService(context, CyLayoutAlgorithmManager.class));
         services.setVisualMappingManager(getService(context, VisualMappingManager.class));
-        services.setNeo4jClient(new Neo4jRESTClient());
+        services.setNeo4jClient(new Neo4jBoltClient());
 
         CommandFactory commandFactory = CommandFactory.create(services);
         services.setCommandFactory(commandFactory);
@@ -42,7 +44,7 @@ public class CyActivator extends AbstractCyActivator  {
         CommandRunner commandRunner = CommandRunner.create(services);
         services.setCommandRunner(commandRunner);
 
-        CypherMenuAction cypherMenuAction = CypherMenuAction.create(services);
+        cypherMenuAction = CypherMenuAction.create(services);
 
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
         RetrieveDataMenuAction syncDownAction = RetrieveDataMenuAction.create(services);
@@ -55,7 +57,6 @@ public class CyActivator extends AbstractCyActivator  {
 
     @Override
     public void shutDown() {
-//        cySwingApplication.removeAction(cypherMenuAction);
+        services.getCySwingApplication().removeAction(cypherMenuAction);
     }
-
 }

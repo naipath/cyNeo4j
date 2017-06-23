@@ -23,36 +23,30 @@ public class CypherResultParser {
         this.currNet = network;
     }
 
-    public void parseRetVal(Neo4jGraph graph) {
+    public void parseRetVal(Neo4jGraph<ResultObject> graph) {
         readResultTable(graph.getData());
     }
 
-    private void readResultTable(List<List<Object>> rows) {
-        for (List<Object> row : rows) {
-            for (Object item : row) {
-
-                ResType type = duckTypeObject(item);
-
-                if (Node.equals(type)) {
-                    parseNode(item);
-                }
-                if (Edge.equals(type)) {
-                    parseEdge(item);
-                }
+    private void readResultTable(List<ResultObject> rows) {
+        for (ResultObject item : rows) {
+            ResType type = duckTypeObject(item);
+            if (Node.equals(type)) {
+                parseNode(item);
+            }
+            if (Edge.equals(type)) {
+                parseEdge(item);
             }
         }
     }
 
-    private void parseNode(Object nodeObj) {
+    private void parseNode(ResultObject nodeObj) {
 
         CyTable defNodeTab = currNet.getDefaultNodeTable();
         if (defNodeTab.getColumn(COLUMN_ID) == null) {
             defNodeTab.createColumn(COLUMN_ID, Long.class, false);
         }
 
-        Map<String, Object> node = (Map<String, Object>) nodeObj;
-
-        Long self = extractID((String) node.get("self"));
+        Long self = nodeObj.getId(); //getId((String) nodeObj.get("self"));
 
         CyNode cyNode = getNodeByNeoId(currNet, self);
 
@@ -61,12 +55,12 @@ public class CypherResultParser {
             currNet.getRow(cyNode).set(COLUMN_ID, self);
         }
 
-        Map<String, Object> nodeProps = (Map<String, Object>) node.get("data");
+        Map<String, Object> nodeProps =  nodeObj.getNodeProperties();//DATA
 
         doStuff(defNodeTab, cyNode, nodeProps);
     }
 
-    private void parseEdge(Object edgeObj) {
+    private void parseEdge(ResultObject edgeObj) {
 
         CyTable defEdgeTab = currNet.getDefaultEdgeTable();
         if (defEdgeTab.getColumn(COLUMN_ID) == null) {
@@ -78,22 +72,16 @@ public class CypherResultParser {
             defNodeTab.createColumn(COLUMN_ID, Long.class, false);
         }
 
-        Map<Object, Object> edge = (Map<Object, Object>) edgeObj;
 
-        String selfURL = (String) edge.get("self");
-        Long self = extractID(selfURL);
+        Long self = edgeObj.getId();
 
         CyEdge cyEdge = getEdgeByNeoId(currNet, self);
 
         if (cyEdge == null) {
 
-            String startUrl = (String) edge.get("start");
-            Long start = extractID(startUrl);
-
-            String endUrl = (String) edge.get("end");
-            Long end = extractID(endUrl);
-
-            String type = (String) edge.get("type");
+            Long start = edgeObj.getStart();
+            Long end = edgeObj.getEnd();
+            String type = edgeObj.getType();
 
             CyNode startNode = getNodeByNeoId(currNet, start);
             CyNode endNode = getNodeByNeoId(currNet, end);
@@ -113,7 +101,7 @@ public class CypherResultParser {
             currNet.getRow(cyEdge).set(COLUMN_ID, self);
             currNet.getRow(cyEdge).set(CyEdge.INTERACTION, type);
 
-            Map<String, Object> nodeProps = (Map<String, Object>) edge.get("data");
+            Map<String, Object> nodeProps = edgeObj.getNodeProperties();
 
             doStuff(defEdgeTab, cyEdge, nodeProps);
         }
@@ -133,7 +121,7 @@ public class CypherResultParser {
         }
     }
 
-    private ResType duckTypeObject(Object obj) {
+    private ResType duckTypeObject(ResultObject obj) {
         if (isNodeType(obj)) {
             return Node;
         } else if (isEdgeType(obj)) {
@@ -142,24 +130,12 @@ public class CypherResultParser {
         return Ignore;
     }
 
-    private boolean isNodeType(Object obj) {
-        try {
-            Map<String, Object> node = (Map<String, Object>) obj;
-            return node.containsKey(NODE_KEY);
-
-        } catch (ClassCastException e) {
-            return false;
-        }
+    private boolean isNodeType(ResultObject obj) {
+        return ResType.Node.equals(obj.getResType());
     }
 
-    private boolean isEdgeType(Object obj) {
-        try {
-            Map<String, Object> node = (Map<String, Object>) obj;
-            return node.containsKey(EDGE_KEY);
-
-        } catch (ClassCastException e) {
-            return false;
-        }
+    private boolean isEdgeType(ResultObject obj) {
+        return ResType.Edge.equals(obj.getResType());
     }
 
     private Long extractID(String objUrl) {

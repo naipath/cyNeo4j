@@ -1,5 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest.Neo4jRESTClient;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -22,7 +23,7 @@ public class Services {
     private CyNetworkViewFactory cyNetworkViewFactory;
     private CyLayoutAlgorithmManager cyLayoutAlgorithmManager;
     private VisualMappingManager visualMappingManager;
-    private Neo4jRESTClient neo4jClient;
+    private Neo4jClient neo4jClient;
     private CommandFactory commandFactory;
     private CommandRunner commandRunner;
 
@@ -98,11 +99,11 @@ public class Services {
         this.visualMappingManager = visualMappingManager;
     }
 
-    public void setNeo4jClient(Neo4jRESTClient neo4jClient) {
+    public void setNeo4jClient(Neo4jClient neo4jClient) {
         this.neo4jClient = neo4jClient;
     }
 
-    public Neo4jRESTClient getNeo4jClient() {
+    public Neo4jClient getNeo4jClient() {
         return neo4jClient;
     }
 
