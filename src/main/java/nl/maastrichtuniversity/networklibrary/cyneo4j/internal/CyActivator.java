@@ -25,7 +25,6 @@ public class CyActivator extends AbstractCyActivator  {
 
     @Override
     public void start(BundleContext context) throws Exception {
-
         services.setCySwingApplication(getService(context, CySwingApplication.class));
         services.setCyApplicationManager(getService(context, CyApplicationManager.class));
         services.setCyNetworkFactory(getService(context, CyNetworkFactory.class));
@@ -36,20 +35,16 @@ public class CyActivator extends AbstractCyActivator  {
         services.setCyLayoutAlgorithmManager(getService(context, CyLayoutAlgorithmManager.class));
         services.setVisualMappingManager(getService(context, VisualMappingManager.class));
         services.setNeo4jClient(new Neo4jClient());
-
-        CommandFactory commandFactory = CommandFactory.create(services);
-        services.setCommandFactory(commandFactory);
-
-        CommandRunner commandRunner = CommandRunner.create(services);
-        services.setCommandRunner(commandRunner);
+        services.setCommandFactory(CommandFactory.create(services));
+        services.setCommandRunner(CommandRunner.create(services));
 
         cypherMenuAction = CypherMenuAction.create(services);
 
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
-        RetrieveDataMenuAction syncDownAction = RetrieveDataMenuAction.create(services);
+        RetrieveDataMenuAction retrieveDataMenuAction = RetrieveDataMenuAction.create(services);
 
         registerAllServices(context, connectAction, new Properties());
-        registerAllServices(context, syncDownAction, new Properties());
+        registerAllServices(context, retrieveDataMenuAction, new Properties());
 
         services.getCySwingApplication().addAction(cypherMenuAction);
     }
