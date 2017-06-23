@@ -1,6 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -17,10 +17,10 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
     private final Neo4jClient neo4jClient;
     private final CySwingApplication cySwingApplication;
 
-    public static ConnectInstanceMenuAction create(ServiceLocator serviceLocator) {
+    public static ConnectInstanceMenuAction create(Services services) {
         return new ConnectInstanceMenuAction(
-                serviceLocator.getNeo4jClient(),
-                serviceLocator.getCySwingApplication());
+                services.getNeo4jClient(),
+                services.getCySwingApplication());
     }
 
     private ConnectInstanceMenuAction(Neo4jClient neo4jClient, CySwingApplication cySwingApplication) {

@@ -4,18 +4,18 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata.Retr
 
 public class CommandFactory {
 
-    private final ServiceLocator serviceLocator;
+    private final Services services;
 
 
-    public CommandFactory(ServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
+    public CommandFactory(Services services) {
+        this.services = services;
     }
 
     public RetrieveDataTask createRetrieveDataTask() {
-        return new RetrieveDataTask(serviceLocator);
+        return new RetrieveDataTask(services);
     }
 
-    public static CommandFactory create(ServiceLocator serviceLocator) {
-        return new CommandFactory(serviceLocator);
+    public static CommandFactory create(Services services) {
+        return new CommandFactory(services);
     }
 }

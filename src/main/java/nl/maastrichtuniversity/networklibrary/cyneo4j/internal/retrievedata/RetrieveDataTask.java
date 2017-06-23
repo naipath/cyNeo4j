@@ -1,9 +1,8 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CypherResultParser;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -23,10 +22,10 @@ import static java.util.stream.Collectors.toList;
 
 public class RetrieveDataTask extends AbstractTask {
 
-    private final ServiceLocator serviceLocator;
+    private final Services services;
 
-    public RetrieveDataTask(ServiceLocator serviceLocator) {
-        this.serviceLocator = serviceLocator;
+    public RetrieveDataTask(Services services) {
+        this.services = services;
     }
 
     @Override
@@ -59,7 +58,7 @@ public class RetrieveDataTask extends AbstractTask {
                 taskMonitor.setTitle("Importing the Neo4j Graph");
 
                 // setup network
-                CyNetwork network = serviceLocator.getCyNetworkFactory().createNetwork();
+                CyNetwork network = services.getCyNetworkFactory().createNetwork();
                 network.getRow(network).set(CyNetwork.NAME, "neo4j network");
 
                 CypherResultParser cypherParser = new CypherResultParser(network);
@@ -82,7 +81,7 @@ public class RetrieveDataTask extends AbstractTask {
                     taskMonitor.setProgress(progress);
                 }
 
-                serviceLocator.getCyNetworkManager().addNetwork(network);
+                services.getCyNetworkManager().addNetwork(network);
 
                 cypherParser = new CypherResultParser(network);
                 taskMonitor.setStatusMessage("Downloading edges");
@@ -109,24 +108,24 @@ public class RetrieveDataTask extends AbstractTask {
                 taskMonitor.setStatusMessage("Creating View");
                 taskMonitor.setProgress(0.8);
 
-                Collection<CyNetworkView> views = serviceLocator.getCyNetworkViewManager().getNetworkViews(network);
+                Collection<CyNetworkView> views = services.getCyNetworkViewManager().getNetworkViews(network);
                 CyNetworkView view;
                 if (!views.isEmpty()) {
                     view = views.iterator().next();
                 } else {
-                    view = serviceLocator.getCyNetworkViewFactory().createNetworkView(network);
-                    serviceLocator.getCyNetworkViewManager().addNetworkView(view);
+                    view = services.getCyNetworkViewFactory().createNetworkView(network);
+                    services.getCyNetworkViewManager().addNetworkView(view);
                 }
 
                 taskMonitor.setStatusMessage("Applying Layout");
                 taskMonitor.setProgress(0.9);
 
                 Set<View<CyNode>> nodes = new HashSet<>();
-                CyLayoutAlgorithm layout = serviceLocator.getCyLayoutAlgorithmManager().getLayout("force-directed");
+                CyLayoutAlgorithm layout = services.getCyLayoutAlgorithmManager().getLayout("force-directed");
                 insertTasksAfterCurrentTask(layout.createTaskIterator(view, layout.createLayoutContext(), nodes, null));
 
-                VisualStyle vs = serviceLocator.getVisualMappingManager().getDefaultVisualStyle();
-                serviceLocator.getVisualMappingManager().setVisualStyle(vs, view);
+                VisualStyle vs = services.getVisualMappingManager().getDefaultVisualStyle();
+                services.getVisualMappingManager().setVisualStyle(vs, view);
                 vs.apply(view);
                 view.updateView();
             }
@@ -144,7 +143,7 @@ public class RetrieveDataTask extends AbstractTask {
     }
 
     private Neo4jGraph executeQuery(CypherQuery query) {
-        return serviceLocator.getNeo4jClient().executeQuery(query);
+        return services.getNeo4jClient().executeQuery(query);
     }
 
     private String toJSONArray(List<Long> ids) {

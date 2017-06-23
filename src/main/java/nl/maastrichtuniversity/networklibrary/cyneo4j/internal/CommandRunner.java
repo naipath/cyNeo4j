@@ -8,8 +8,8 @@ public class CommandRunner {
 
     private final DialogTaskManager dialogTaskManager;
 
-    static CommandRunner create(ServiceLocator serviceLocator) {
-        return new CommandRunner(serviceLocator.getDialogTaskManager());
+    static CommandRunner create(Services services) {
+        return new CommandRunner(services.getDialogTaskManager());
     }
 
     private CommandRunner(DialogTaskManager dialogTaskManager) {

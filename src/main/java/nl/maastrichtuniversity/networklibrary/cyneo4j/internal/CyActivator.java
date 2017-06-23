@@ -23,34 +23,34 @@ public class CyActivator extends AbstractCyActivator  {
     @Override
     public void start(BundleContext context) throws Exception {
 
-        ServiceLocator serviceLocator = new ServiceLocator();
+        Services services = new Services();
 
-        serviceLocator.setCySwingApplication(getService(context, CySwingApplication.class));
-        serviceLocator.setCyApplicationManager(getService(context, CyApplicationManager.class));
-        serviceLocator.setCyNetworkFactory(getService(context, CyNetworkFactory.class));
-        serviceLocator.setCyNetworkManager(getService(context, CyNetworkManager.class));
-        serviceLocator.setCyNetworkViewManager(getService(context, CyNetworkViewManager.class));
-        serviceLocator.setDialogTaskManager(getService(context, DialogTaskManager.class));
-        serviceLocator.setCyNetworkViewFactory(getService(context, CyNetworkViewFactory.class));
-        serviceLocator.setCyLayoutAlgorithmManager(getService(context, CyLayoutAlgorithmManager.class));
-        serviceLocator.setVisualMappingManager(getService(context, VisualMappingManager.class));
-        serviceLocator.setNeo4jClient(new Neo4jRESTClient());
+        services.setCySwingApplication(getService(context, CySwingApplication.class));
+        services.setCyApplicationManager(getService(context, CyApplicationManager.class));
+        services.setCyNetworkFactory(getService(context, CyNetworkFactory.class));
+        services.setCyNetworkManager(getService(context, CyNetworkManager.class));
+        services.setCyNetworkViewManager(getService(context, CyNetworkViewManager.class));
+        services.setDialogTaskManager(getService(context, DialogTaskManager.class));
+        services.setCyNetworkViewFactory(getService(context, CyNetworkViewFactory.class));
+        services.setCyLayoutAlgorithmManager(getService(context, CyLayoutAlgorithmManager.class));
+        services.setVisualMappingManager(getService(context, VisualMappingManager.class));
+        services.setNeo4jClient(new Neo4jRESTClient());
 
-        CommandFactory commandFactory = CommandFactory.create(serviceLocator);
-        serviceLocator.setCommandFactory(commandFactory);
+        CommandFactory commandFactory = CommandFactory.create(services);
+        services.setCommandFactory(commandFactory);
 
-        CommandRunner commandRunner = CommandRunner.create(serviceLocator);
-        serviceLocator.setCommandRunner(commandRunner);
+        CommandRunner commandRunner = CommandRunner.create(services);
+        services.setCommandRunner(commandRunner);
 
-        CypherMenuAction cypherMenuAction = CypherMenuAction.create(serviceLocator);
+        CypherMenuAction cypherMenuAction = CypherMenuAction.create(services);
 
-        ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(serviceLocator);
-        RetrieveDataMenuAction syncDownAction = RetrieveDataMenuAction.create(serviceLocator);
+        ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
+        RetrieveDataMenuAction syncDownAction = RetrieveDataMenuAction.create(services);
 
         registerAllServices(context, connectAction, new Properties());
         registerAllServices(context, syncDownAction, new Properties());
 
-        serviceLocator.getCySwingApplication().addAction(cypherMenuAction);
+        services.getCySwingApplication().addAction(cypherMenuAction);
     }
 
     @Override

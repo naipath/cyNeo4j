@@ -2,7 +2,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandFactory;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandRunner;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import org.cytoscape.application.swing.AbstractCyAction;
 
@@ -17,11 +17,11 @@ public class RetrieveDataMenuAction extends AbstractCyAction {
     private final CommandFactory commandFactory;
     private final CommandRunner commandRunner;
 
-    public static RetrieveDataMenuAction create(ServiceLocator serviceLocator) {
+    public static RetrieveDataMenuAction create(Services services) {
         return new RetrieveDataMenuAction(
-                serviceLocator.getNeo4jClient(),
-                serviceLocator.getCommandFactory(),
-                serviceLocator.getCommandRunner()
+                services.getNeo4jClient(),
+                services.getCommandFactory(),
+                services.getCommandRunner()
         );
     }
 

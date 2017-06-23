@@ -11,7 +11,7 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.swing.DialogTaskManager;
 
-public class ServiceLocator {
+public class Services {
 
     private CySwingApplication cySwingApplication;
     private CyApplicationManager cyApplicationManager;
