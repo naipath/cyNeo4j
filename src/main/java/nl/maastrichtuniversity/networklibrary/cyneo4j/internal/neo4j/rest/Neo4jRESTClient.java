@@ -52,7 +52,8 @@ public class Neo4jRESTClient implements Neo4jClient {
     }
 
 
-    public boolean checkConnectionParameter(ConnectionParameter connectionParameter) {
+    @Override
+    public boolean connect(ConnectionParameter connectionParameter) {
         if (validateConnection(connectionParameter.getHttpUrl())) {
             connect(connectionParameter.getHttpUrl());
             return true;

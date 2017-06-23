@@ -14,11 +14,21 @@ public class Neo4jBoltClient implements Neo4jClient {
 
     private Driver driver;
 
-
-    public void execute(String query) {
-        try (Session session = driver.session()) {
-            StatementResult statementResult = session.run(query);
-            statementResult.forEachRemaining(Record::asMap);
+    @Override
+    public boolean connect(ConnectionParameter connectionParameter) {
+        try {
+            driver = GraphDatabase.driver(
+                connectionParameter.getBoltUrl(),
+                AuthTokens.basic(
+                    connectionParameter.getUsername(),
+                    connectionParameter.getPasswordAsString()
+                ),
+                Config.build().withoutEncryption().toConfig()
+            );
+            return true;
+        } catch (AuthenticationException | ServiceUnavailableException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -42,24 +52,6 @@ public class Neo4jBoltClient implements Neo4jClient {
             statementResult.forEachRemaining(Record::asMap);
         }
         return null;
-    }
-
-    @Override
-    public boolean checkConnectionParameter(ConnectionParameter connectionParameter) {
-        try {
-            driver = GraphDatabase.driver(
-                connectionParameter.getBoltUrl(),
-                AuthTokens.basic(
-                    connectionParameter.getUsername(),
-                    connectionParameter.getPasswordAsString()
-                ),
-                Config.build().withoutEncryption().toConfig()
-            );
-            return true;
-        } catch (AuthenticationException | ServiceUnavailableException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     @Override
