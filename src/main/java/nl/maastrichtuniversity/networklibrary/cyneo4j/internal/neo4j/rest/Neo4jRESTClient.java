@@ -18,7 +18,7 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.swing.DialogTaskManager;
 
 import java.io.IOException;
-import java.util.function.Function;
+import java.util.List;
 
 public class Neo4jRESTClient implements Neo4jClient {
 
@@ -62,22 +62,17 @@ public class Neo4jRESTClient implements Neo4jClient {
     }
 
     @Override
-    public <T> T executeQuery(CypherQuery query, Function<Object, T> converter) throws IOException {
-        return executeQuery(query.toJsonString(), converter);
-    }
-
-    private <T> T executeQuery(String query, Function<Object, T> converter) throws IOException {
-        return converter.apply(Request.Post(getCypherURL()).bodyString(query, ContentType.APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler));
-    }
-
-    @Override
     public Neo4jGraph retrieveData() {
         return null;
     }
 
     @Override
-    public Neo4jGraph executeQuery(CypherQuery cypherQuery) {
-        return null;
+    public Neo4jGraph executeQuery(CypherQuery query) {
+        try {
+            return new Neo4jGraph((List<List<Object>>) Request.Post(getCypherURL()).bodyString(query.toJsonString(), ContentType.APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler));
+        } catch (IOException e) {
+            throw new IllegalStateException();
+        }
     }
 
     public void connect(String instanceLocation) {

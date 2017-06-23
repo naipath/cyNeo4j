@@ -10,8 +10,6 @@ import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 import org.neo4j.driver.v1.types.MapAccessor;
 import org.neo4j.driver.v1.util.Pair;
 
-import java.util.function.Function;
-
 import static java.util.stream.Collectors.toList;
 
 public class Neo4jBoltClient implements Neo4jClient {
@@ -33,14 +31,6 @@ public class Neo4jBoltClient implements Neo4jClient {
         } catch (AuthenticationException | ServiceUnavailableException e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    @Override
-    public <T> T executeQuery(CypherQuery query, Function<Object, T> converter) {
-        try (Session session = driver.session()) {
-            StatementResult statementResult = session.run(query.getQuery());
-            return converter.apply(statementResult.list()); //TODO convert to map
         }
     }
 
