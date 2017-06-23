@@ -25,7 +25,6 @@ public class RetrieveDataMenuAction extends AbstractCyAction {
         );
     }
 
-
     private RetrieveDataMenuAction(Neo4jClient neo4jClient, CommandFactory commandFactory, CommandRunner commandRunner) {
         super(MENU_TITLE);
         this.commandFactory = commandFactory;

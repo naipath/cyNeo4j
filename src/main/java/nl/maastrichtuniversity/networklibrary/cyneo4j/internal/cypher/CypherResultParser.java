@@ -40,7 +40,7 @@ public class CypherResultParser {
             defNodeTab.createColumn(COLUMN_ID, Long.class, false);
         }
 
-        Long self = nodeObj.getId(); //getId((String) nodeObj.get("self"));
+        Long self = nodeObj.getId();
 
         CyNode cyNode = getNodeByNeoId(currNet, self);
 
@@ -49,7 +49,7 @@ public class CypherResultParser {
             currNet.getRow(cyNode).set(COLUMN_ID, self);
         }
 
-        Map<String, Object> nodeProps = nodeObj.getNodeProperties();//DATA
+        Map<String, Object> nodeProps = nodeObj.getNodeProperties();
 
         doStuff(defNodeTab, cyNode, nodeProps);
     }

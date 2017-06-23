@@ -2,7 +2,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CypherResultParser;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResType;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResultObject;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
@@ -15,10 +14,10 @@ import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
-import java.util.*;
-import java.util.function.Function;
-
-import static java.util.stream.Collectors.toList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class RetrieveDataTask extends AbstractTask {
 
@@ -33,14 +32,12 @@ public class RetrieveDataTask extends AbstractTask {
         try {
             CypherQuery nodeIdQuery = CypherQuery.builder()
                     .query("MATCH (n) RETURN id(n)")
-                    .build(); //"{ \"query\" : \"MATCH (n) RETURN id(n)\",\"params\" : {}}";
+                    .build();
 
             CypherQuery edgeIdQuery =
                     CypherQuery.builder()
                             .query("MATCH ()-[r]->() RETURN id(r)")
                             .build();
-
-//                    "{ \"query\" : \"MATCH ()-[r]->() RETURN id(r)\",\"params\" : {}}";
 
             List<Long> nodeIds = executeQueryNodeId(nodeIdQuery).getData();
             List<Long> edgeIds = executeQueryNodeId(edgeIdQuery).getData();
@@ -90,8 +87,6 @@ public class RetrieveDataTask extends AbstractTask {
                     if (end > edgeIds.size())
                         end = edgeIds.size();
 
-//                    String query = "{\"query\" : \"MATCH ()-[r]->() where id(r) in {toget} RETURN r\", \"params\" : { \"toget\" : " + array + "} }";
-
                     CypherQuery query = CypherQuery.builder()
                             .query("MATCH ()-[r]->() where id(r) in {toget} RETURN r")
                             .params("toget", edgeIds.subList(i, end))
@@ -135,7 +130,6 @@ public class RetrieveDataTask extends AbstractTask {
     private Neo4jGraph<Long> executeQueryNodeId(CypherQuery query) {
         return services.getNeo4jClient().executeQueryIdList(query);
     }
-
 
     private  Neo4jGraph<ResultObject> executeQuery(CypherQuery query) {
         return services.getNeo4jClient().executeQueryResultObject(query);
