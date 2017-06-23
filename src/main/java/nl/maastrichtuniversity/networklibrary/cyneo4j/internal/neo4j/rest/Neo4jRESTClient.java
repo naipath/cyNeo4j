@@ -53,11 +53,11 @@ public class Neo4jRESTClient implements Neo4jClient {
 
 
     public boolean checkConnectionParameter(ConnectionParameter connectionParameter) {
-        return validateConnection(connectionParameter.getHttpUrl());
-    }
-
-    public void connect(ConnectionParameter parameters) {
-        connect(parameters.getHttpUrl());
+        if (validateConnection(connectionParameter.getHttpUrl())) {
+            connect(connectionParameter.getHttpUrl());
+            return true;
+        }
+        return false;
     }
 
     @Override

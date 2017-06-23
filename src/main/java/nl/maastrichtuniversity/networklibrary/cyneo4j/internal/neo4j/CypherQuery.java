@@ -17,8 +17,7 @@ public class CypherQuery {
     public String toJsonString() {
         //TODO: use library
         String jsonParams = params.entrySet().stream().map(this::paramEntryToString).reduce( (a,b) -> a + "," + b).orElse("");
-        String json = "{ \"query\" : \""+ query +"\",\"params\" : {" + jsonParams + "}}";
-        return json;
+        return "{ \"query\" : \""+ query +"\",\"params\" : {" + jsonParams + "}}";
     }
 
     private String paramEntryToString(Map.Entry<String, String> entry) {

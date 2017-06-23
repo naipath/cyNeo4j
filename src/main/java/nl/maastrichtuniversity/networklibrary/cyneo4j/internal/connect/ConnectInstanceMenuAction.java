@@ -36,9 +36,7 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
 
         ConnectDialog connectDialog = new ConnectDialog(cySwingApplication.getJFrame(), neo4jClient::checkConnectionParameter );
         connectDialog.showConnectDialog();
-        if(connectDialog.isOk()) {
-            neo4jClient.connect(connectDialog.getParameters());
-        } else {
+        if(!connectDialog.isOk()) {
             JOptionPane.showInputDialog("Invalid connection parameters");
         }
     }

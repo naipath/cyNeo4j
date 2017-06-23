@@ -23,25 +23,11 @@ public class Neo4jBoltClient implements Neo4jClient {
     }
 
     @Override
-    public void connect(ConnectionParameter connectionParameter) {
-        driver = GraphDatabase.driver(
-            connectionParameter.getBoltUrl(),
-            AuthTokens.basic(
-                connectionParameter.getUsername(),
-                connectionParameter.getPasswordAsString()
-            ),
-            Config.build().withoutEncryption().toConfig()
-        );
-    }
-
-    @Override
     public <T> T executeQuery(CypherQuery query, Function<Object, T> converter) {
         try (Session session = driver.session()) {
-            StatementResult statementResult = session.run(query.getQuery(), query.getParameters());
-            statementResult.forEachRemaining(record -> record.asMap());
+            StatementResult statementResult = session.run(query.getQuery());
+            return converter.apply(statementResult.list()); //TODO convert to map
         }
-
-        return null;
     }
 
     @Override
@@ -51,6 +37,10 @@ public class Neo4jBoltClient implements Neo4jClient {
 
     @Override
     public Neo4jGraph executeQuery(CypherQuery cypherQuery) {
+        try (Session session = driver.session()) {
+            StatementResult statementResult = session.run(cypherQuery.getQuery());
+            statementResult.forEachRemaining(Record::asMap);
+        }
         return null;
     }
 

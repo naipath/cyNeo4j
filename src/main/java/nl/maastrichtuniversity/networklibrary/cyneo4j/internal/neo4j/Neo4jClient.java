@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 public interface Neo4jClient {
 
-    void connect(ConnectionParameter connectionParameter);
     <T> T executeQuery(CypherQuery query, Function<Object, T> converter) throws IOException;
     Neo4jGraph retrieveData();
     Neo4jGraph executeQuery(CypherQuery cypherQuery);
