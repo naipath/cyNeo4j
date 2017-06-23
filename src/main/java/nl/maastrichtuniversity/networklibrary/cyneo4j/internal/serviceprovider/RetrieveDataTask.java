@@ -28,6 +28,8 @@ import java.util.Set;
 
 public class RetrieveDataTask extends AbstractTask {
 
+    private static final String NODE_ID_QUERY = "{ \"query\" : \"MATCH (n) RETURN id(n)\",\"params\" : {}}";
+    private static final String EDGE_ID_QUERY = "{ \"query\" : \"MATCH ()-[r]->() RETURN id(r)\",\"params\" : {}}";
     private String cypherURL;
     private String instanceLocation;
     private CyNetworkFactory cyNetworkFactory;
@@ -60,11 +62,8 @@ public class RetrieveDataTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         try {
-            String nodeIdQuery = "{ \"query\" : \"MATCH (n) RETURN id(n)\",\"params\" : {}}";
-            String edgeIdQuery = "{ \"query\" : \"MATCH ()-[r]->() RETURN id(r)\",\"params\" : {}}";
-
-            List<Long> nodeIds = Request.Post(cypherURL).bodyString(nodeIdQuery, ContentType.APPLICATION_JSON).execute().handleResponse(idListHandler);
-            List<Long> edgeIds = Request.Post(cypherURL).bodyString(edgeIdQuery, ContentType.APPLICATION_JSON).execute().handleResponse(idListHandler);
+            List<Long> nodeIds = Request.Post(cypherURL).bodyString(NODE_ID_QUERY, ContentType.APPLICATION_JSON).execute().handleResponse(idListHandler);
+            List<Long> edgeIds = Request.Post(cypherURL).bodyString(EDGE_ID_QUERY, ContentType.APPLICATION_JSON).execute().handleResponse(idListHandler);
 
             int numQueries = nodeIds.size() + edgeIds.size();
 

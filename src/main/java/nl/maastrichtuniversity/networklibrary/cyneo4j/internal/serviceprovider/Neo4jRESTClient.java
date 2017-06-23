@@ -66,7 +66,7 @@ public class Neo4jRESTClient {
     }
 
     void syncDown() {
-        TaskIterator it = new TaskIterator(new RetrieveDataTask(
+        dialogTaskManager.execute(new TaskIterator(new RetrieveDataTask(
             getCypherURL(),
             getInstanceLocation(),
             cyNetworkFactory,
@@ -75,8 +75,7 @@ public class Neo4jRESTClient {
             cyNetworkViewFactory,
             cyLayoutAlgorithmManager,
             visualMappingManager
-        ));
-        dialogTaskManager.execute(it);
+        )));
     }
 
     public String getCypherURL() {
@@ -84,14 +83,13 @@ public class Neo4jRESTClient {
     }
 
     public Object executeExtensionCall(String url, String payload) {
-        Object retVal = null;
         try {
-            retVal = Request.Post(url).bodyString(payload, APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler);
+            return Request.Post(url).bodyString(payload, APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return retVal;
+        return null;
     }
 
     public boolean validateConnection(String instanceLocation) {
