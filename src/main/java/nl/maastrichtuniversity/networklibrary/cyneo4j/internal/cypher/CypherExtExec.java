@@ -1,5 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyNetwork;
@@ -8,23 +9,19 @@ import org.cytoscape.model.CyNetworkManager;
 
 class CypherExtExec {
 
-    private final CyApplicationManager cyApplicationManager;
-    private final CyNetworkFactory cyNetworkFactory;
-    private final CyNetworkManager cyNetworkManager;
+    private final ServiceLocator serviceLocator;
 
-    CypherExtExec(CyApplicationManager cyApplicationManager, CyNetworkFactory cyNetworkFactory, CyNetworkManager cyNetworkManager) {
-        this.cyApplicationManager = cyApplicationManager;
-        this.cyNetworkFactory = cyNetworkFactory;
-        this.cyNetworkManager = cyNetworkManager;
+    CypherExtExec(ServiceLocator serviceLocator) {
+        this.serviceLocator = serviceLocator;
     }
 
     void processCallResponse(Neo4jGraph graph) {
-        CyNetwork currNet = cyApplicationManager.getCurrentNetwork();
+        CyNetwork currNet = serviceLocator.getCyApplicationManager().getCurrentNetwork();
 
         if (currNet == null) {
-            currNet = cyNetworkFactory.createNetwork();
+            currNet = serviceLocator.getCyNetworkFactory().createNetwork();
             currNet.getRow(currNet).set(CyNetwork.NAME, "Network");
-            cyNetworkManager.addNetwork(currNet);
+            serviceLocator.getCyNetworkManager().addNetwork(currNet);
         }
         new CypherResultParser(currNet).parseRetVal(graph);
     }

@@ -137,8 +137,8 @@ public class RetrieveDataTask extends AbstractTask {
 
     private List<Long> toLongList(Neo4jGraph result) {
         return result.getData().stream()
-            .map(ids -> ids.get(0))
-            .map(t -> (Long) t)
+            .map(ids -> (Integer) ids.get(0))
+            .map(Integer::longValue)
             .collect(toList());
 
     }

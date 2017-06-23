@@ -19,8 +19,8 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
 
     public static ConnectInstanceMenuAction create(ServiceLocator serviceLocator) {
         return new ConnectInstanceMenuAction(
-                serviceLocator.getService(Neo4jClient.class),
-                serviceLocator.getService(CySwingApplication.class));
+                serviceLocator.getNeo4jClient(),
+                serviceLocator.getCySwingApplication());
     }
 
     private ConnectInstanceMenuAction(Neo4jClient neo4jClient, CySwingApplication cySwingApplication) {

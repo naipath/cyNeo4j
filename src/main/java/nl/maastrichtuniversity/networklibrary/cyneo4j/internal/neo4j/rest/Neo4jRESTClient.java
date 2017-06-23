@@ -9,6 +9,7 @@ import org.apache.http.entity.ContentType;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class Neo4jRESTClient implements Neo4jClient {
 
@@ -31,9 +32,8 @@ public class Neo4jRESTClient implements Neo4jClient {
     @Override
     public Neo4jGraph executeQuery(CypherQuery query) {
         try {
-            Object o = Request.Post(getCypherURL()).bodyString(query.toJsonString(), ContentType.APPLICATION_JSON)
+            return (Neo4jGraph)Request.Post(getCypherURL()).bodyString(query.toJsonString(), ContentType.APPLICATION_JSON)
                 .execute().handleResponse(passThroughResponseHandler);
-            return new Neo4jGraph((List<List<Object>>) o);
         } catch (IOException e) {
             throw new IllegalStateException();
         }

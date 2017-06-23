@@ -1,9 +1,12 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 class PassThroughResponseHandler extends HttpResponseHandler<Object> {
 
@@ -12,7 +15,8 @@ class PassThroughResponseHandler extends HttpResponseHandler<Object> {
     @Override
     public Object handle(int responseCode, InputStream content) throws IOException {
         if (responseCode >= 200 && responseCode < 300) {
-            return mapper.readValue(content, Object.class);
+            Map<String, Object> map = mapper.readValue(content, Map.class);
+            return new Neo4jGraph((List<List<Object>>) map.get("data"));
         }
         return null;
     }

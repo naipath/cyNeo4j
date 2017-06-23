@@ -19,9 +19,9 @@ public class RetrieveDataMenuAction extends AbstractCyAction {
 
     public static RetrieveDataMenuAction create(ServiceLocator serviceLocator) {
         return new RetrieveDataMenuAction(
-                serviceLocator.getService(Neo4jClient.class),
-                serviceLocator.getService(CommandFactory.class),
-                serviceLocator.getService(CommandRunner.class)
+                serviceLocator.getNeo4jClient(),
+                serviceLocator.getCommandFactory(),
+                serviceLocator.getCommandRunner()
         );
     }
 
