@@ -8,7 +8,6 @@ import org.cytoscape.model.CyNetworkManager;
 
 class CypherExtExec {
 
-    private String query;
     private final CyApplicationManager cyApplicationManager;
     private final CyNetworkFactory cyNetworkFactory;
     private final CyNetworkManager cyNetworkManager;
@@ -24,7 +23,7 @@ class CypherExtExec {
 
         if (currNet == null) {
             currNet = cyNetworkFactory.createNetwork();
-            currNet.getRow(currNet).set(CyNetwork.NAME, query);
+            currNet.getRow(currNet).set(CyNetwork.NAME, "Network");
             cyNetworkManager.addNetwork(currNet);
         }
         new CypherResultParser(currNet).parseRetVal(graph);

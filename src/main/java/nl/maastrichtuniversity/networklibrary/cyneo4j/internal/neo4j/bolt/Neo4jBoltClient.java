@@ -35,11 +35,6 @@ public class Neo4jBoltClient implements Neo4jClient {
     }
 
     @Override
-    public Neo4jGraph retrieveData() {
-        return null;
-    }
-
-    @Override
     public Neo4jGraph executeQuery(CypherQuery cypherQuery) {
         try (Session session = driver.session()) {
             StatementResult statementResult = session.run(cypherQuery.getQuery());

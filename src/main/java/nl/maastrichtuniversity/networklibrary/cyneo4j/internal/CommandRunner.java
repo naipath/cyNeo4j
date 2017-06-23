@@ -8,7 +8,7 @@ public class CommandRunner {
 
     private final DialogTaskManager dialogTaskManager;
 
-    public static CommandRunner create(ServiceLocator serviceLocator) {
+    static CommandRunner create(ServiceLocator serviceLocator) {
         return new CommandRunner(serviceLocator.getService(DialogTaskManager.class));
     }
 

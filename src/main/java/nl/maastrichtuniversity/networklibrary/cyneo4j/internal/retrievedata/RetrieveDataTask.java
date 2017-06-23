@@ -162,10 +162,6 @@ public class RetrieveDataTask extends AbstractTask {
         }
     }
 
-    private Object identity(Object o) {
-        return o;
-    }
-
     private List<Long> toLongList(Neo4jGraph result) {
         return result.getData().stream()
             .map(ids -> ids.get(0))

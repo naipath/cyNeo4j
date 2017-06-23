@@ -3,7 +3,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -63,7 +62,6 @@ public class CypherMenuAction extends AbstractCyAction {
             return;
         }
         CypherQuery cypherQuery = CypherQuery.builder().query(query).build();
-        Neo4jGraph callRetValue = neo4JClient.executeQuery(cypherQuery);
-        exec.processCallResponse(callRetValue);
+        exec.processCallResponse(neo4JClient.executeQuery(cypherQuery));
     }
 }

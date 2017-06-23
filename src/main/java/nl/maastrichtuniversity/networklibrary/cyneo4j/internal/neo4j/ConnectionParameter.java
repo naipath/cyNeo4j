@@ -19,16 +19,8 @@ public class ConnectionParameter {
         return "bolt://" + host;
     }
 
-    public String getHost() {
-        return host;
-    }
-
     public String getUsername() {
         return username;
-    }
-
-    public char[] getPassword() {
-        return password;
     }
 
     public String getPasswordAsString() {

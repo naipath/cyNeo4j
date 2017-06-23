@@ -29,9 +29,8 @@ public class CypherResultParser {
 
     private void readResultTable(List<List<Object>> rows) {
         for (List<Object> row : rows) {
-            for (int i = 0; i < row.size(); ++i) {
+            for (Object item : row) {
 
-                Object item = row.get(i);
                 ResType type = duckTypeObject(item);
 
                 if (Node.equals(type)) {

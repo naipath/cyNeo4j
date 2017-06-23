@@ -29,11 +29,6 @@ public class Neo4jRESTClient implements Neo4jClient {
     }
 
     @Override
-    public Neo4jGraph retrieveData() {
-        return null;
-    }
-
-    @Override
     public Neo4jGraph executeQuery(CypherQuery query) {
         try {
             return new Neo4jGraph((List<List<Object>>) Request.Post(getCypherURL()).bodyString(query.toJsonString(), ContentType.APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler));
