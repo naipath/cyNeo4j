@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.function.Predicate;
 
-public class ConnectDialog extends JDialog {
+class ConnectDialog extends JDialog {
 
     private static final String CANCEL_CMD = "cancel";
     private static final String OK_CMD = "ok";
@@ -17,12 +17,12 @@ public class ConnectDialog extends JDialog {
     private boolean ok = false;
     private final Predicate<ConnectionParameter> connectionCheck;
 
-    public ConnectDialog(JFrame jFrame, Predicate<ConnectionParameter> connectionCheck) {
+    ConnectDialog(JFrame jFrame, Predicate<ConnectionParameter> connectionCheck) {
         super(jFrame);
         this.connectionCheck = connectionCheck;
     }
 
-    public void showConnectDialog() {
+    void showConnectDialog() {
         init();
         center();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -32,11 +32,11 @@ public class ConnectDialog extends JDialog {
         setVisible(true);
     }
 
-    public ConnectionParameter getParameters() {
+    private ConnectionParameter getParameters() {
         return new ConnectionParameter(url.getText(), username.getText(), password.getPassword());
     }
 
-    public boolean isOk() {
+    boolean isOk() {
         return ok;
     }
 
@@ -88,9 +88,9 @@ public class ConnectDialog extends JDialog {
 
     private void center() {
         Point cyLocation = getParent().getLocation();
-        int cyHeight = getParent().getHeight();
-        int cyWidth = getParent().getWidth();
-        Point middle = new Point(cyLocation.x + (cyWidth / 4), cyLocation.y + (cyHeight / 4));
-        this.setLocation(middle);
+        int height = getParent().getHeight();
+        int width = getParent().getWidth();
+
+        this.setLocation(new Point(cyLocation.x + (width / 4), cyLocation.y + (height / 4)));
     }
 }

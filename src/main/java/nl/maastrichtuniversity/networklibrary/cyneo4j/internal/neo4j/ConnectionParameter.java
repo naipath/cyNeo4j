@@ -12,23 +12,15 @@ public class ConnectionParameter {
     }
 
     public String getHttpUrl() {
-        return "http://" + username + ":" +  new String(password) + "@" + host + ":7474";
+        return String.format("http://%s:%s@%s:7474", username, new String(password), host);
     }
 
     public String getBoltUrl() {
         return "bolt://" + host;
     }
 
-    public String getHost() {
-        return host;
-    }
-
     public String getUsername() {
         return username;
-    }
-
-    public char[] getPassword() {
-        return password;
     }
 
     public String getPasswordAsString() {

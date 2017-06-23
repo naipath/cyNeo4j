@@ -25,20 +25,17 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
 
     private ConnectInstanceMenuAction(Neo4jClient neo4jClient, CySwingApplication cySwingApplication) {
         super(MENU_TITLE);
+        this.neo4jClient = neo4jClient;
         this.cySwingApplication = cySwingApplication;
         setPreferredMenu(MENU_LOC);
         setMenuGravity(0.0f);
-        this.neo4jClient = neo4jClient;
     }
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-
-        ConnectDialog connectDialog = new ConnectDialog(cySwingApplication.getJFrame(), neo4jClient::checkConnectionParameter );
+        ConnectDialog connectDialog = new ConnectDialog(cySwingApplication.getJFrame(), neo4jClient::connect);
         connectDialog.showConnectDialog();
-        if(connectDialog.isOk()) {
-            neo4jClient.connect(connectDialog.getParameters());
-        } else {
+        if(!connectDialog.isOk()) {
             JOptionPane.showInputDialog("Invalid connection parameters");
         }
     }

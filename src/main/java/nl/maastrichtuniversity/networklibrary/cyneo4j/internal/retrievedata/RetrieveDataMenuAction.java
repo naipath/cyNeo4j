@@ -4,7 +4,6 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandFactory;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandRunner;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ServiceLocator;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
-import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
 
 import javax.swing.*;
@@ -20,22 +19,21 @@ public class RetrieveDataMenuAction extends AbstractCyAction {
 
     public static RetrieveDataMenuAction create(ServiceLocator serviceLocator) {
         return new RetrieveDataMenuAction(
-                serviceLocator.getService(CyApplicationManager.class),
                 serviceLocator.getService(Neo4jClient.class),
                 serviceLocator.getService(CommandFactory.class),
-                serviceLocator.getService(CommandRunner.class));
+                serviceLocator.getService(CommandRunner.class)
+        );
     }
 
 
-    private RetrieveDataMenuAction(CyApplicationManager cyApplicationManager, Neo4jClient neo4jClient, CommandFactory commandFactory, CommandRunner commandRunner) {
-        super(MENU_TITLE, cyApplicationManager, null, null);
+    private RetrieveDataMenuAction(Neo4jClient neo4jClient, CommandFactory commandFactory, CommandRunner commandRunner) {
+        super(MENU_TITLE);
+        this.commandFactory = commandFactory;
         this.commandRunner = commandRunner;
+        this.neo4JClient = neo4jClient;
         setPreferredMenu(MENU_LOC);
         setEnabled(false);
         setMenuGravity(0.1f);
-        this.neo4JClient = neo4jClient;
-        this.commandFactory = commandFactory;
-
     }
     
     @Override

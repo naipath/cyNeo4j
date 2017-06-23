@@ -8,71 +8,52 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 
 import java.io.IOException;
-import java.util.function.Function;
+import java.util.List;
 
 public class Neo4jRESTClient implements Neo4jClient {
 
     private static final String DATA_URL = "/db/data/";
     private static final String CYPHER_URL = DATA_URL + "cypher";
 
-    private String instanceLocation = null;
+    private String httpUrl = null;
     private Neo4jPingHandler neo4jPingHandler = new Neo4jPingHandler();
     private PassThroughResponseHandler passThroughResponseHandler = new PassThroughResponseHandler();
 
-    public static Neo4jRESTClient create() {
-        return new Neo4jRESTClient();
-    }
-
-    private Neo4jRESTClient() {
-    }
-
-
-    public boolean checkConnectionParameter(ConnectionParameter connectionParameter) {
-        return validateConnection(connectionParameter.getHttpUrl());
-    }
-
-    public void connect(ConnectionParameter parameters) {
-        connect(parameters.getHttpUrl());
+    @Override
+    public boolean connect(ConnectionParameter connectionParameter) {
+        if (validateConnection(connectionParameter.getHttpUrl())) {
+            connect(connectionParameter.getHttpUrl());
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public <T> T executeQuery(CypherQuery query, Function<Object, T> converter) throws IOException {
-        return executeQuery(query.toJsonString(), converter);
+    public Neo4jGraph executeQuery(CypherQuery query) {
+        try {
+            Object o = Request.Post(getCypherURL()).bodyString(query.toJsonString(), ContentType.APPLICATION_JSON)
+                .execute().handleResponse(passThroughResponseHandler);
+            return new Neo4jGraph((List<List<Object>>) o);
+        } catch (IOException e) {
+            throw new IllegalStateException();
+        }
     }
 
-    private <T> T executeQuery(String query, Function<Object, T> converter) throws IOException {
-        return converter.apply(Request.Post(getCypherURL()).bodyString(query, ContentType.APPLICATION_JSON).execute().handleResponse(passThroughResponseHandler));
-    }
-
-    @Override
-    public Neo4jGraph retrieveData() {
-        return null;
-    }
-
-    @Override
-    public Neo4jGraph executeQuery(CypherQuery cypherQuery) {
-        return null;
-    }
-
-    public void connect(String instanceLocation) {
-        if (validateConnection(this.instanceLocation)) {
-            this.instanceLocation = null;
+    private void connect(String instanceLocation) {
+        if (validateConnection(this.httpUrl)) {
+            this.httpUrl = null;
         }
         if (validateConnection(instanceLocation)) {
-            this.instanceLocation = instanceLocation;
+            this.httpUrl = instanceLocation;
         }
     }
 
     public boolean isConnected() {
-        return validateConnection(getInstanceLocation());
-    }
-
-    public String getInstanceLocation() {
-        return instanceLocation;
+        return validateConnection(httpUrl);
     }
 
     public String getCypherURL() {
-        return instanceLocation + CYPHER_URL;
+        return httpUrl + CYPHER_URL;
     }
 
 

@@ -3,30 +3,27 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.stream.Collectors.joining;
+
 public class CypherQuery {
 
     private final String query;
     private final Map<String, String> params;
-    private Map<String, Object> parameters;
 
-    public CypherQuery(String query, Map<String, String> params) {
+    CypherQuery(String query, Map<String, String> params) {
         this.query = query;
         this.params = params;
     }
 
     public String toJsonString() {
-        //TODO: use library
-        String jsonParams = params.entrySet().stream().map(this::paramEntryToString).reduce( (a,b) -> a + "," + b).orElse("");
-        String json = "{ \"query\" : \""+ query +"\",\"params\" : {" + jsonParams + "}}";
-        return json;
+        String jsonParams = params.entrySet().stream()
+            .map(this::paramEntryToString)
+            .collect(joining(","));
+        return "{ \"query\" : \""+ query +"\",\"params\" : {" + jsonParams + "}}";
     }
 
     private String paramEntryToString(Map.Entry<String, String> entry) {
         return "\"" + entry.getKey() + "\": " + entry.getValue();
-    }
-
-    public Map<String, Object> getParameters() {
-        return parameters;
     }
 
     public String getQuery() {
