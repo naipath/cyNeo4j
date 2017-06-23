@@ -1,9 +1,10 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandFactory;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandRunner;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.RetrieveDataTask;
 import org.cytoscape.application.swing.AbstractCyAction;
 
 import javax.swing.*;

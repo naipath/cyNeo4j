@@ -1,6 +1,7 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CypherExtExec;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import org.cytoscape.application.swing.AbstractCyAction;
 

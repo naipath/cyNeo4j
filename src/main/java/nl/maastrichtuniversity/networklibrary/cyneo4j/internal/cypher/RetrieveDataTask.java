@@ -1,8 +1,6 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CypherResultParser;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ResultObject;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
 import org.cytoscape.model.CyNetwork;

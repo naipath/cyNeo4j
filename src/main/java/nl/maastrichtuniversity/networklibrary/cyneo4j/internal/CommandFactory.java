@@ -1,6 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.retrievedata.RetrieveDataTask;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.RetrieveDataTask;
 
 public class CommandFactory {
 

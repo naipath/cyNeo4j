@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.connect;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.ConnectionParameter;
 

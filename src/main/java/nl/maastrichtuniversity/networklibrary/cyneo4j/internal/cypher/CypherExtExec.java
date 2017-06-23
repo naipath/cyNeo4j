@@ -4,15 +4,15 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
 import org.cytoscape.model.CyNetwork;
 
-class CypherExtExec {
+public class CypherExtExec {
 
     private final Services services;
 
-    CypherExtExec(Services services) {
+    public CypherExtExec(Services services) {
         this.services = services;
     }
 
-    void processCallResponse(Neo4jGraph<ResultObject> graph) {
+    public void processCallResponse(Neo4jGraph<ResultObject> graph) {
         CyNetwork currNet = services.getCyApplicationManager().getCurrentNetwork();
 
         if (currNet == null) {
