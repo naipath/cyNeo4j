@@ -40,9 +40,7 @@ public class CyActivator extends AbstractCyActivator  {
         serviceLocator.register(CyNetworkViewFactory.class, getService(context, CyNetworkViewFactory.class));
         serviceLocator.register(CyLayoutAlgorithmManager.class, getService(context, CyLayoutAlgorithmManager.class));
         serviceLocator.register(VisualMappingManager.class, getService(context, VisualMappingManager.class));
-
-        Neo4jRESTClient neo4JRESTClient = Neo4jRESTClient.create();
-        serviceLocator.register(Neo4jClient.class, neo4JRESTClient);
+        serviceLocator.register(Neo4jClient.class, new Neo4jRESTClient());
 
         CommandFactory commandFactory = CommandFactory.create(serviceLocator);
         serviceLocator.register(commandFactory);

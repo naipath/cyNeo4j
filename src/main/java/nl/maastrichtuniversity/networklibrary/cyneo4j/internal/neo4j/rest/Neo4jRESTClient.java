@@ -19,13 +19,6 @@ public class Neo4jRESTClient implements Neo4jClient {
     private Neo4jPingHandler neo4jPingHandler = new Neo4jPingHandler();
     private PassThroughResponseHandler passThroughResponseHandler = new PassThroughResponseHandler();
 
-    public static Neo4jRESTClient create() {
-        return new Neo4jRESTClient();
-    }
-
-    private Neo4jRESTClient() {
-    }
-
     @Override
     public boolean connect(ConnectionParameter connectionParameter) {
         if (validateConnection(connectionParameter.getHttpUrl())) {
