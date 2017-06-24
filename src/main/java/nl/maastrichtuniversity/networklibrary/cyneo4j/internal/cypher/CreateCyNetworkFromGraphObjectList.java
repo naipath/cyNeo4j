@@ -1,6 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.*;
 import org.cytoscape.model.*;
 
 import java.util.*;
@@ -9,38 +9,29 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toSet;
 
-public class CypherResultParser {
+public class CreateCyNetworkFromGraphObjectList implements GraphVisitor {
 
     private static final String COLUMN_ID = "neoid";
     private CyNetwork currNet;
 
-    public CypherResultParser(CyNetwork network) {
+    public CreateCyNetworkFromGraphObjectList(CyNetwork network) {
         this.currNet = network;
     }
 
-    public void parseRetVal(Neo4jGraph<ResultObject> graph) {
-        readResultTable(graph.getData());
-    }
-
-    private void readResultTable(List<ResultObject> rows) {
-        rows.forEach(item -> {
-            if (item.isNode()) {
-                parseNode(item);
-            }
-            if (item.isEdge()) {
-                parseEdge(item);
-            }
+    public void parseRetVal(List<GraphObject> list) {
+        list.forEach(item -> {
+            item.accept(this);
         });
     }
 
-    private void parseNode(ResultObject nodeObj) {
-
+    @Override
+    public void visit(GraphNode graphNode) {
         CyTable defNodeTab = currNet.getDefaultNodeTable();
         if (defNodeTab.getColumn(COLUMN_ID) == null) {
             defNodeTab.createColumn(COLUMN_ID, Long.class, false);
         }
 
-        Long self = nodeObj.getId();
+        Long self = graphNode.getId();
 
         CyNode cyNode = getNodeByNeoId(currNet, self);
 
@@ -49,13 +40,14 @@ public class CypherResultParser {
             currNet.getRow(cyNode).set(COLUMN_ID, self);
         }
 
-        Map<String, Object> nodeProps = nodeObj.getNodeProperties();
+        Map<String, Object> nodeProps = graphNode.getProperties();
 
         doStuff(defNodeTab, cyNode, nodeProps);
+
     }
 
-    private void parseEdge(ResultObject edgeObj) {
-
+    @Override
+    public void visit(GraphEdge graphEdge) {
         CyTable defEdgeTab = currNet.getDefaultEdgeTable();
         if (defEdgeTab.getColumn(COLUMN_ID) == null) {
             defEdgeTab.createColumn(COLUMN_ID, Long.class, false);
@@ -67,15 +59,15 @@ public class CypherResultParser {
         }
 
 
-        Long self = edgeObj.getId();
+        Long self = graphEdge.getId();
 
         CyEdge cyEdge = getEdgeByNeoId(currNet, self);
 
         if (cyEdge == null) {
 
-            Long start = edgeObj.getStart();
-            Long end = edgeObj.getEnd();
-            String type = edgeObj.getType();
+            Long start = graphEdge.getStart();
+            Long end = graphEdge.getEnd();
+            String type = graphEdge.getType();
 
             CyNode startNode = getNodeByNeoId(currNet, start);
             CyNode endNode = getNodeByNeoId(currNet, end);
@@ -95,10 +87,27 @@ public class CypherResultParser {
             currNet.getRow(cyEdge).set(COLUMN_ID, self);
             currNet.getRow(cyEdge).set(CyEdge.INTERACTION, type);
 
-            Map<String, Object> nodeProps = edgeObj.getNodeProperties();
+            Map<String, Object> nodeProps = graphEdge.getProperties();
 
             doStuff(defEdgeTab, cyEdge, nodeProps);
         }
+    }
+
+    @Override
+    public void visit(GraphResult neo4jResult) {
+        for(GraphObject graphObject : neo4jResult.getAll()) {
+            graphObject.accept(this);
+        }
+    }
+
+    @Override
+    public void visit(GraphLong neo4jLong) {
+
+    }
+
+    @Override
+    public void visit(GraphUnspecifiedType neo4jUnspecifiedType) {
+
     }
 
     private void doStuff(CyTable defEdgeTab, CyIdentifiable cyEdge, Map<String, Object> nodeProps) {
@@ -164,4 +173,6 @@ public class CypherResultParser {
         }
         return null;
     }
+
+
 }

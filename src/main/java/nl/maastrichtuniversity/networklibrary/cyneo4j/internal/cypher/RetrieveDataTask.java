@@ -2,7 +2,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphObject;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
@@ -19,8 +19,8 @@ import java.util.Set;
 
 public class RetrieveDataTask extends AbstractTask {
 
-    private static final String NODE_ID_QUERY = "MATCH (n) RETURN id(n)";
-    private static final String EDGE_ID_QUERY = "MATCH ()-[r]->() RETURN id(r)";
+    private static final String NODE_QUERY = "MATCH (n) RETURN n";
+    private static final String EDGE_QUERY = "MATCH ()-[r]->() RETURN r";
 
     private Services services;
 
@@ -31,103 +31,55 @@ public class RetrieveDataTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         try {
-            CypherQuery nodeIdQuery = CypherQuery.builder().query(NODE_ID_QUERY).build();
-            CypherQuery edgeIdQuery = CypherQuery.builder().query(EDGE_ID_QUERY).build();
+            taskMonitor.setTitle("Importing the Neo4j Graph");
+            // setup network
+            CyNetwork network = services.getCyNetworkFactory().createNetwork();
+            network.getRow(network).set(CyNetwork.NAME, "neo4j network");
+            CreateCyNetworkFromGraphObjectList cypherParser = new CreateCyNetworkFromGraphObjectList(network);
+            taskMonitor.setStatusMessage("Downloading nodes");
+            CypherQuery nodeQuery = CypherQuery.builder()
+                    .query(NODE_QUERY)
+                    .build();
+            cypherParser.parseRetVal(executeQuery(nodeQuery));
 
-            List<Long> nodeIds = executeQueryNodeId(nodeIdQuery).getData();
-            List<Long> edgeIds = executeQueryNodeId(edgeIdQuery).getData();
+            services.getCyNetworkManager().addNetwork(network);
 
-            int numQueries = nodeIds.size() + edgeIds.size();
+            cypherParser = new CreateCyNetworkFromGraphObjectList(network);
+            taskMonitor.setStatusMessage("Downloading edges");
+            CypherQuery edgeQuery = CypherQuery.builder()
+                    .query(EDGE_QUERY)
+                    .build();
+            cypherParser.parseRetVal(executeQuery(edgeQuery));
 
-            int chunkSize = 500;
-            double progress_increment = (0.7 / (double) numQueries) * (double) chunkSize;
-            double progress = 0.1;
+            taskMonitor.setStatusMessage("Creating View");
 
-            taskMonitor.setProgress(progress);
-
-            if (nodeIds.size() > 0) {
-
-                taskMonitor.setTitle("Importing the Neo4j Graph");
-
-                // setup network
-                CyNetwork network = services.getCyNetworkFactory().createNetwork();
-                network.getRow(network).set(CyNetwork.NAME, "neo4j network");
-
-                CypherResultParser cypherParser = new CypherResultParser(network);
-
-                taskMonitor.setStatusMessage("Downloading nodes");
-                for (int i = 0; i < nodeIds.size(); i += chunkSize) {
-                    int end = i + chunkSize;
-
-                    if (end > nodeIds.size())
-                        end = nodeIds.size();
-                    CypherQuery query = CypherQuery.builder()
-                            .query("MATCH (n) where id(n) in {toget} RETURN n")
-                            .params("toget", nodeIds.subList(i, end))
-                            .build();
-
-                    cypherParser.parseRetVal(executeQuery(query));
-
-                    progress += progress_increment;
-                    taskMonitor.setProgress(progress);
-                }
-
-                services.getCyNetworkManager().addNetwork(network);
-
-                cypherParser = new CypherResultParser(network);
-                taskMonitor.setStatusMessage("Downloading edges");
-                for (int i = 0; i < edgeIds.size(); i += chunkSize) {
-                    int end = i + chunkSize;
-
-                    if (end > edgeIds.size())
-                        end = edgeIds.size();
-
-                    CypherQuery query = CypherQuery.builder()
-                            .query("MATCH ()-[r]->() where id(r) in {toget} RETURN r")
-                            .params("toget", edgeIds.subList(i, end))
-                            .build();
-
-                    cypherParser.parseRetVal(executeQuery(query));
-
-                    progress += progress_increment;
-                    taskMonitor.setProgress(progress);
-                }
-
-                taskMonitor.setStatusMessage("Creating View");
-                taskMonitor.setProgress(0.8);
-
-                Collection<CyNetworkView> views = services.getCyNetworkViewManager().getNetworkViews(network);
-                CyNetworkView view;
-                if (!views.isEmpty()) {
-                    view = views.iterator().next();
-                } else {
-                    view = services.getCyNetworkViewFactory().createNetworkView(network);
-                    services.getCyNetworkViewManager().addNetworkView(view);
-                }
-
-                taskMonitor.setStatusMessage("Applying Layout");
-                taskMonitor.setProgress(0.9);
-
-                Set<View<CyNode>> nodes = new HashSet<>();
-                CyLayoutAlgorithm layout = services.getCyLayoutAlgorithmManager().getLayout("force-directed");
-                insertTasksAfterCurrentTask(layout.createTaskIterator(view, layout.createLayoutContext(), nodes, null));
-
-                VisualStyle vs = services.getVisualMappingManager().getDefaultVisualStyle();
-                services.getVisualMappingManager().setVisualStyle(vs, view);
-                vs.apply(view);
-                view.updateView();
+            Collection<CyNetworkView> views = services.getCyNetworkViewManager().getNetworkViews(network);
+            CyNetworkView view;
+            if (!views.isEmpty()) {
+                view = views.iterator().next();
+            } else {
+                view = services.getCyNetworkViewFactory().createNetworkView(network);
+                services.getCyNetworkViewManager().addNetworkView(view);
             }
+
+            taskMonitor.setStatusMessage("Applying Layout");
+
+            Set<View<CyNode>> nodes = new HashSet<>();
+            CyLayoutAlgorithm layout = services.getCyLayoutAlgorithmManager().getLayout("force-directed");
+            insertTasksAfterCurrentTask(layout.createTaskIterator(view, layout.createLayoutContext(), nodes, null));
+
+            VisualStyle vs = services.getVisualMappingManager().getDefaultVisualStyle();
+            services.getVisualMappingManager().setVisualStyle(vs, view);
+            vs.apply(view);
+            view.updateView();
+
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
     }
 
-    private Neo4jGraph<Long> executeQueryNodeId(CypherQuery query) {
-        return services.getNeo4jClient().executeQueryIdList(query);
-    }
-
-    private  Neo4jGraph<ResultObject> executeQuery(CypherQuery query) {
-        return services.getNeo4jClient().executeQueryResultObject(query);
+    private List<GraphObject> executeQuery(CypherQuery query) {
+        return services.getNeo4jClient().executeQuery(query);
     }
 
 }

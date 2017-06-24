@@ -40,6 +40,6 @@ public class CypherMenuAction extends AbstractCyAction {
             return;
         }
         CypherQuery cypherQuery = CypherQuery.builder().query(query).build();
-        exec.processCallResponse(services.getNeo4jClient().executeQueryResultObject(cypherQuery));
+        exec.processCallResponse(services.getNeo4jClient().executeQuery(cypherQuery));
     }
 }

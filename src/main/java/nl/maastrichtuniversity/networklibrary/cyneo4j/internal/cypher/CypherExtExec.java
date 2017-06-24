@@ -1,8 +1,10 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jGraph;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphObject;
 import org.cytoscape.model.CyNetwork;
+
+import java.util.List;
 
 public class CypherExtExec {
 
@@ -12,7 +14,7 @@ public class CypherExtExec {
         this.services = services;
     }
 
-    public void processCallResponse(Neo4jGraph<ResultObject> graph) {
+    public void processCallResponse(List<GraphObject> graph) {
         CyNetwork currNet = services.getCyApplicationManager().getCurrentNetwork();
 
         if (currNet == null) {
@@ -20,6 +22,6 @@ public class CypherExtExec {
             currNet.getRow(currNet).set(CyNetwork.NAME, "Network");
             services.getCyNetworkManager().addNetwork(currNet);
         }
-        new CypherResultParser(currNet).parseRetVal(graph);
+        new CreateCyNetworkFromGraphObjectList(currNet).parseRetVal(graph);
     }
 }

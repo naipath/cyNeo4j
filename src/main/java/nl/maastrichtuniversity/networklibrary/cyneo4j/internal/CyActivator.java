@@ -20,11 +20,10 @@ import java.util.Properties;
 
 public class CyActivator extends AbstractCyActivator  {
 
-    private Services services = new Services();
-    private CypherMenuAction cypherMenuAction;
 
     @Override
     public void start(BundleContext context) throws Exception {
+        Services services = new Services();
         services.setCySwingApplication(getService(context, CySwingApplication.class));
         services.setCyApplicationManager(getService(context, CyApplicationManager.class));
         services.setCyNetworkFactory(getService(context, CyNetworkFactory.class));
@@ -38,19 +37,15 @@ public class CyActivator extends AbstractCyActivator  {
         services.setCommandFactory(CommandFactory.create(services));
         services.setCommandRunner(CommandRunner.create(services));
 
-        cypherMenuAction = CypherMenuAction.create(services);
+        CypherMenuAction cypherMenuAction = CypherMenuAction.create(services);
 
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
         RetrieveDataMenuAction retrieveDataMenuAction = RetrieveDataMenuAction.create(services);
 
         registerAllServices(context, connectAction, new Properties());
         registerAllServices(context, retrieveDataMenuAction, new Properties());
+        registerAllServices(context, cypherMenuAction, new Properties());
 
-        services.getCySwingApplication().addAction(cypherMenuAction);
     }
 
-    @Override
-    public void shutDown() {
-        services.getCySwingApplication().removeAction(cypherMenuAction);
-    }
 }
