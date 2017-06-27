@@ -1,5 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.AddEdgeCommand;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.AddNodeCommand;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphObject;
 import org.neo4j.driver.v1.*;
 import org.neo4j.driver.v1.exceptions.AuthenticationException;
@@ -39,4 +41,22 @@ public class Neo4jClient {
         return driver != null && driver.session().isOpen();
     }
 
+    public void executeCommand(AddEdgeCommand cmd) {
+        CypherQuery cypherQuery = CypherQuery.builder()
+                .query("MATCH (s {suid:$startNodeId}), (e {suid:$endNodeId}) CREATE (s) -[:LINK]-> (e)")
+                .params("startNodeId", cmd.getStartId())
+                .params("endNodeId", cmd.getEndId())
+                .params("relationship", cmd.getRelationship())
+                .params(cmd.getEdgeProperties())
+                .build();
+        executeQuery(cypherQuery);
+    }
+
+    public void executeCommand(AddNodeCommand cmd) {
+        CypherQuery cypherQuery = CypherQuery.builder().query("CREATE(n $props) SET n.suid=$suid")
+                .params("props",cmd.getNodeProperties())
+                .params("suid", cmd.getNodeId())
+                .build();
+        executeQuery(cypherQuery);
+    }
 }

@@ -3,34 +3,31 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandFactory;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandRunner;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CopyDataTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.RetrieveDataTask;
 import org.cytoscape.application.swing.AbstractCyAction;
+import org.cytoscape.work.AbstractTask;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.function.Supplier;
 
-public class RetrieveDataMenuAction extends AbstractCyAction {
+public class CommandMenuAction extends AbstractCyAction {
 
-    private final static String MENU_TITLE = "Retrieve data";
     private final static String MENU_LOC = "Apps.cyNeo4j";
     private final Neo4jClient neo4JClient;
-    private final CommandFactory commandFactory;
     private final CommandRunner commandRunner;
+    private final Supplier<AbstractTask> taskSupplier;
 
-    public static RetrieveDataMenuAction create(Services services) {
-        return new RetrieveDataMenuAction(
-                services.getNeo4jClient(),
-                services.getCommandFactory(),
-                services.getCommandRunner()
-        );
+    public static CommandMenuAction create(String menuTitle, Services services, Supplier<AbstractTask> taskSupplier) {
+        return new CommandMenuAction(menuTitle, services, taskSupplier);
     }
 
-    private RetrieveDataMenuAction(Neo4jClient neo4jClient, CommandFactory commandFactory, CommandRunner commandRunner) {
-        super(MENU_TITLE);
-        this.commandFactory = commandFactory;
-        this.commandRunner = commandRunner;
-        this.neo4JClient = neo4jClient;
+    private CommandMenuAction(String menuTitle, Services services, Supplier<AbstractTask> taskSupplier) {
+        super(menuTitle);
+        this.taskSupplier = taskSupplier;
+        this.commandRunner = services.getCommandRunner();
+        this.neo4JClient = services.getNeo4jClient();
         setPreferredMenu(MENU_LOC);
         setEnabled(false);
         setMenuGravity(0.1f);
@@ -42,7 +39,7 @@ public class RetrieveDataMenuAction extends AbstractCyAction {
             JOptionPane.showMessageDialog(null, "Not connected to any remote instance");
             return;
         }
-        RetrieveDataTask retrieveDataTask = commandFactory.createRetrieveDataTask();
-        commandRunner.execute(retrieveDataTask);
+        AbstractTask abstractTask = taskSupplier.get();
+        commandRunner.execute(abstractTask);
     }
 }

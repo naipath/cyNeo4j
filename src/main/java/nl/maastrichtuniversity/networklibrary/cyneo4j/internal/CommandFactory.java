@@ -1,5 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CopyDataTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.RetrieveDataTask;
 
 public class CommandFactory {
@@ -16,5 +17,9 @@ public class CommandFactory {
 
     static CommandFactory create(Services services) {
         return new CommandFactory(services);
+    }
+
+    public CopyDataTask createCopyDataTask() {
+        return new CopyDataTask(services);
     }
 }

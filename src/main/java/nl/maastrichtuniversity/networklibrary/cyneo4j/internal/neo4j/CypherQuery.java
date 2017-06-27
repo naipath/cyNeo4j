@@ -42,6 +42,12 @@ public class CypherQuery {
             return this;
         }
 
+        public Builder params(Map<String,Object> map) {
+            this.params.putAll(map);
+            return this;
+        }
+
+
 
         public CypherQuery build() {
             return new CypherQuery(query, params);

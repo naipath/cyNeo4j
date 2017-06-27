@@ -1,9 +1,9 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.CommandMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.ConnectInstanceMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.CypherMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.RetrieveDataMenuAction;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkFactory;
@@ -40,10 +40,12 @@ public class CyActivator extends AbstractCyActivator  {
         CypherMenuAction cypherMenuAction = CypherMenuAction.create(services);
 
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
-        RetrieveDataMenuAction retrieveDataMenuAction = RetrieveDataMenuAction.create(services);
+        CommandMenuAction retrieveDataMenuAction = CommandMenuAction.create("Retrieve Data",services, () -> services.getCommandFactory().createRetrieveDataTask());
+        CommandMenuAction copyDataMenuAction = CommandMenuAction.create("Copy Data",services, () -> services.getCommandFactory().createCopyDataTask());
 
         registerAllServices(context, connectAction, new Properties());
         registerAllServices(context, retrieveDataMenuAction, new Properties());
+        registerAllServices(context, copyDataMenuAction, new Properties());
         registerAllServices(context, cypherMenuAction, new Properties());
 
     }

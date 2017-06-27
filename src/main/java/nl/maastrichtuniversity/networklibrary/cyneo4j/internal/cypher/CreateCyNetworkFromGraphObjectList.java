@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.toSet;
 
 public class CreateCyNetworkFromGraphObjectList implements GraphVisitor {
 
-    private static final String COLUMN_ID = "neoid";
+    private static final String COLUMN_REFERENCEID = "refid";
     private CyNetwork currNet;
 
     public CreateCyNetworkFromGraphObjectList(CyNetwork network) {
@@ -19,6 +19,18 @@ public class CreateCyNetworkFromGraphObjectList implements GraphVisitor {
     }
 
     public void parseRetVal(List<GraphObject> list) {
+
+
+        CyTable defNodeTab = currNet.getDefaultNodeTable();
+
+        if (defNodeTab.getColumn(COLUMN_REFERENCEID) == null) {
+            defNodeTab.createColumn(COLUMN_REFERENCEID, Long.class, false);
+        }
+        CyTable defEdgeTab = currNet.getDefaultEdgeTable();
+        if (defEdgeTab.getColumn(COLUMN_REFERENCEID) == null) {
+            defEdgeTab.createColumn(COLUMN_REFERENCEID, Long.class, false);
+        }
+
         list.forEach(item -> {
             item.accept(this);
         });
@@ -26,42 +38,28 @@ public class CreateCyNetworkFromGraphObjectList implements GraphVisitor {
 
     @Override
     public void visit(GraphNode graphNode) {
+
         CyTable defNodeTab = currNet.getDefaultNodeTable();
-        if (defNodeTab.getColumn(COLUMN_ID) == null) {
-            defNodeTab.createColumn(COLUMN_ID, Long.class, false);
-        }
+        Long nodeId = graphNode.getId();
 
-        Long self = graphNode.getId();
-
-        CyNode cyNode = getNodeByNeoId(currNet, self);
+        CyNode cyNode = getNodeById(currNet, nodeId);
 
         if (cyNode == null) {
             cyNode = currNet.addNode();
-            currNet.getRow(cyNode).set(COLUMN_ID, self);
+            currNet.getRow(cyNode).set(COLUMN_REFERENCEID, nodeId);
         }
 
-        Map<String, Object> nodeProps = graphNode.getProperties();
-
-        doStuff(defNodeTab, cyNode, nodeProps);
+        addPropertiesToRowInCyTable(defNodeTab, cyNode, graphNode.getProperties());
 
     }
 
     @Override
     public void visit(GraphEdge graphEdge) {
         CyTable defEdgeTab = currNet.getDefaultEdgeTable();
-        if (defEdgeTab.getColumn(COLUMN_ID) == null) {
-            defEdgeTab.createColumn(COLUMN_ID, Long.class, false);
-        }
 
-        CyTable defNodeTab = currNet.getDefaultNodeTable();
-        if (defNodeTab.getColumn(COLUMN_ID) == null) {
-            defNodeTab.createColumn(COLUMN_ID, Long.class, false);
-        }
+        Long edgeId = graphEdge.getId();
 
-
-        Long self = graphEdge.getId();
-
-        CyEdge cyEdge = getEdgeByNeoId(currNet, self);
+        CyEdge cyEdge = getEdgeById(currNet, edgeId);
 
         if (cyEdge == null) {
 
@@ -69,33 +67,31 @@ public class CreateCyNetworkFromGraphObjectList implements GraphVisitor {
             Long end = graphEdge.getEnd();
             String type = graphEdge.getType();
 
-            CyNode startNode = getNodeByNeoId(currNet, start);
-            CyNode endNode = getNodeByNeoId(currNet, end);
+            CyNode startNode = getNodeById(currNet, start);
+            CyNode endNode = getNodeById(currNet, end);
 
             if (startNode == null) {
                 startNode = currNet.addNode();
-                currNet.getRow(startNode).set(COLUMN_ID, start);
+                currNet.getRow(startNode).set(COLUMN_REFERENCEID, start);
             }
 
             if (endNode == null) {
                 endNode = currNet.addNode();
-                currNet.getRow(endNode).set(COLUMN_ID, end);
+                currNet.getRow(endNode).set(COLUMN_REFERENCEID, end);
             }
 
             cyEdge = currNet.addEdge(startNode, endNode, true);
 
-            currNet.getRow(cyEdge).set(COLUMN_ID, self);
+            currNet.getRow(cyEdge).set(COLUMN_REFERENCEID, edgeId);
             currNet.getRow(cyEdge).set(CyEdge.INTERACTION, type);
 
-            Map<String, Object> nodeProps = graphEdge.getProperties();
-
-            doStuff(defEdgeTab, cyEdge, nodeProps);
+            addPropertiesToRowInCyTable(defEdgeTab, cyEdge, graphEdge.getProperties());
         }
     }
 
     @Override
-    public void visit(GraphResult neo4jResult) {
-        for(GraphObject graphObject : neo4jResult.getAll()) {
+    public void visit(GraphResult result) {
+        for(GraphObject graphObject : result.getAll()) {
             graphObject.accept(this);
         }
     }
@@ -110,22 +106,22 @@ public class CreateCyNetworkFromGraphObjectList implements GraphVisitor {
 
     }
 
-    private void doStuff(CyTable defEdgeTab, CyIdentifiable cyEdge, Map<String, Object> nodeProps) {
-        for (Entry<String, Object> obj : nodeProps.entrySet()) {
-            if (defEdgeTab.getColumn(obj.getKey()) == null) {
-                if (obj.getValue().getClass() == ArrayList.class) {
-                    defEdgeTab.createListColumn(obj.getKey(), String.class, true);
+    private void addPropertiesToRowInCyTable(CyTable cyTable, CyIdentifiable cyIdentifiable, Map<String, Object> nodeProps) {
+        for (Entry<String, Object> entry : nodeProps.entrySet()) {
+            if (cyTable.getColumn(entry.getKey()) == null) {
+                if (entry.getValue() instanceof List) {
+                    cyTable.createListColumn(entry.getKey(), String.class, true);
                 } else {
-                    defEdgeTab.createColumn(obj.getKey(), obj.getValue().getClass(), true);
+                    cyTable.createColumn(entry.getKey(), entry.getValue().getClass(), true);
                 }
             }
-            Object value = fixSpecialTypes(obj.getValue(), defEdgeTab.getColumn(obj.getKey()).getType());
-            defEdgeTab.getRow(cyEdge.getSUID()).set(obj.getKey(), value);
+//            Object value = fixSpecialTypes(entry.getValue(), cyTable.getColumn(entry.getKey()).getType());
+            cyTable.getRow(cyIdentifiable.getSUID()).set(entry.getKey(), entry.getValue());
         }
     }
 
-    private CyNode getNodeByNeoId(CyNetwork network, Long neoId) {
-        Set<CyNode> res = getNodesWithValue(network, network.getDefaultNodeTable(), neoId);
+    private CyNode getNodeById(CyNetwork network, Long id) {
+        Set<CyNode> res = getNodesWithValue(network, network.getDefaultNodeTable(), id);
         if (res.size() > 1) {
             throw new IllegalArgumentException("more than one start node found! " + res.toString());
         }
@@ -135,8 +131,8 @@ public class CreateCyNetworkFromGraphObjectList implements GraphVisitor {
         return res.iterator().next();
     }
 
-    private CyEdge getEdgeByNeoId(CyNetwork network, Long neoId) {
-        Set<CyEdge> res = getEdgeWithValue(network, network.getDefaultEdgeTable(), neoId);
+    private CyEdge getEdgeById(CyNetwork network, Long id) {
+        Set<CyEdge> res = getEdgeWithValue(network, network.getDefaultEdgeTable(), id);
         if (res.size() > 1) {
             throw new IllegalArgumentException("more than one start node found! " + res.toString());
         }
@@ -148,12 +144,12 @@ public class CreateCyNetworkFromGraphObjectList implements GraphVisitor {
 
     private Set<CyNode> getNodesWithValue(CyNetwork net, CyTable table, Object value) {
         String primaryKeyColname = table.getPrimaryKey().getName();
-        return getValueFromRows(table.getMatchingRows(COLUMN_ID, value), primaryKeyColname, net::getNode);
+        return getValueFromRows(table.getMatchingRows(COLUMN_REFERENCEID, value), primaryKeyColname, net::getNode);
     }
 
     private Set<CyEdge> getEdgeWithValue(CyNetwork net, CyTable table, Object value) {
         String primaryKeyColname = table.getPrimaryKey().getName();
-        return getValueFromRows(table.getMatchingRows(COLUMN_ID, value), primaryKeyColname, net::getEdge);
+        return getValueFromRows(table.getMatchingRows(COLUMN_REFERENCEID, value), primaryKeyColname, net::getEdge);
     }
 
     private <T> Set<T> getValueFromRows(Collection<CyRow> matchingRows, String primaryKeyColname, Function<Long, T> mapper) {
@@ -166,13 +162,13 @@ public class CreateCyNetworkFromGraphObjectList implements GraphVisitor {
     }
 
     private Object fixSpecialTypes(Object val, Class<?> req) {
-        if (val.getClass() == req) {
+        if(val.getClass().isAssignableFrom(req)) {
             return val;
-        } else if (val.getClass() == Integer.class && req == Long.class) {
-            return ((Integer) val).longValue();
+        }
+        if(val instanceof Number && req.equals(Long.class)) {
+            return ((Number)val).longValue();
         }
         return null;
     }
-
 
 }
