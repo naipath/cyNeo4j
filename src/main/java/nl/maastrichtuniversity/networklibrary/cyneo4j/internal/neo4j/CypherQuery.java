@@ -3,8 +3,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.stream.Collectors.joining;
-
 public class CypherQuery {
 
     private final String query;
