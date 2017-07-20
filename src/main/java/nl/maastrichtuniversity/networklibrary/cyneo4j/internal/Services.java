@@ -1,14 +1,17 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.template.provider.CypherQueryTemplateProvider;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.swing.DialogTaskManager;
 
 public class Services {
@@ -25,6 +28,9 @@ public class Services {
     private Neo4jClient neo4jClient;
     private CommandFactory commandFactory;
     private CommandRunner commandRunner;
+    private CyEventHelper cyEventHelper;
+    private VisualStyleFactory visualStyleFactory;
+    private CypherQueryTemplateProvider cypherQueryTemplateProvider;
 
     public CySwingApplication getCySwingApplication() {
         return cySwingApplication;
@@ -120,5 +126,29 @@ public class Services {
 
     public CommandRunner getCommandRunner() {
         return commandRunner;
+    }
+
+    public void setCyEventHelper(CyEventHelper cyEventHelper) {
+        this.cyEventHelper = cyEventHelper;
+    }
+
+    public CyEventHelper getCyEventHelper() {
+        return cyEventHelper;
+    }
+
+    public VisualStyleFactory getVisualStyleFactory() {
+        return visualStyleFactory;
+    }
+
+    public void setVisualStyleFactory(VisualStyleFactory visualStyleFactory) {
+        this.visualStyleFactory = visualStyleFactory;
+    }
+
+    public void setCypherQueryTemplateProvider(CypherQueryTemplateProvider cypherQueryTemplateProvider) {
+        this.cypherQueryTemplateProvider = cypherQueryTemplateProvider;
+    }
+
+    public CypherQueryTemplateProvider getCypherQueryTemplateProvider() {
+        return cypherQueryTemplateProvider;
     }
 }

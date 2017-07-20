@@ -22,6 +22,6 @@ public class CypherExtExec {
             currNet.getRow(currNet).set(CyNetwork.NAME, "Network");
             services.getCyNetworkManager().addNetwork(currNet);
         }
-        new CreateCyNetworkFromGraphObjectList(currNet).parseRetVal(graph);
+        new CreateCyNetworkFromGraphObjectList(currNet, new BasicCopyCyNetworkStrategy()).importGraph(graph);
     }
 }

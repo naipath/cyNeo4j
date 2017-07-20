@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cytemplate name="gene-detail-query">
+    <query><![CDATA[MATCH (n) - [r] - (m) WHERE n.geneID = $geneID  RETURN n, r, m]]></query>
+    <parameters>
+        <parameter name="geneID" type="java.lang.String" />
+    </parameters>
+    <mapping>
+        <node>
+            <referenceId>
+                <column type="java.lang.Long" name="refid"/>
+            </referenceId>
+            <properties>
+                <property name="geneID">
+                    <column type="java.lang.String" name="geneID" />
+                </property>
+                <property name="start">
+                    <column type="java.lang.Long" name="start" />
+                </property>
+                <property name="end">
+                    <column type="java.lang.Long" name="end" />
+                </property>
+                <property name="start">
+                    <column type="java.lang.Long" name="start" />
+                </property>
+            </properties>
+            <labels>
+                <label match="*">
+                    <column type="java.lang.String" name="nodeType" />
+                </label>
+            </labels>
+        </node>
+        <edge>
+            <referenceId>
+                <column type="java.lang.Long" name="refid"/>
+            </referenceId>
+            <linkType>
+                <column type="java.lang.String" name="linkType"/>
+            </linkType>
+            <interaction>DIRECTED</interaction>
+        </edge>
+    </mapping>
+</cytemplate>

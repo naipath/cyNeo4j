@@ -35,22 +35,19 @@ public class RetrieveDataTask extends AbstractTask {
             // setup network
             CyNetwork network = services.getCyNetworkFactory().createNetwork();
             network.getRow(network).set(CyNetwork.NAME, "neo4j network");
-            CreateCyNetworkFromGraphObjectList cypherParser = new CreateCyNetworkFromGraphObjectList(network);
+            CreateCyNetworkFromGraphObjectList cypherParser = new CreateCyNetworkFromGraphObjectList(network, new BasicCopyCyNetworkStrategy());
             taskMonitor.setStatusMessage("Downloading nodes");
             CypherQuery nodeQuery = CypherQuery.builder()
                     .query(NODE_QUERY)
                     .build();
-            cypherParser.parseRetVal(executeQuery(nodeQuery));
+            cypherParser.importGraph(executeQuery(nodeQuery));
 
             services.getCyNetworkManager().addNetwork(network);
-
-            cypherParser = new CreateCyNetworkFromGraphObjectList(network);
             taskMonitor.setStatusMessage("Downloading edges");
             CypherQuery edgeQuery = CypherQuery.builder()
                     .query(EDGE_QUERY)
                     .build();
-            cypherParser.parseRetVal(executeQuery(edgeQuery));
-
+            cypherParser.importGraph(executeQuery(edgeQuery));
             taskMonitor.setStatusMessage("Creating View");
 
             Collection<CyNetworkView> views = services.getCyNetworkViewManager().getNetworkViews(network);

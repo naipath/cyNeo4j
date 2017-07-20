@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.bioquery;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.genequery;
 
 public class Gene {
     private final SequenceId sequenceId;

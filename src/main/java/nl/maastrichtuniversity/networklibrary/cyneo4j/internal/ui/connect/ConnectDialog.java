@@ -1,6 +1,7 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.connect;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.ConnectionParameter;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.DialogMethods;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +29,7 @@ class ConnectDialog extends JDialog {
 
     void showConnectDialog() {
         init();
-        center();
+        DialogMethods.center(this);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setModal(true);
         setResizable(true);
@@ -124,11 +125,4 @@ class ConnectDialog extends JDialog {
         }
     }
 
-    private void center() {
-        Point cyLocation = getParent().getLocation();
-        int height = getParent().getHeight();
-        int width = getParent().getWidth();
-
-        this.setLocation(new Point(cyLocation.x + (width / 4), cyLocation.y + (height / 4)));
-    }
 }

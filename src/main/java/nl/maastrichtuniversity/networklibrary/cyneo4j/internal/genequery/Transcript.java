@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.bioquery;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.genequery;
 
 public class Transcript {
     private final TranscriptId transcriptId;

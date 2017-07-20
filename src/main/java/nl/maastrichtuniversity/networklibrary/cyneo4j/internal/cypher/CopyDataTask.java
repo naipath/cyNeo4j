@@ -38,7 +38,6 @@ public class CopyDataTask extends AbstractTask {
         cmd.setRelationship("links");
         cmd.setDirected(cyEdge.isDirected());
         services.getNeo4jClient().executeCommand(cmd);
-
     }
 
     private void copyNodeToNeo4j(CyNetwork cyNetwork, CyNode cyNode) {
@@ -48,5 +47,4 @@ public class CopyDataTask extends AbstractTask {
         cmd.setNodeId(cyNode.getSUID());
         services.getNeo4jClient().executeCommand(cmd);
     }
-
 }
