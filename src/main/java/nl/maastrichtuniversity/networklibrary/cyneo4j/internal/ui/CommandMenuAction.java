@@ -1,9 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandFactory;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandRunner;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CopyDataTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.work.AbstractTask;

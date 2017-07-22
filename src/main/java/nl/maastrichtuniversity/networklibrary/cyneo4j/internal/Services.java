@@ -1,12 +1,14 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.template.provider.CypherQueryTemplateProvider;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.configuration.AppConfiguration;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.provider.CypherQueryTemplateResourceProvider;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.session.CySessionManager;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
@@ -30,7 +32,7 @@ public class Services {
     private CommandRunner commandRunner;
     private CyEventHelper cyEventHelper;
     private VisualStyleFactory visualStyleFactory;
-    private CypherQueryTemplateProvider cypherQueryTemplateProvider;
+    private AppConfiguration appConfiguration;
 
     public CySwingApplication getCySwingApplication() {
         return cySwingApplication;
@@ -144,11 +146,11 @@ public class Services {
         this.visualStyleFactory = visualStyleFactory;
     }
 
-    public void setCypherQueryTemplateProvider(CypherQueryTemplateProvider cypherQueryTemplateProvider) {
-        this.cypherQueryTemplateProvider = cypherQueryTemplateProvider;
+    public void setAppConfiguration(AppConfiguration appConfiguration) {
+        this.appConfiguration = appConfiguration;
     }
 
-    public CypherQueryTemplateProvider getCypherQueryTemplateProvider() {
-        return cypherQueryTemplateProvider;
+    public AppConfiguration getAppConfiguration() {
+        return appConfiguration;
     }
 }

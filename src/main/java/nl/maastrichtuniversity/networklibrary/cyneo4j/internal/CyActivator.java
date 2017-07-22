@@ -1,14 +1,11 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.template.provider.CypherQueryTemplateProvider;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.configuration.AppConfiguration;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.CommandMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.connect.ConnectInstanceMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.CypherMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.genedetailquery.GeneDetailsQueryMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.genepathquery.GenePathQueryMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.template.CypherQueryTemplateMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.querytemplate.QueryTemplateMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.cypherquery.CypherQueryMenuAction;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.event.CyEventHelper;
@@ -27,10 +24,13 @@ import java.util.Properties;
 
 public class CyActivator extends AbstractCyActivator  {
 
+    private AppConfiguration appConfiguration = new AppConfiguration();
 
     @Override
     public void start(BundleContext context) throws Exception {
+        appConfiguration.load();
         Services services = new Services();
+        services.setAppConfiguration(appConfiguration);
         services.setCySwingApplication(getService(context, CySwingApplication.class));
         services.setCyApplicationManager(getService(context, CyApplicationManager.class));
         services.setCyNetworkFactory(getService(context, CyNetworkFactory.class));
@@ -43,26 +43,20 @@ public class CyActivator extends AbstractCyActivator  {
         services.setCyEventHelper(getService(context, CyEventHelper.class));
         services.setVisualStyleFactory(getService(context, VisualStyleFactory.class));
         services.setNeo4jClient(new Neo4jClient());
-        services.setCypherQueryTemplateProvider(CypherQueryTemplateProvider.create());
         services.setCommandFactory(CommandFactory.create(services));
         services.setCommandRunner(CommandRunner.create(services));
-
-        CypherMenuAction cypherMenuAction = CypherMenuAction.create(services);
-
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
         CommandMenuAction retrieveDataMenuAction = CommandMenuAction.create("Retrieve Data",services, () -> services.getCommandFactory().createRetrieveDataTask());
-        CommandMenuAction copyDataMenuAction = CommandMenuAction.create("Copy Data",services, () -> services.getCommandFactory().createCopyDataTask());
-        GenePathQueryMenuAction genePathQueryMenuAction = GenePathQueryMenuAction.create(services);
-        GeneDetailsQueryMenuAction geneDetailsQueryMenuAction = GeneDetailsQueryMenuAction.create(services);
-        CypherQueryTemplateMenuAction cypherQueryTemplateMenuAction = CypherQueryTemplateMenuAction.create(services);
+        CommandMenuAction writeDataToNeo4jMenuAction = CommandMenuAction.create("Write data to Neo4j",services, () -> services.getCommandFactory().createCopyDataTask());
+        CypherQueryMenuAction cypherQueryMenuAction = CypherQueryMenuAction.create(services);
+        QueryTemplateMenuAction queryTemplateMenuAction = QueryTemplateMenuAction.create(services);
 
         registerAllServices(context, connectAction, new Properties());
-        registerAllServices(context, genePathQueryMenuAction, new Properties());
-        registerAllServices(context, geneDetailsQueryMenuAction, new Properties());
+        registerAllServices(context, cypherQueryMenuAction, new Properties());
+        registerAllServices(context, queryTemplateMenuAction, new Properties() );
         registerAllServices(context, retrieveDataMenuAction, new Properties());
-        registerAllServices(context, copyDataMenuAction, new Properties());
-        registerAllServices(context, cypherMenuAction, new Properties());
-        registerAllServices(context, cypherQueryTemplateMenuAction , new Properties());
+        registerAllServices(context, writeDataToNeo4jMenuAction, new Properties());
+
     }
 
 }

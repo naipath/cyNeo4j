@@ -1,5 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CopyCyNetworkStrategy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.*;
 import org.cytoscape.model.*;
 
