@@ -9,6 +9,9 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphEdge;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphNode;
 import org.cytoscape.model.*;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,6 +19,7 @@ import java.util.Optional;
 public class MapNeo4jToCyNetworkStrategy implements CopyCyNetworkStrategy {
 
     private final GraphToCytoscapeMapping graphToCytoscapeMapping;
+
 
     public MapNeo4jToCyNetworkStrategy(GraphToCytoscapeMapping graphToCytoscapeMapping) {
         this.graphToCytoscapeMapping = graphToCytoscapeMapping;
@@ -66,8 +70,6 @@ public class MapNeo4jToCyNetworkStrategy implements CopyCyNetworkStrategy {
                 }
             });
         }
-        //TODO: add mapping for name
-        cyRow.set("name", graphNode.getLabels().stream().findFirst().orElse("?"));
     }
 
     @Override

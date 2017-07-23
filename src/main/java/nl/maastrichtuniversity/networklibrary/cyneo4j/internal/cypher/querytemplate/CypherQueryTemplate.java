@@ -96,7 +96,13 @@ public class CypherQueryTemplate {
         }
 
         public <T> Builder addNodePropertyMapping(String name, String columnName, Class<T> type) {
-            nodePropertyMapping.put(name, new NodeMapping<T>(columnName,type));
+            nodePropertyMapping.put(name,
+                    new NodeMapping<T>(
+                            columnName,
+                            type,
+                            node -> type.cast(node.getProperty(name, type).orElse(null)) //TODO: add default value
+                    )
+            );
             return this;
         }
 
@@ -109,7 +115,7 @@ public class CypherQueryTemplate {
         }
 
         public <T> Builder addNodeReferenceIdMapping(String name, Class<T> type) {
-            nodeReferenceIdMapping = new NodeMapping<T>(name, type);
+            nodeReferenceIdMapping = new NodeMapping<T>(name, type, node -> type.cast(node.getId()));
             return this;
         }
 

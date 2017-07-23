@@ -43,6 +43,10 @@ public class GraphNode extends GraphObject {
         return labels;
     }
 
+    public Object getProperty(String key) {
+        return properties.get(key);
+    }
+
     public <T> Optional<T> getProperty(String key, Class<T> clz) {
         if (key != null && clz != null) {
             Object value = properties.get(key);

@@ -46,10 +46,10 @@ public class CyActivator extends AbstractCyActivator  {
         services.setCommandFactory(CommandFactory.create(services));
         services.setCommandRunner(CommandRunner.create(services));
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
-        CommandMenuAction retrieveDataMenuAction = CommandMenuAction.create("Retrieve Data",services, () -> services.getCommandFactory().createRetrieveDataTask());
-        CommandMenuAction writeDataToNeo4jMenuAction = CommandMenuAction.create("Write data to Neo4j",services, () -> services.getCommandFactory().createCopyDataTask());
         CypherQueryMenuAction cypherQueryMenuAction = CypherQueryMenuAction.create(services);
         QueryTemplateMenuAction queryTemplateMenuAction = QueryTemplateMenuAction.create(services);
+        CommandMenuAction writeDataToNeo4jMenuAction = CommandMenuAction.create("Copy network to Neo4j",services, () -> services.getCommandFactory().createCopyDataTask());
+        CommandMenuAction retrieveDataMenuAction = CommandMenuAction.create("Copy Neo4j graph to cytoscape",services, () -> services.getCommandFactory().createRetrieveDataTask());
 
         registerAllServices(context, connectAction, new Properties());
         registerAllServices(context, cypherQueryMenuAction, new Properties());
