@@ -4,12 +4,12 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemp
 import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
-public class CyQueryParameters {
+class Parameters {
 
     @XmlElement(name="parameter")
-    private List<CyQueryParameter> parameterList;
+    private List<Parameter> parameterList;
 
-    public List<CyQueryParameter> getParameterList() {
+    public List<Parameter> getParameterList() {
         return parameterList;
     }
 }

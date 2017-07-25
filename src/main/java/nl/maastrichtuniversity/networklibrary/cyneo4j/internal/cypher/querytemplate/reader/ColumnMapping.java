@@ -5,19 +5,19 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CyQueryMapping {
+class ColumnMapping {
 
     @XmlElement(name = "node")
-    private CyQueryNodeMapping nodeMapping;
+    private NodeMapping nodeMapping;
 
     @XmlElement(name = "edge")
-    private CyQueryEdgeMapping edgeMapping;
+    private EdgeMapping edgeMapping;
 
-    public CyQueryNodeMapping getNodeMapping() {
+    public NodeMapping getNodeMapping() {
         return nodeMapping;
     }
 
-    public CyQueryEdgeMapping getEdgeMapping() {
+    public EdgeMapping getEdgeMapping() {
         return edgeMapping;
     }
 

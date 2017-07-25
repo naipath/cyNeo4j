@@ -4,21 +4,16 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CyQueryProperty {
+class Label {
 
-    @XmlAttribute(name = "name")
-    private String name;
+    @XmlAttribute(name="match")
+    private String match;
 
-    @XmlElement(name = "column")
-    private CyQueryColumn column;
-
-    public String getName() {
-        return name;
+    public String getMatch() {
+        return match;
     }
 
-    public CyQueryColumn getColumn() {
-        return column;
-    }
 }

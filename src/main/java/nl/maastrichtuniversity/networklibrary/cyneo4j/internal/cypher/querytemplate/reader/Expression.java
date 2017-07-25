@@ -2,16 +2,15 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemp
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import java.util.List;
+import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CyQueryLabelMapping {
+class Expression {
 
-    @XmlElement(name="label")
-    private List<CyQueryLabel> labels;
+    @XmlValue
+    private String expression;
 
-    public List<CyQueryLabel> getLabels() {
-        return labels;
+    public String getExpression() {
+        return expression;
     }
 }

@@ -1,17 +1,15 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.EdgeMapping;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.GraphToCytoscapeMapping;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.NodeLabelMapping;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.NodeMapping;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.*;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.values.ValueExpression;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphEdge;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphNode;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
-import org.cytoscape.model.CyEdge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class CypherQueryTemplate {
 
@@ -19,13 +17,13 @@ public class CypherQueryTemplate {
     private String cypherQuery;
     private Map<String,Class<?>> parameterTypes;
     private Map<String,Object> parameters;
-    private GraphToCytoscapeMapping mapping;
+    private GraphMapping mapping;
 
     CypherQueryTemplate(
             String name,
             String query,
             Map<String, Class<?>> parameterTypes,
-            GraphToCytoscapeMapping mapping) {
+            GraphMapping mapping) {
         this.name = name;
         this.cypherQuery = query;
         this.parameterTypes = new HashMap<>(parameterTypes);
@@ -43,7 +41,7 @@ public class CypherQueryTemplate {
                 .build();
     }
 
-    public GraphToCytoscapeMapping getMapping() {
+    public GraphMapping getMapping() {
         return mapping;
     }
 
@@ -70,15 +68,12 @@ public class CypherQueryTemplate {
     public static class Builder {
 
         private String query;
-        private Map<String, Class<?>> parameterTypes = new HashMap<>();
-        private Map<String, NodeMapping<?>> nodePropertyMapping = new HashMap<>();
-        private List<NodeLabelMapping> nodeLabelMappingList = new ArrayList<>();
-        private NodeMapping<?> nodeReferenceIdMapping;
-        private Map<String, EdgeMapping<?>> edgePropertyMapping = new HashMap<>();
-        private EdgeMapping<?> edgeLinkTypeMapping;
-        private EdgeMapping<?> edgeReferenceIdMapping;
         private String name;
-        private CyEdge.Type interaction;
+        private Map<String, Class<?>> parameterTypes = new HashMap<>();
+        private List<NodeColumnMapping> nodeColumnMapping = new ArrayList<>();
+        private List<EdgeColumnMapping> edgeColumnMapping = new ArrayList<>();
+        private String nodeReferenceIdColumn;
+        private String edgeReferenceIdColumn;
 
         public Builder setName(String name) {
             this.name =name;
@@ -95,69 +90,39 @@ public class CypherQueryTemplate {
             return this;
         }
 
-        public <T> Builder addNodePropertyMapping(String name, String columnName, Class<T> type) {
-            nodePropertyMapping.put(name,
-                    new NodeMapping<T>(
-                            columnName,
-                            type,
-                            node -> type.cast(node.getProperty(name, type).orElse(null)) //TODO: add default value
-                    )
-            );
+        public <T> Builder addNodeColumnMapping(String columnName, Class<T> type, ValueExpression<GraphNode, T> valueExpression) {
+            nodeColumnMapping.add(new NodeColumnMapping(columnName, type, valueExpression));
             return this;
         }
 
-        public <T> Builder addNodeLabelMapping(String name, String match, String columnName, Class<T> type) {
-            //TODO, name and type
-            Pattern pattern = Pattern.compile(match);
-            NodeLabelMapping nodeLabelMapping = new NodeLabelMapping(pattern, columnName);
-            nodeLabelMappingList.add(nodeLabelMapping);
+        public <T> Builder addEdgeColumnMapping(String columnName, Class<T> type, ValueExpression<GraphEdge, T> valueExpression) {
+            edgeColumnMapping.add(new EdgeColumnMapping(columnName, type, valueExpression));
             return this;
         }
 
-        public <T> Builder addNodeReferenceIdMapping(String name, Class<T> type) {
-            nodeReferenceIdMapping = new NodeMapping<T>(name, type, node -> type.cast(node.getId()));
+        public Builder setNodeReferenceIdColumn(String nodeReferenceIdColumn) {
+            this.nodeReferenceIdColumn = nodeReferenceIdColumn;
             return this;
         }
-
-        public <T> Builder addEdgePropertyMapping(String name, String columnName, Class<T> type) {
-            edgePropertyMapping.put(name, new EdgeMapping<T>(columnName, type));
-            return this;
-        }
-
-        public Builder addInteractionMapping(String interactionValue) {
-            interaction = CyEdge.Type.valueOf(interactionValue);
-            return this;
-        }
-
-        public <T> Builder addEdgeLinkTypeMapping(String name, Class<T> type) {
-            edgeLinkTypeMapping = new EdgeMapping<T>(name, type);
-            return this;
-        }
-
-        public <T> Builder addEdgeReferenceIdMapping(String name, Class<T> type) {
-            edgeReferenceIdMapping = new EdgeMapping<T>(name, type);
+        public Builder setEdgeReferenceIdColumn(String edgeReferenceIdColumn) {
+            this.edgeReferenceIdColumn = edgeReferenceIdColumn;
             return this;
         }
 
         public CypherQueryTemplate build() {
-            GraphToCytoscapeMapping graphToCytoscapeMapping = new GraphToCytoscapeMapping(
-                    nodeReferenceIdMapping,
-                    nodePropertyMapping,
-                    nodeLabelMappingList,
-                    edgeReferenceIdMapping,
-                    edgeLinkTypeMapping,
-                    interaction,
-                    edgePropertyMapping
-            );
+            GraphMapping graphMapping = new GraphMapping(
+                    nodeColumnMapping,
+                    edgeColumnMapping,
+                    nodeReferenceIdColumn,
+                    edgeReferenceIdColumn
+                    );
             CypherQueryTemplate cypherQueryTemplate = new CypherQueryTemplate(
                     name,
                     query,
                     parameterTypes,
-                    graphToCytoscapeMapping
+                    graphMapping
             );
             return cypherQueryTemplate;
         }
     }
-
-
 }

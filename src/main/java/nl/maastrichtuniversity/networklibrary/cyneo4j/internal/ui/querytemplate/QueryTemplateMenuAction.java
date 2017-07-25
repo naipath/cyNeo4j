@@ -2,15 +2,12 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.querytemplate
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CypherQueryTemplate;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.RetrieveDataFromQueryTemplateTask;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.provider.CypherQueryTemplateDirectoryProvider;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.ImportQueryTemplateTask;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.vizmap.VisualStyle;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
 public class QueryTemplateMenuAction extends AbstractCyAction {
@@ -55,7 +52,7 @@ public class QueryTemplateMenuAction extends AbstractCyAction {
                 parameterDialog.showDialog();
                 if (parameterDialog.isOk()) {
                     query.setParameters(parameterDialog.getParameters());
-                    RetrieveDataFromQueryTemplateTask retrieveDataTask =
+                    ImportQueryTemplateTask retrieveDataTask =
                             services.getCommandFactory().createRetrieveDataFromQueryTemplateTask(
                                     networkName,
                                     query,

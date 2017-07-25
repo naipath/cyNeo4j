@@ -9,9 +9,9 @@ import java.util.List;
 public class CyQueryPropertiesMapping {
 
     @XmlElement( name = "property" )
-    private List<CyQueryProperty> propertyList;
+    private List<Property> propertyList;
 
-    public List<CyQueryProperty> getPropertyList() {
+    public List<Property> getPropertyList() {
         return propertyList;
     }
 }

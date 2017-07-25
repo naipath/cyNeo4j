@@ -7,19 +7,19 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CyQueryLabel {
+class EdgeMapping {
 
-    @XmlAttribute(name="match")
-    private String match;
+    @XmlAttribute(name="referenceIdColumn")
+    private String referenceIdColumn;
 
-    @XmlElement(name="column")
-    private List<CyQueryColumn> columnList;
+    @XmlElement(name = "column")
+    private List<EdgeColumn> columnList;
 
-    public String getMatch() {
-        return match;
+    public List<EdgeColumn> getColumnList() {
+        return columnList;
     }
 
-    public List<CyQueryColumn> getColumnList() {
-        return columnList;
+    public String getReferenceIdColumn() {
+        return referenceIdColumn;
     }
 }

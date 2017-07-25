@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "cytemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CyQueryTemplate {
+class QueryTemplate {
 
     @XmlAttribute(name="name")
     private String name;
@@ -13,21 +13,21 @@ public class CyQueryTemplate {
     private String query;
 
     @XmlElement(name = "parameters")
-    private CyQueryParameters parameters;
+    private Parameters parameters;
 
     @XmlElement(name = "mapping")
-    private CyQueryMapping mapping;
+    private ColumnMapping mapping;
 
 
     public String getQuery() {
         return query;
     }
 
-    public CyQueryParameters getParameters() {
+    public Parameters getParameters() {
         return parameters;
     }
 
-    public CyQueryMapping getMapping() {
+    public ColumnMapping getMapping() {
         return mapping;
     }
 

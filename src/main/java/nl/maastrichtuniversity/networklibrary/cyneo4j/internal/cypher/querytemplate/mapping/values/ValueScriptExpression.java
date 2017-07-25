@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.values;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -7,10 +7,12 @@ import javax.script.ScriptException;
 public class ValueScriptExpression<T,V> implements ValueExpression<T,V> {
     private final String script;
     private final String varName;
+    private final Class<V> type;
 
-    public ValueScriptExpression(String script, String varName) {
+    public ValueScriptExpression(String script, String varName, Class<V> type) {
         this.script = script;
         this.varName = varName;
+        this.type = type;
     }
 
     @Override
@@ -18,7 +20,7 @@ public class ValueScriptExpression<T,V> implements ValueExpression<T,V> {
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
         engine.put(varName, val);
         try {
-            V result = (V)engine.eval(script);
+            V result = type.cast(engine.eval(script));
             return result;
         } catch (ScriptException e) {
             return null;

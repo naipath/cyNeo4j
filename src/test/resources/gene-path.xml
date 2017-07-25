@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<cytemplate name="test-query">
+<cytemplate name="gene-path">
     <query><![CDATA[MATCH p=(n:gene) - [r:order*] - (m:gene) WHERE n.geneID=$from AND m.geneID=$to RETURN p]]></query>
     <parameters>
         <parameter name="from" type="java.lang.String" />

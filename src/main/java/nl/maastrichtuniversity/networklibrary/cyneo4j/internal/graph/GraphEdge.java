@@ -1,6 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class GraphEdge extends GraphObject {
@@ -54,5 +55,16 @@ public class GraphEdge extends GraphObject {
     public long getId() {
         return id;
     }
+
+    public <T> Optional<T> getProperty(String key, Class<T> clz) {
+        if (key != null && clz != null) {
+            Object value = properties.get(key);
+            if (value != null && clz.isInstance(value)) {
+                return Optional.of(clz.cast(value));
+            }
+        }
+        return Optional.empty();
+    }
+
 
 }

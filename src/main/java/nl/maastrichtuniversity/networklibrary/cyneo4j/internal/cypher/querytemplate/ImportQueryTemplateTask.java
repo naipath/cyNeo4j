@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class RetrieveDataFromQueryTemplateTask extends AbstractTask {
+public class ImportQueryTemplateTask extends AbstractTask {
 
     private final Services services;
     private final String networkName;
@@ -27,7 +27,7 @@ public class RetrieveDataFromQueryTemplateTask extends AbstractTask {
 
 
 
-    public RetrieveDataFromQueryTemplateTask(Services services, String networkName, String visualStyleTitle, CypherQueryTemplate queryTemplate) {
+    public ImportQueryTemplateTask(Services services, String networkName, String visualStyleTitle, CypherQueryTemplate queryTemplate) {
         this.services = services;
         this.networkName = networkName;
         this.visualStyleTitle = visualStyleTitle;
@@ -43,7 +43,7 @@ public class RetrieveDataFromQueryTemplateTask extends AbstractTask {
             network.getRow(network).set(CyNetwork.NAME, networkName);
             services.getCyNetworkManager().addNetwork(network);
 
-            CreateCyNetworkFromGraphObjectList cypherParser = new CreateCyNetworkFromGraphObjectList(network, new MapNeo4jToCyNetworkStrategy(cypherQueryTemplate.getMapping()));
+            CreateCyNetworkFromGraphObjectList cypherParser = new CreateCyNetworkFromGraphObjectList(network, new MapToNetworkStrategy(cypherQueryTemplate.getMapping()));
             taskMonitor.setStatusMessage("Downloading graph");
             CypherQuery cypherQuery = cypherQueryTemplate.createQuery();
             cypherParser.importGraph(executeQuery(cypherQuery));

@@ -3,7 +3,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.writenetwork.WriteNetworkToNeo4jDataTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.retrievedata.RetrieveDataTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CypherQueryTemplate;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.RetrieveDataFromQueryTemplateTask;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.ImportQueryTemplateTask;
 
 public class CommandFactory {
 
@@ -25,7 +25,7 @@ public class CommandFactory {
         return new WriteNetworkToNeo4jDataTask(services);
     }
 
-    public RetrieveDataFromQueryTemplateTask createRetrieveDataFromQueryTemplateTask(String networkName, CypherQueryTemplate query, String visualStyle) {
-        return new RetrieveDataFromQueryTemplateTask(services, networkName, visualStyle, query);
+    public ImportQueryTemplateTask createRetrieveDataFromQueryTemplateTask(String networkName, CypherQueryTemplate query, String visualStyle) {
+        return new ImportQueryTemplateTask(services, networkName, visualStyle, query);
     }
 }
