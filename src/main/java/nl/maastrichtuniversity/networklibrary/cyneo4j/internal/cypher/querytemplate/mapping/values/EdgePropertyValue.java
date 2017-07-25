@@ -1,6 +1,5 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.values;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.values.ValueExpression;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphEdge;
 
 public class EdgePropertyValue<T> implements ValueExpression<GraphEdge, T> {

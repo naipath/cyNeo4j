@@ -7,8 +7,13 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class CypherQueryTemplateDirectoryProvider {
     private static Logger LOG = Logger.getLogger(CypherQueryTemplateDirectoryProvider.class);

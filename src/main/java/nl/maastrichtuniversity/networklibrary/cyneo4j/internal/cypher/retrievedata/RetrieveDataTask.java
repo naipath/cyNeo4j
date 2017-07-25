@@ -1,9 +1,9 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.retrievedata;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CreateCyNetworkFromGraphObjectList;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphToNetwork;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphObject;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
@@ -36,7 +36,7 @@ public class RetrieveDataTask extends AbstractTask {
             // setup network
             CyNetwork network = services.getCyNetworkFactory().createNetwork();
             network.getRow(network).set(CyNetwork.NAME, "neo4j network");
-            CreateCyNetworkFromGraphObjectList cypherParser = new CreateCyNetworkFromGraphObjectList(network, new RetrieveDataToCyNetworkStrategy());
+            ImportGraphToNetwork cypherParser = new ImportGraphToNetwork(network, new CopyToNetworkStrategy());
             taskMonitor.setStatusMessage("Downloading nodes");
             CypherQuery nodeQuery = CypherQuery.builder()
                     .query(NODE_QUERY)

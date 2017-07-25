@@ -1,12 +1,15 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.cypherquery;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.retrievedata.ExecuteCypherQuery;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.ImportQueryTemplateTask;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.retrievedata.ExecuteCypherQueryTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import org.cytoscape.application.swing.AbstractCyAction;
+import org.cytoscape.view.vizmap.VisualStyle;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.stream.Collectors;
 
 public class CypherQueryMenuAction extends AbstractCyAction {
 
@@ -35,18 +38,31 @@ public class CypherQueryMenuAction extends AbstractCyAction {
             return;
         }
 
-        CypherQueryDialog cypherQueryDialog = new CypherQueryDialog(services.getCySwingApplication().getJFrame());
+        CypherQueryDialog cypherQueryDialog = new CypherQueryDialog(services.getCySwingApplication().getJFrame(), getAllVisualStyleTitle());
         cypherQueryDialog.showDialog();
         if(!cypherQueryDialog.isExecuteQuery()) {
             return;
         }
         String query = cypherQueryDialog.getCypherQuery();
         if (query.isEmpty()) {
-            JOptionPane.showMessageDialog(services.getCySwingApplication().getJFrame(), "Failed to collect parameters for ");
+            JOptionPane.showMessageDialog(services.getCySwingApplication().getJFrame(), "Query is empty");
             return;
         }
-        ExecuteCypherQuery exec = new ExecuteCypherQuery(services);
-        CypherQuery cypherQuery = CypherQuery.builder().query(query).build();
-        exec.processCallResponse(services.getNeo4jClient().executeQuery(cypherQuery), "Network");
+
+        ExecuteCypherQueryTask executeCypherQueryTask  =
+                services.getCommandFactory().createExecuteCypherQueryTask(
+                        cypherQueryDialog.getNetwork(),
+                        CypherQuery.builder().query(query).build(),
+                        cypherQueryDialog.getVisualStyleTitle()
+                );
+        services.getCommandRunner().execute(executeCypherQueryTask);
+    }
+
+    private String[] getAllVisualStyleTitle() {
+        return services.getVisualMappingManager()
+                .getAllVisualStyles().stream()
+                .map(VisualStyle::getTitle)
+                .collect(Collectors.toList())
+                .toArray(new String[0]);
     }
 }

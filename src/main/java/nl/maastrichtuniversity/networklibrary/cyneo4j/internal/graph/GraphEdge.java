@@ -2,7 +2,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class GraphEdge extends GraphObject {
     private long start;

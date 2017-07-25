@@ -1,8 +1,6 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class GraphMapping {
 

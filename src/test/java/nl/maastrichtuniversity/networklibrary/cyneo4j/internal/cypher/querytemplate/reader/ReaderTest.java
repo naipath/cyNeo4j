@@ -3,7 +3,8 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemp
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CypherQueryTemplate;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ReaderTest {
     @Test

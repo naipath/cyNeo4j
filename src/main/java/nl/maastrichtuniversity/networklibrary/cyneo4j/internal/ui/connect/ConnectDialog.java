@@ -6,11 +6,7 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.DialogMethods;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.util.function.Predicate;
-
-import static java.awt.Color.BLACK;
 
 class ConnectDialog extends JDialog {
 

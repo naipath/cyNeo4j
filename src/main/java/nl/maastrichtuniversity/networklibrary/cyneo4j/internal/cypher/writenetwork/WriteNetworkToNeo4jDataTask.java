@@ -3,9 +3,10 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.writenetw
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.AddEdgeCommand;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.AddNodeCommand;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphNode;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
-import org.cytoscape.model.*;
+import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyRow;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 

@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.retrievedata;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphToNetwork;
@@ -18,22 +18,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ImportQueryTemplateTask extends AbstractTask {
+public class ExecuteCypherQueryTask extends AbstractTask {
 
     private final Services services;
     private final String networkName;
     private final String visualStyleTitle;
-    private final CypherQueryTemplate cypherQueryTemplate;
+    private final CypherQuery cypherQuery;
 
-    public ImportQueryTemplateTask(Services services, String networkName, String visualStyleTitle, CypherQueryTemplate queryTemplate) {
+
+    public ExecuteCypherQueryTask(Services services, String networkName, String visualStyleTitle, CypherQuery cypherQuery) {
         this.services = services;
         this.networkName = networkName;
         this.visualStyleTitle = visualStyleTitle;
-        this.cypherQueryTemplate = queryTemplate;
+        this.cypherQuery = cypherQuery;
     }
 
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
+
         try {
             taskMonitor.setTitle("Importing the Neo4j Graph " + networkName);
             // setup network
@@ -41,9 +43,8 @@ public class ImportQueryTemplateTask extends AbstractTask {
             network.getRow(network).set(CyNetwork.NAME, networkName);
             services.getCyNetworkManager().addNetwork(network);
 
-            ImportGraphToNetwork cypherParser = new ImportGraphToNetwork(network, new MapToNetworkStrategy(cypherQueryTemplate.getMapping()));
+            ImportGraphToNetwork cypherParser = new ImportGraphToNetwork(network, new CopyToNetworkStrategy());
             taskMonitor.setStatusMessage("Downloading graph");
-            CypherQuery cypherQuery = cypherQueryTemplate.createQuery();
             cypherParser.importGraph(executeQuery(cypherQuery));
 
             CyEventHelper cyEventHelper = services.getCyEventHelper();

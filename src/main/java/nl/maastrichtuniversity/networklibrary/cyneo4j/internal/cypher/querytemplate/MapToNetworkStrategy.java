@@ -1,14 +1,16 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.CopyCyNetworkStrategy;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.*;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphStrategy;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.EdgeColumnMapping;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.GraphMapping;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.NodeColumnMapping;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphEdge;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphNode;
 import org.cytoscape.model.*;
 
 import java.util.Optional;
 
-public class MapToNetworkStrategy implements CopyCyNetworkStrategy {
+public class MapToNetworkStrategy implements ImportGraphStrategy {
 
     private final GraphMapping graphMapping;
 
@@ -39,7 +41,7 @@ public class MapToNetworkStrategy implements CopyCyNetworkStrategy {
     }
 
     @Override
-    public void addPropertiesNode(CyNetwork network, GraphNode graphNode) {
+    public void handleNode(CyNetwork network, GraphNode graphNode) {
         CyNode cyNode = getNodeByIdOrElseCreate(network, graphNode.getId());
         CyRow cyRow = network.getRow(cyNode);
         for(NodeColumnMapping<?> nodeColumnMapping : graphMapping.getNodeColumnMapping()) {
@@ -48,7 +50,7 @@ public class MapToNetworkStrategy implements CopyCyNetworkStrategy {
     }
 
     @Override
-    public void addPropertiesEdge(CyNetwork network, GraphEdge graphEdge) {
+    public void handleEdge(CyNetwork network, GraphEdge graphEdge) {
 
         if(edgeExists(network, graphEdge.getId())) {
             return;

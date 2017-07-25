@@ -59,7 +59,6 @@ public class SelectTemplateDialog extends JDialog {
         JTextField networkNameField = new JTextField();
         JLabel networkNameLabel = new JLabel("network");
 
-
         JScrollPane visualStyleSelectListPane = new JScrollPane();
         JList visualStyleSelectList = new JList(visualStyles);
         visualStyleSelectList.setFixedCellWidth(200);

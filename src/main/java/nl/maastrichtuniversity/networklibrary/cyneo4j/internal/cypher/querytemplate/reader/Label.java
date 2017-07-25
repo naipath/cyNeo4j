@@ -3,8 +3,6 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemp
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 class Label {

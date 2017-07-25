@@ -1,11 +1,11 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.configuration.AppConfiguration;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.CommandMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.connect.ConnectInstanceMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.querytemplate.QueryTemplateMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.cypherquery.CypherQueryMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.querytemplate.QueryTemplateMenuAction;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.event.CyEventHelper;
