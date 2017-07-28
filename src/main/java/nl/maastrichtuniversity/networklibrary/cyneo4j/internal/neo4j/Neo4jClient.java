@@ -53,7 +53,8 @@ public class Neo4jClient {
     }
 
     public void executeCommand(AddNodeCommand cmd) {
-        CypherQuery cypherQuery = CypherQuery.builder().query("CREATE(n $props) SET n.suid=$suid")
+    	String nodeName = cmd.getNodeLabel().replace(' ', '_');
+        CypherQuery cypherQuery = CypherQuery.builder().query("CREATE(n:" + nodeName + " $props) SET n.suid=$suid")
                 .params("props",cmd.getNodeProperties())
                 .params("suid", cmd.getNodeId())
                 .build();

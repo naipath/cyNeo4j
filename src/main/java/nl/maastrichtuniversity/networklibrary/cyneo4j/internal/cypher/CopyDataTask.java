@@ -46,6 +46,7 @@ public class CopyDataTask extends AbstractTask {
         CyRow cyRow=cyNetwork.getDefaultNodeTable().getRow(cyNode.getSUID());
         cmd.setNodeProperties(cyRow.getAllValues());
         cmd.setNodeId(cyNode.getSUID());
+        cmd.setNodeLabel(cyNetwork.getRow(cyNetwork).get(CyNetwork.NAME, String.class));
         services.getNeo4jClient().executeCommand(cmd);
     }
 
