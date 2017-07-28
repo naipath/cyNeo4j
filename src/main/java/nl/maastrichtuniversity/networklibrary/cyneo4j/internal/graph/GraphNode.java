@@ -3,6 +3,9 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class GraphNode extends GraphObject {
 
@@ -33,5 +36,37 @@ public class GraphNode extends GraphObject {
 
     public long getId() {
         return id;
+    }
+
+    public List<String> getLabels() {
+        return labels;
+    }
+
+    public Object getProperty(String key) {
+        return properties.get(key);
+    }
+
+    public <T> Optional<T> getProperty(String key, Class<T> clz) {
+        if (key != null && clz != null) {
+            Object value = properties.get(key);
+            if (value != null && clz.isInstance(value)) {
+                return Optional.of(clz.cast(value));
+            }
+        }
+        return Optional.empty();
+    }
+
+    public <T> Optional<T> getProperty(String key, Function<Object, T> fn) {
+        if (key != null && fn != null) {
+            Object value = properties.get(key);
+            if (value != null) {
+                return Optional.of(fn.apply(value));
+            }
+        }
+        return Optional.empty();
+    }
+
+    public void ifLabelPresent(String label, Consumer<String> consumer) {
+        labels.stream().filter(val -> val.equalsIgnoreCase(label)).findFirst().ifPresent(consumer);
     }
 }
