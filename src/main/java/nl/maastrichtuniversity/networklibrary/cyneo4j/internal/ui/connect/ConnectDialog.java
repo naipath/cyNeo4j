@@ -60,7 +60,7 @@ class ConnectDialog extends JDialog {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton("Connect");
         okButton.addActionListener(this::ok);
         okButton.setActionCommand(OK_CMD);
 

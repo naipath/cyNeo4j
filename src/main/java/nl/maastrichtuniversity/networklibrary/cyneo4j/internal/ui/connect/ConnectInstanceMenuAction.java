@@ -14,39 +14,22 @@ public class ConnectInstanceMenuAction extends AbstractCyAction {
 
     private final static String MENU_TITLE = "Connect to Instance";
     private final static String MENU_LOC = "Apps.cyNeo4j";
-
-    private final Neo4jClient neo4jClient;
-    private final CySwingApplication cySwingApplication;
-    private final AppConfiguration appConfiguration;
+    private final ConnectToNeo4j connectToNeo4j;
 
     public static ConnectInstanceMenuAction create(Services services) {
-        return new ConnectInstanceMenuAction(
-                services.getNeo4jClient(),
-                services.getCySwingApplication(),
-                services.getAppConfiguration());
+        return new ConnectInstanceMenuAction(ConnectToNeo4j.create(services));
     }
 
-    private ConnectInstanceMenuAction(Neo4jClient neo4jClient, CySwingApplication cySwingApplication, AppConfiguration appConfiguration) {
+    private ConnectInstanceMenuAction(ConnectToNeo4j connectToNeo4j) {
         super(MENU_TITLE);
-        this.neo4jClient = neo4jClient;
-        this.cySwingApplication = cySwingApplication;
-        this.appConfiguration = appConfiguration;
+        this.connectToNeo4j = connectToNeo4j;
         setPreferredMenu(MENU_LOC);
         setMenuGravity(0.0f);
     }
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-        ConnectDialog connectDialog = new ConnectDialog(cySwingApplication.getJFrame(), neo4jClient::connect,
-                appConfiguration.getNeo4jHost(),
-                appConfiguration.getNeo4jUsername()
-        );
-        connectDialog.showConnectDialog();
-        if(connectDialog.isOk()) {
-            appConfiguration.setConnectionParameters(connectDialog.getHostname(), connectDialog.getUsername());
-            appConfiguration.save();
-            JOptionPane.showMessageDialog(this.cySwingApplication.getJFrame(), "Connected");
-        }
+        connectToNeo4j.connect();
     }
 
 }

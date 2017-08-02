@@ -21,9 +21,17 @@ public class WriteNetworkToNeo4jDataTask extends AbstractTask {
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         try {
+            taskMonitor.setStatusMessage("Export network to Neo4j");
             CyNetwork cyNetwork = services.getCyApplicationManager().getCurrentNetwork();
-            cyNetwork.getNodeList().forEach(node -> copyNodeToNeo4j(cyNetwork, node));
-            cyNetwork.getEdgeList().forEach(edge -> copyEdgeToNeo4j(cyNetwork, edge));
+
+            if(cyNetwork == null) {
+                taskMonitor.showMessage(TaskMonitor.Level.WARN, "No network selected");
+            } else {
+                taskMonitor.setStatusMessage("Exporting nodes");
+                cyNetwork.getNodeList().forEach(node -> copyNodeToNeo4j(cyNetwork, node));
+                taskMonitor.setStatusMessage("Exporting edges");
+                cyNetwork.getEdgeList().forEach(edge -> copyEdgeToNeo4j(cyNetwork, edge));
+            }
 
         } catch (Exception e) {
             throw new IllegalStateException(e);

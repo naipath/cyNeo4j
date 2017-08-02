@@ -2,7 +2,8 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.querytemplate
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CypherQueryTemplate;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.ImportQueryTemplateTask;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphTask;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.connect.ConnectToNeo4j;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.vizmap.VisualStyle;
 
@@ -29,7 +30,8 @@ public class QueryTemplateMenuAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if(!services.getNeo4jClient().isConnected()) {
+        ConnectToNeo4j connectToNeo4j = ConnectToNeo4j.create(services);
+        if(!connectToNeo4j.connect()) {
             JOptionPane.showMessageDialog(services.getCySwingApplication().getJFrame(), "Not connected");;
             return;
         }
@@ -52,7 +54,7 @@ public class QueryTemplateMenuAction extends AbstractCyAction {
                 parameterDialog.showDialog();
                 if (parameterDialog.isOk()) {
                     query.setParameters(parameterDialog.getParameters());
-                    ImportQueryTemplateTask retrieveDataTask =
+                    ImportGraphTask retrieveDataTask =
                             services.getCommandFactory().createRetrieveDataFromQueryTemplateTask(
                                     networkName,
                                     query,

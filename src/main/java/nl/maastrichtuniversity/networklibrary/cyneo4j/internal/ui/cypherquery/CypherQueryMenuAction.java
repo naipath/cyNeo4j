@@ -1,9 +1,9 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.cypherquery;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.ImportQueryTemplateTask;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.retrievedata.ExecuteCypherQueryTask;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.connect.ConnectToNeo4j;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.vizmap.VisualStyle;
 
@@ -33,7 +33,8 @@ public class CypherQueryMenuAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if(!services.getNeo4jClient().isConnected()) {
+        ConnectToNeo4j connectToNeo4j = ConnectToNeo4j.create(services);
+        if(!connectToNeo4j.connect()) {
             JOptionPane.showMessageDialog(services.getCySwingApplication().getJFrame(), "Not connected");;
             return;
         }
@@ -49,7 +50,7 @@ public class CypherQueryMenuAction extends AbstractCyAction {
             return;
         }
 
-        ExecuteCypherQueryTask executeCypherQueryTask  =
+        ImportGraphTask executeCypherQueryTask  =
                 services.getCommandFactory().createExecuteCypherQueryTask(
                         cypherQueryDialog.getNetwork(),
                         CypherQuery.builder().query(query).build(),

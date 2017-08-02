@@ -1,6 +1,8 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphStrategy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphToNetwork;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphObject;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
@@ -17,34 +19,50 @@ import org.cytoscape.work.TaskMonitor;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
-public class ImportQueryTemplateTask extends AbstractTask {
+public class ImportGraphTask extends AbstractTask {
 
     private final Services services;
     private final String networkName;
     private final String visualStyleTitle;
-    private final CypherQueryTemplate cypherQueryTemplate;
+    private final ImportGraphStrategy importGraphStrategy;
+    private final CypherQuery cypherQuery;
 
-    public ImportQueryTemplateTask(Services services, String networkName, String visualStyleTitle, CypherQueryTemplate queryTemplate) {
+    public ImportGraphTask(Services services, String networkName, String visualStyleTitle, ImportGraphStrategy importGraphStrategy, CypherQuery cypherQuery) {
         this.services = services;
         this.networkName = networkName;
         this.visualStyleTitle = visualStyleTitle;
-        this.cypherQueryTemplate = queryTemplate;
+        this.importGraphStrategy = importGraphStrategy;
+        this.cypherQuery = cypherQuery;
     }
 
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
         try {
+
             taskMonitor.setTitle("Importing the Neo4j Graph " + networkName);
+
             // setup network
             CyNetwork network = services.getCyNetworkFactory().createNetwork();
             network.getRow(network).set(CyNetwork.NAME, networkName);
             services.getCyNetworkManager().addNetwork(network);
 
-            ImportGraphToNetwork cypherParser = new ImportGraphToNetwork(network, new MapToNetworkStrategy(cypherQueryTemplate.getMapping()));
-            taskMonitor.setStatusMessage("Downloading graph");
-            CypherQuery cypherQuery = cypherQueryTemplate.createQuery();
-            cypherParser.importGraph(executeQuery(cypherQuery));
+            ImportGraphToNetwork cypherParser = new ImportGraphToNetwork(network, importGraphStrategy, () -> this.cancelled);
+
+            taskMonitor.setStatusMessage("Execute query");
+            CompletableFuture<List<GraphObject>> result = CompletableFuture.supplyAsync(() -> executeQuery(cypherQuery));
+
+            while(!result.isDone()) {
+                if(this.cancelled) {
+                    result.cancel(true);
+                }
+                Thread.sleep(400);
+            }
+            List<GraphObject> graphObjects = result.get();
+
+            taskMonitor.setStatusMessage("Importing graph");
+            cypherParser.importGraph(graphObjects);
 
             CyEventHelper cyEventHelper = services.getCyEventHelper();
             cyEventHelper.flushPayloadEvents();
