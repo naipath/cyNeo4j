@@ -53,11 +53,12 @@ public class Neo4jClient {
     }
 
     public void executeCommand(AddNodeCommand cmd) {
+    	String nodeName = cmd.getNodeLabel().replace(' ', '_');
         CypherQuery removerQuery = CypherQuery.builder().query("MATCH(n {suid:$suid}) DELETE n")
                 .params("suid", cmd.getNodeId())
                 .build();
         executeQuery(removerQuery);
-        CypherQuery insertQuery = CypherQuery.builder().query("CREATE(n $props) SET n.suid=$suid")
+        CypherQuery insertQuery = CypherQuery.builder().query("CREATE(n:" + nodeName + " $props) SET n.suid=$suid")
                 .params("props",cmd.getNodeProperties())
                 .params("suid", cmd.getNodeId())
                 .build();

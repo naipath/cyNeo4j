@@ -9,7 +9,6 @@
 
     <name>cyNeo4j</name>
 
-    <packaging>bundle</packaging>
 
     <properties>
         <bundle.symbolicName>nl.maastrichtuniversity.networklibrary.cyneo4j</bundle.symbolicName>
@@ -54,6 +53,11 @@
                         <Embed-Transitive>true</Embed-Transitive>
 
                     </instructions>
+					<archive>
+						<manifestEntries>
+							<Cytoscape-App-Name>cyNeo4J</Cytoscape-App-Name>
+						</manifestEntries>
+					</archive>
                 </configuration>
             </plugin>
         </plugins>
@@ -142,4 +146,5 @@
 
     </dependencies>
 
+    <packaging>bundle</packaging>
 </project>
