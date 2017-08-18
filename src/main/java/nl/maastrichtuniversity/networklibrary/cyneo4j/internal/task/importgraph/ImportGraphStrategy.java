@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphEdge;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphNode;

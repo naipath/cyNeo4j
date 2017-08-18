@@ -1,6 +1,6 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.retrievedata;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphStrategy;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.ImportGraphStrategy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphEdge;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphNode;
 import org.cytoscape.model.*;
@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toSet;
 
-public class CopyToNetworkStrategy implements ImportGraphStrategy {
+public class CopyAllImportStrategy implements ImportGraphStrategy {
 
     private static final String COLUMN_REFERENCEID = "refid";
     private static final String COLUMN_NAME = "name";

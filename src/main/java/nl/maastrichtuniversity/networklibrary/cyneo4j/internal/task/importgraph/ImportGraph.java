@@ -1,24 +1,24 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.*;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.CancelTaskException;
 import org.cytoscape.model.CyNetwork;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ImportGraphToNetwork implements GraphVisitor {
+public class ImportGraph implements GraphVisitor {
 
     private final CyNetwork network;
     private final ImportGraphStrategy importGraphStrategy;
     private final Supplier<Boolean> isCancelled;
 
 
-    public ImportGraphToNetwork(CyNetwork network, ImportGraphStrategy importGraphStrategy, Supplier<Boolean> isCancelled) {
+    public ImportGraph(CyNetwork network, ImportGraphStrategy importGraphStrategy, Supplier<Boolean> isCancelled) {
         this.network = network;
         this.importGraphStrategy = importGraphStrategy;
         this.isCancelled = isCancelled;
     }
-
 
 
     public void importGraph(List<GraphObject> list) {

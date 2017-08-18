@@ -1,6 +1,6 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphStrategy;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.ImportGraphStrategy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.EdgeColumnMapping;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.GraphMapping;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.NodeColumnMapping;
@@ -10,11 +10,11 @@ import org.cytoscape.model.*;
 
 import java.util.Optional;
 
-public class MapToNetworkStrategy implements ImportGraphStrategy {
+public class MappingImportStrategy implements ImportGraphStrategy {
 
     private final GraphMapping graphMapping;
 
-    public MapToNetworkStrategy(GraphMapping graphMapping) {
+    public MappingImportStrategy(GraphMapping graphMapping) {
         this.graphMapping = graphMapping;
     }
 

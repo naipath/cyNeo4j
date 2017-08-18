@@ -29,6 +29,23 @@ public class CyActivator extends AbstractCyActivator  {
     @Override
     public void start(BundleContext context) throws Exception {
         appConfiguration.load();
+        Services services = createServices(context);
+
+        ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
+        CypherQueryMenuAction cypherQueryMenuAction = CypherQueryMenuAction.create(services);
+        QueryTemplateMenuAction queryTemplateMenuAction = QueryTemplateMenuAction.create(services);
+        CommandMenuAction exportNetworkToNeo4jMenuAction = CommandMenuAction.create("Export network",services, () -> services.getCommandFactory().createExportNetworkToNeo4jTask());
+        CommandMenuAction ImportGraphMenuAction = CommandMenuAction.create("Import graph",services, () -> services.getCommandFactory().createImportGraphTask());
+
+        registerAllServices(context, connectAction, new Properties());
+        registerAllServices(context, cypherQueryMenuAction, new Properties());
+        registerAllServices(context, queryTemplateMenuAction, new Properties() );
+        registerAllServices(context, ImportGraphMenuAction, new Properties());
+        registerAllServices(context, exportNetworkToNeo4jMenuAction, new Properties());
+
+    }
+
+    private Services createServices(BundleContext context) {
         Services services = new Services();
         services.setAppConfiguration(appConfiguration);
         services.setCySwingApplication(getService(context, CySwingApplication.class));
@@ -45,18 +62,7 @@ public class CyActivator extends AbstractCyActivator  {
         services.setNeo4jClient(new Neo4jClient());
         services.setCommandFactory(CommandFactory.create(services));
         services.setCommandRunner(CommandRunner.create(services));
-        ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
-        CypherQueryMenuAction cypherQueryMenuAction = CypherQueryMenuAction.create(services);
-        QueryTemplateMenuAction queryTemplateMenuAction = QueryTemplateMenuAction.create(services);
-        CommandMenuAction writeDataToNeo4jMenuAction = CommandMenuAction.create("Copy network to Neo4j",services, () -> services.getCommandFactory().createCopyDataTask());
-        CommandMenuAction retrieveDataMenuAction = CommandMenuAction.create("Copy Neo4j graph to cytoscape",services, () -> services.getCommandFactory().createRetrieveDataTask());
-
-        registerAllServices(context, connectAction, new Properties());
-        registerAllServices(context, cypherQueryMenuAction, new Properties());
-        registerAllServices(context, queryTemplateMenuAction, new Properties() );
-        registerAllServices(context, retrieveDataMenuAction, new Properties());
-        registerAllServices(context, writeDataToNeo4jMenuAction, new Properties());
-
+        return services;
     }
 
 }

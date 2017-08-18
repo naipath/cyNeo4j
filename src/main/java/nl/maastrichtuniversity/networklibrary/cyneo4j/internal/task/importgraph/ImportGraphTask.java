@@ -1,9 +1,6 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphStrategy;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.ImportGraphToNetwork;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphObject;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import org.cytoscape.event.CyEventHelper;
@@ -48,7 +45,7 @@ public class ImportGraphTask extends AbstractTask {
             network.getRow(network).set(CyNetwork.NAME, networkName);
             services.getCyNetworkManager().addNetwork(network);
 
-            ImportGraphToNetwork cypherParser = new ImportGraphToNetwork(network, importGraphStrategy, () -> this.cancelled);
+            ImportGraph cypherParser = new ImportGraph(network, importGraphStrategy, () -> this.cancelled);
 
             taskMonitor.setStatusMessage("Execute query");
             CompletableFuture<List<GraphObject>> result = CompletableFuture.supplyAsync(() -> executeQuery(cypherQuery));
