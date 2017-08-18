@@ -15,8 +15,6 @@ public class SelectTemplateDialog extends JDialog {
 
 
     private static final class TemplateQueryListEntry {
-
-
         final String id;
         final String name;
         private TemplateQueryListEntry(String id, String name) {
@@ -27,8 +25,6 @@ public class SelectTemplateDialog extends JDialog {
         public String toString() {
             return name;
         }
-
-
     }
 
     private final String[] visualStyles;
@@ -58,44 +54,31 @@ public class SelectTemplateDialog extends JDialog {
         JButton cancelButton = new JButton("Cancel");
         JTextField networkNameField = new JTextField();
         JLabel networkNameLabel = new JLabel("network");
-
-        JScrollPane visualStyleSelectListPane = new JScrollPane();
-        JList visualStyleSelectList = new JList(visualStyles);
-        visualStyleSelectList.setFixedCellWidth(200);
-        visualStyleSelectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
-        visualStyleSelectListPane.setViewportView(visualStyleSelectList);
+        JComboBox visualStyleComboBox = new JComboBox(visualStyles);
         JLabel visualStyleLabel = new JLabel("Visual Style");
-
-        JPanel queryListPanel = new JPanel();
-        queryListPanel.setLayout(new BoxLayout(queryListPanel, BoxLayout.Y_AXIS));
-        JScrollPane queryListPane = new JScrollPane();
-        JList queryList = new JList(templateQueryListEntries);
-        queryList.setFixedCellWidth(200);
-        queryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        queryListPane.setViewportView(queryList);
+        SelectQueryPanel queryListPanel = new SelectQueryPanel(templateQueryListEntries);
         JLabel queryListLabel = new JLabel("Queries");
-        JButton selectFolderButton = new JButton("Select Folder");
-        selectFolderButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        selectFolderButton.addActionListener(e -> {
-            templateDir = selectQueryFolder();
-            TemplateQueryListEntry[] items = getQueryTemplatesFromDir();
-            queryList.setListData(items);
-        });
-        queryListPanel.add(queryListPane);
-        queryListPanel.add(selectFolderButton);
 
         okButton.addActionListener(e -> {
             networkName = networkNameField.getText();
-            visualStyle = visualStyleSelectList.getSelectedValue().toString();
-            cypherQueryTemplateId = ((TemplateQueryListEntry)queryList.getSelectedValue()).id;
+            if(visualStyleComboBox.getSelectedIndex()== -1) {
+                JOptionPane.showMessageDialog(this, "No visualstyle selected", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            visualStyle = visualStyleComboBox.getSelectedItem().toString();
+            if(queryListPanel.getQueryList().getSelectedIndex() == -1) {
+                JOptionPane.showMessageDialog(this, "No query selected", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            cypherQueryTemplateId = ((TemplateQueryListEntry)queryListPanel.getQueryList().getSelectedValue()).id;
             ok = true;
             SelectTemplateDialog.this.dispose();
         });
+
         cancelButton.addActionListener(e -> {
             ok = false;
             SelectTemplateDialog.this.dispose();
         });
-
 
         JPanel topPanel = new JPanel(new GridBagLayout());
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -126,7 +109,7 @@ public class SelectTemplateDialog extends JDialog {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        topPanel.add(visualStyleSelectListPane, gbc);
+        topPanel.add(visualStyleComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -143,12 +126,7 @@ public class SelectTemplateDialog extends JDialog {
         add(topPanel);
         add(buttonPanel,  BorderLayout.SOUTH);
 
-        DialogMethods.center(this);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModal(true);
-        setResizable(true);
-        pack();
-        setVisible(true);
+        DialogMethods.centerAndShow(this);
     }
 
 
@@ -193,7 +171,6 @@ public class SelectTemplateDialog extends JDialog {
             templateDirectoryListener.accept(templateDir);
         }
         return items;
-
     }
 
     private String selectQueryFolder() {
@@ -215,6 +192,42 @@ public class SelectTemplateDialog extends JDialog {
                 .collect(Collectors.toList())
                 .toArray(new TemplateQueryListEntry[0]);
     }
+
+    private final class SelectQueryPanel extends JPanel {
+
+        JList queryList;
+
+        public SelectQueryPanel(TemplateQueryListEntry[] templateQueryListEntries) {
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            JScrollPane queryListPane = new JScrollPane();
+            queryList = new JList(templateQueryListEntries);
+            queryList.setFixedCellWidth(200);
+            queryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            queryListPane.setViewportView(queryList);
+            JPanel queryListButtonPanel = new JPanel();
+            JButton newQueryButton = new JButton("New");
+            JButton editQueryButton = new JButton("Edit");
+            JButton selectFolderButton = new JButton("Select Folder");
+            selectFolderButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+            selectFolderButton.addActionListener(e -> {
+                templateDir = selectQueryFolder();
+                TemplateQueryListEntry[] items = getQueryTemplatesFromDir();
+                queryList.setListData(items);
+            });
+            add(queryListPane);
+            queryListButtonPanel.add(newQueryButton);
+            queryListButtonPanel.add(editQueryButton);
+            queryListButtonPanel.add(selectFolderButton);
+            add(queryListButtonPanel);
+        }
+
+        public JList getQueryList() {
+            return queryList;
+        }
+    }
+
+
+
 
     public static void main(String[] args) {
         SelectTemplateDialog dialog = new SelectTemplateDialog(null,

@@ -8,6 +8,15 @@ import java.awt.*;
 
 public class DialogMethods {
 
+    public static void centerAndShow(JDialog jDialog) {
+        center(jDialog);
+        jDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        jDialog.setModal(true);
+        jDialog.setResizable(true);
+        jDialog.pack();
+        jDialog.setVisible(true);
+    }
+
     public static void center(JDialog jDialog) {
         Point cyLocation = jDialog.getParent().getLocation();
         int height = jDialog.getParent().getHeight();
