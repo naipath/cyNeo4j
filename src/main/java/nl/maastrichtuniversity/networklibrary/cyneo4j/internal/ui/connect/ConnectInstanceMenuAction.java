@@ -1,12 +1,8 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.connect;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.configuration.AppConfiguration;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import org.cytoscape.application.swing.AbstractCyAction;
-import org.cytoscape.application.swing.CySwingApplication;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")

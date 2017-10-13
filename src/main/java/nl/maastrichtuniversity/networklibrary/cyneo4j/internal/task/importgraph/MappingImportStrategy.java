@@ -1,6 +1,5 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.ImportGraphStrategy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.EdgeColumnMapping;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.GraphMapping;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.NodeColumnMapping;
@@ -22,7 +21,6 @@ public class MappingImportStrategy implements ImportGraphStrategy {
     public void createTables(CyNetwork network) {
         CyTable nodeTable = network.getDefaultNodeTable();
         CyTable edgeTable = network.getDefaultEdgeTable();
-        CyTable cyNetworkTable= network.getDefaultNetworkTable();
 
         for(NodeColumnMapping<?> nodeColumnMapping : graphMapping.getNodeColumnMapping()) {
             if (!columnExists(nodeTable, nodeColumnMapping.getColumnName())) {

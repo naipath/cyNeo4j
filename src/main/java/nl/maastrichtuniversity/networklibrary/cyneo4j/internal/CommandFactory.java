@@ -1,11 +1,12 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CypherQueryTemplate;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.exportnetwork.ExportNetworkToNeo4jTask;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.CopyAllImportStrategy;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.ImportGraphStrategy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.ImportGraphTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.MappingImportStrategy;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.CopyAllImportStrategy;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.exportnetwork.ExportNetworkToNeo4jTask;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 
 public class CommandFactory {
 
@@ -33,7 +34,9 @@ public class CommandFactory {
     }
 
     public ImportGraphTask createRetrieveDataFromQueryTemplateTask(String networkName, CypherQueryTemplate query, String visualStyle) {
-        return new ImportGraphTask(services, networkName, visualStyle, new MappingImportStrategy(query.getMapping()),query.createQuery());
+        ImportGraphStrategySelector selector = new ImportGraphStrategySelector();
+        query.getMapping().accept(selector);
+        return new ImportGraphTask(services, networkName, visualStyle, selector.getImportGraphStrategy() ,query.createQuery());
     }
     public ImportGraphTask createExecuteCypherQueryTask(String networkName, CypherQuery query, String visualStyle) {
         return new ImportGraphTask(services, networkName, visualStyle, new CopyAllImportStrategy(), query);

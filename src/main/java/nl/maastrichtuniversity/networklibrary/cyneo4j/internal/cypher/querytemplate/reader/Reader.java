@@ -1,6 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.reader;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CypherQueryTemplate;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.GraphMapping;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.mapping.values.*;
 
 import javax.xml.bind.JAXBContext;
@@ -52,50 +53,53 @@ public class Reader {
             builder.addParameter(cyQueryParameter.getName(), type);
         });
 
-        builder.setNodeReferenceIdColumn(xml.getMapping().getNodeMapping().getReferenceIdColumn());
+        GraphMapping.Builder graphMappingBuilder = GraphMapping.builder();
+
+        graphMappingBuilder.setNodeReferenceIdColumn(xml.getMapping().getNodeMapping().getReferenceIdColumn());
 
         xml.getMapping().getNodeMapping().getColumnList().forEach(column -> {
             Class<?> columnType = getType(column.getType());
             if(column.getId() != null) {
-                builder.addNodeColumnMapping(column.getName(), Long.class, new NodeId());
+                graphMappingBuilder.addNodeColumnMapping(column.getName(), Long.class, new NodeId());
             }
             if(column.getProperty() != null) {
-                builder.addNodeColumnMapping(
+                graphMappingBuilder.addNodeColumnMapping(
                         column.getName(),
                         columnType,
                         new NodePropertyValue(column.getProperty().getKey(), columnType));
             }
             if(column.getLabel() != null) {
-                builder.addNodeColumnMapping(column.getName(), String.class, new LabelValue(column.getLabel().getMatch()));
+                graphMappingBuilder.addNodeColumnMapping(column.getName(), String.class, new LabelValue(column.getLabel().getMatch()));
             }
             if(column.getExpression() != null) {
-                builder.addNodeColumnMapping(
+                graphMappingBuilder.addNodeColumnMapping(
                         column.getName(),
                         columnType,
                         new NodeScriptExpression(column.getExpression().getExpression(),columnType));
             }
         });
 
-        builder.setEdgeReferenceIdColumn(xml.getMapping().getEdgeMapping().getReferenceIdColumn());
+        graphMappingBuilder.setEdgeReferenceIdColumn(xml.getMapping().getEdgeMapping().getReferenceIdColumn());
 
         xml.getMapping().getEdgeMapping().getColumnList().forEach(column -> {
             Class<?> columnType = getType(column.getType());
             if(column.getId() != null) {
-                builder.addEdgeColumnMapping(column.getName(), Long.class, new EdgeId());;
+                graphMappingBuilder.addEdgeColumnMapping(column.getName(), Long.class, new EdgeId());;
             }
             if(column.getProperty() != null) {
-                builder.addEdgeColumnMapping(
+                graphMappingBuilder.addEdgeColumnMapping(
                         column.getName(),
                         columnType,
                         new EdgePropertyValue(column.getProperty().getKey(), columnType));
             }
             if(column.getExpression() != null) {
-                builder.addEdgeColumnMapping(
+                graphMappingBuilder.addEdgeColumnMapping(
                         column.getName(),
                         columnType,
                         new EdgeScriptExpression(column.getExpression().getExpression(), columnType));
             }
         });
+        builder.addMappingStrategy(graphMappingBuilder.build());
         return builder.build();
     }
 

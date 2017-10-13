@@ -1,6 +1,5 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph;
 
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.ImportGraphStrategy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphEdge;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphNode;
 import org.cytoscape.model.*;

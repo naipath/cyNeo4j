@@ -19,13 +19,13 @@ public class CypherQueryTemplate {
     private String cypherQuery;
     private Map<String,Class<?>> parameterTypes;
     private Map<String,Object> parameters;
-    private GraphMapping mapping;
+    private MappingStrategy mapping;
 
     CypherQueryTemplate(
             String name,
             String query,
             Map<String, Class<?>> parameterTypes,
-            GraphMapping mapping) {
+            MappingStrategy mapping) {
         this.name = name;
         this.cypherQuery = query;
         this.parameterTypes = new HashMap<>(parameterTypes);
@@ -43,7 +43,7 @@ public class CypherQueryTemplate {
                 .build();
     }
 
-    public GraphMapping getMapping() {
+    public MappingStrategy getMapping() {
         return mapping;
     }
 
@@ -72,10 +72,7 @@ public class CypherQueryTemplate {
         private String query;
         private String name;
         private Map<String, Class<?>> parameterTypes = new HashMap<>();
-        private List<NodeColumnMapping> nodeColumnMapping = new ArrayList<>();
-        private List<EdgeColumnMapping> edgeColumnMapping = new ArrayList<>();
-        private String nodeReferenceIdColumn;
-        private String edgeReferenceIdColumn;
+        private MappingStrategy mappingStrategy;
 
         public Builder setName(String name) {
             this.name =name;
@@ -92,37 +89,17 @@ public class CypherQueryTemplate {
             return this;
         }
 
-        public <T> Builder addNodeColumnMapping(String columnName, Class<T> type, ValueExpression<GraphNode, T> valueExpression) {
-            nodeColumnMapping.add(new NodeColumnMapping(columnName, type, valueExpression));
-            return this;
-        }
-
-        public <T> Builder addEdgeColumnMapping(String columnName, Class<T> type, ValueExpression<GraphEdge, T> valueExpression) {
-            edgeColumnMapping.add(new EdgeColumnMapping(columnName, type, valueExpression));
-            return this;
-        }
-
-        public Builder setNodeReferenceIdColumn(String nodeReferenceIdColumn) {
-            this.nodeReferenceIdColumn = nodeReferenceIdColumn;
-            return this;
-        }
-        public Builder setEdgeReferenceIdColumn(String edgeReferenceIdColumn) {
-            this.edgeReferenceIdColumn = edgeReferenceIdColumn;
+        public Builder addMappingStrategy(MappingStrategy mappingStrategy) {
+            this.mappingStrategy = mappingStrategy;
             return this;
         }
 
         public CypherQueryTemplate build() {
-            GraphMapping graphMapping = new GraphMapping(
-                    nodeColumnMapping,
-                    edgeColumnMapping,
-                    nodeReferenceIdColumn,
-                    edgeReferenceIdColumn
-                    );
             CypherQueryTemplate cypherQueryTemplate = new CypherQueryTemplate(
                     name,
                     query,
                     parameterTypes,
-                    graphMapping
+                    mappingStrategy
             );
             return cypherQueryTemplate;
         }

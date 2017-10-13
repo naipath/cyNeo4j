@@ -2,12 +2,10 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.CommandRunner;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.connect.ConnectToNeo4j;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.work.AbstractTask;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.function.Supplier;
 

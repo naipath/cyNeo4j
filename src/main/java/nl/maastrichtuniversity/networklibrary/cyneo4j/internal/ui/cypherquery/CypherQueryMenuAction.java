@@ -1,8 +1,8 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.cypherquery;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.ImportGraphTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.ImportGraphTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.connect.ConnectToNeo4j;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.view.vizmap.VisualStyle;

@@ -53,7 +53,7 @@ public class SelectTemplateDialog extends JDialog {
         JButton okButton = new JButton("Ok");
         JButton cancelButton = new JButton("Cancel");
         JTextField networkNameField = new JTextField();
-        JLabel networkNameLabel = new JLabel("network");
+        JLabel networkNameLabel = new JLabel("Networkname");
         JComboBox visualStyleComboBox = new JComboBox(visualStyles);
         JLabel visualStyleLabel = new JLabel("Visual Style");
         SelectQueryPanel queryListPanel = new SelectQueryPanel(templateQueryListEntries);

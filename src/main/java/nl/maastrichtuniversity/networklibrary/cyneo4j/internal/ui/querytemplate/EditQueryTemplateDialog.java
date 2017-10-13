@@ -1,33 +1,62 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.querytemplate;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CopyAllMappingStrategy;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CypherQueryTemplate;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.DialogMethods;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.PAGE_START;
 
 public class EditQueryTemplateDialog extends JDialog {
+
+    private String cypherQuery;
+    private EditQueryPanel editQueryPanel;
+    private ParametersPanel parametersPanel;
 
     public void showDialog() {
         setTitle("Edit Query");
 
-        EditQueryPanel editQueryPanel = new EditQueryPanel();
-        ParametersPanel parametersPanel = new ParametersPanel();
-        NodeMappingPanel nodeMappingPanel = new NodeMappingPanel();
-        EdgeMappingPanel edgeMappingPanel = new EdgeMappingPanel();
+        editQueryPanel = new EditQueryPanel();
+
+        parametersPanel = new ParametersPanel();
         ButtonPanel buttonPanel = new ButtonPanel((ev) -> this.dispose(), (ev) -> this.dispose());
 
+        JPanel panel = new JPanel();
         setLayout(new FlowLayout());
-        add(editQueryPanel);
-        add(parametersPanel);
-        add(nodeMappingPanel);
-        add(edgeMappingPanel);
-        add(buttonPanel);
-
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(editQueryPanel);
+        panel.add(parametersPanel);
+        panel.add(buttonPanel);
+        add(panel);
         DialogMethods.centerAndShow(this);
+    }
+
+    public CypherQueryTemplate createCypherQuery() {
+        CypherQueryTemplate.Builder builder = CypherQueryTemplate.builder();
+        builder.setQueryTemplate(editQueryPanel.textArea.getText());
+        builder.setName("Import");
+        builder.addMappingStrategy(new CopyAllMappingStrategy("refid", "network"));
+
+        for(int i = 1; i < parametersPanel.getRowCount(); i++) {
+            String parameter = parametersPanel.getParameter(i);
+            Class<?> parameterType = parametersPanel.getParameterType(i);
+            if (parameter != null && parameterType != null) {
+                builder.addParameter(parameter, parameterType);
+
+            }
+        }
+        return builder.build();
     }
 
     private final class ButtonPanel extends JPanel {
@@ -43,18 +72,39 @@ public class EditQueryTemplateDialog extends JDialog {
     }
 
     private final class EditQueryPanel extends JPanel {
+        JTextArea textArea;
         EditQueryPanel() {
-            JTextArea textArea = new JTextArea(20,40);
-            add(textArea);
+            textArea = new JTextArea(20,40);
+            JLabel label = new JLabel("Cypher Query");
+            setLayout(new BorderLayout());
+            add(label, PAGE_START);
+            add(textArea, CENTER);
         }
+
     }
 
     private final class ParametersPanel extends JPanel {
+
+        private ParameterTableModel parameterTableModel =  new ParameterTableModel ();
+
         ParametersPanel() {
             JTable jTable = new JTable();
-            jTable.setModel(new ParameterTableModel ());
-            jTable.getModel().setValueAt("Parameter", 0, 0);
-            add(jTable);
+            jTable.setModel(parameterTableModel);
+            jTable.getModel().setValueAt("Parametername", 0, 0);
+            jTable.getModel().setValueAt("Type", 0, 1);
+
+            TableColumn column = jTable.getColumnModel().getColumn(1);
+            JComboBox comboBox = new JComboBox();
+            comboBox.addItem("String");
+            comboBox.addItem("Integer");
+            comboBox.addItem("Long");
+            comboBox.addItem("Double");
+            column.setCellEditor(new DefaultCellEditor(comboBox));
+
+            JLabel label = new JLabel("Parameters");
+            setLayout(new BorderLayout());
+            add(label, PAGE_START);
+            add(jTable, CENTER);
         }
         private final class ParameterTableModel extends DefaultTableModel {
 
@@ -68,24 +118,32 @@ public class EditQueryTemplateDialog extends JDialog {
             }
         }
 
-    }
+        private int getRowCount() {
+            return parameterTableModel.getRowCount();
+        }
 
-    private final class NodeMappingPanel extends JPanel {
-        NodeMappingPanel() {
-            JTable jTable = new JTable();
-            jTable.setModel(new DefaultTableModel(10,4));
-            add(jTable);
+        private void addRow() {
+            parameterTableModel.addRow(new Object[] {"param", "String"});
+        }
+
+         private String getParameter(int row) {
+            return (String) parameterTableModel.getValueAt(row,0);
+        }
+
+        private Class<?> getParameterType(int row) {
+            return getType((String) parameterTableModel.getValueAt(row,1));
+        }
+
+        private Class<?> getType(String type) {
+            switch(type) {
+                case "String" : return String.class;
+                case "Integer" : return Integer.class;
+                case "Long" : return Long.class;
+                case "Double" : return Double.class;
+                default: return null;
+            }
         }
     }
-
-    private final class EdgeMappingPanel extends JPanel {
-        EdgeMappingPanel() {
-            JTable jTable = new JTable();
-            jTable.setModel(new DefaultTableModel(10, 4));
-            add(jTable);
-        }
-    }
-
 
     public static void main(String[] args) {
         EditQueryTemplateDialog dialog = new EditQueryTemplateDialog();
