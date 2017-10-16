@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.reader;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.xml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -12,5 +12,9 @@ class Expression {
 
     public String getExpression() {
         return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 }

@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.reader;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.xml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,6 +14,14 @@ class EdgeMapping {
 
     @XmlElement(name = "column")
     private List<EdgeColumn> columnList;
+
+    public void setReferenceIdColumn(String referenceIdColumn) {
+        this.referenceIdColumn = referenceIdColumn;
+    }
+
+    public void setColumnList(List<EdgeColumn> columnList) {
+        this.columnList = columnList;
+    }
 
     public List<EdgeColumn> getColumnList() {
         return columnList;

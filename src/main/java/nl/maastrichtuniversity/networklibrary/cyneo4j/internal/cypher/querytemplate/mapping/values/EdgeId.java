@@ -6,4 +6,9 @@ public class EdgeId implements ValueExpression<GraphEdge,Long> {
     public Long eval(GraphEdge val) {
         return val.getId();
     }
+
+    @Override
+    public void accept(ValueExpressionVisitor visitor) {
+        visitor.visit(this);
+    }
 }

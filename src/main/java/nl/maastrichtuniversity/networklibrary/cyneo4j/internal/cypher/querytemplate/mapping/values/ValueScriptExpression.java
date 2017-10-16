@@ -4,7 +4,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-public class ValueScriptExpression<T,V> implements ValueExpression<T,V> {
+public abstract class ValueScriptExpression<T,V> implements ValueExpression<T,V> {
     private final String script;
     private final String varName;
     private final Class<V> type;
@@ -27,5 +27,17 @@ public class ValueScriptExpression<T,V> implements ValueExpression<T,V> {
         } catch (ClassCastException e) {
             return null;
         }
+    }
+
+    public String getScript() {
+        return script;
+    }
+
+    public String getVarName() {
+        return varName;
+    }
+
+    public Class<V> getType() {
+        return type;
     }
 }

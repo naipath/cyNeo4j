@@ -1,11 +1,15 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.querytemplate;
 
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CopyAllMappingStrategy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CypherQueryTemplate;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.provider.CypherQueryTemplateDirectoryProvider;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.DialogMethods;
 
 import javax.swing.*;
+import javax.xml.bind.JAXBException;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Consumer;
@@ -206,7 +210,66 @@ public class SelectTemplateDialog extends JDialog {
             queryListPane.setViewportView(queryList);
             JPanel queryListButtonPanel = new JPanel();
             JButton newQueryButton = new JButton("New");
+
+            newQueryButton.addActionListener(e -> {
+                EditQueryTemplateDialog editQueryTemplateDialog = new EditQueryTemplateDialog();
+                editQueryTemplateDialog.showDialog();
+
+                if(editQueryTemplateDialog.isOk()) {
+                    CypherQueryTemplate cypherQueryTemplate = editQueryTemplateDialog.createCypherQuery();
+
+                    JFileChooser fileChooser = new JFileChooser();
+                    if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                        File file = fileChooser.getSelectedFile();
+                        try {
+                            provider.addCypherQueryTemplate(
+                                    file.toPath(), cypherQueryTemplate
+                            );
+                            reloadList();
+                        } catch (IOException | JAXBException ex) {
+                            JOptionPane.showMessageDialog(this, "Error saving file", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            });
+
             JButton editQueryButton = new JButton("Edit");
+            editQueryButton.addActionListener(e -> {
+                int selected = queryList.getSelectedIndex();
+                if(selected >= 0) {
+                    TemplateQueryListEntry templateQueryListEntry = (TemplateQueryListEntry) queryList.getSelectedValue();
+                    CypherQueryTemplate cypherQueryTemplate = provider.getCypherQueryTemplate(Long.valueOf(templateQueryListEntry.id)).orElse(null);
+                    if(cypherQueryTemplate != null) {
+                        if(cypherQueryTemplate.getMapping() instanceof CopyAllMappingStrategy) {
+
+                           CopyAllMappingStrategy copyAllMappingStrategy = (CopyAllMappingStrategy) cypherQueryTemplate.getMapping();
+                            EditQueryTemplateDialog editQueryTemplateDialog = new EditQueryTemplateDialog(
+                                    cypherQueryTemplate.getName(),
+                                    cypherQueryTemplate.getCypherQuery(),
+                                    cypherQueryTemplate.getParameterTypes(),
+                                    copyAllMappingStrategy.getReferenceColumn(),
+                                    copyAllMappingStrategy.getNetworkName()
+                            );
+                            editQueryTemplateDialog.showDialog();
+                            if(editQueryTemplateDialog.isOk()) {
+                                try {
+                                    provider.putCypherQueryTemplate(
+                                            Long.valueOf(templateQueryListEntry.id),
+                                            editQueryTemplateDialog.createCypherQuery()
+                                    );
+                                    reloadList();
+                                } catch (IOException | JAXBException ex) {
+                                    JOptionPane.showMessageDialog(this, "Error saving query", "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+
+                        } else {
+                            JOptionPane.showMessageDialog(this, "The mapping strategy is not supported by the editor, use a text editor to edit this query");
+                        }
+                    }
+                }
+            });
+
             JButton selectFolderButton = new JButton("Select Folder");
             selectFolderButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
             selectFolderButton.addActionListener(e -> {
@@ -221,9 +284,15 @@ public class SelectTemplateDialog extends JDialog {
             add(queryListButtonPanel);
         }
 
-        public JList getQueryList() {
+        JList getQueryList() {
             return queryList;
         }
+
+        void reloadList() {
+            TemplateQueryListEntry[] list = SelectTemplateDialog.this.getQueryTemplatesFromDir();
+            queryList.setListData(list);
+        }
+
     }
 
 

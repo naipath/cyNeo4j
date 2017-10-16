@@ -7,4 +7,9 @@ public class NodeId implements ValueExpression<GraphNode,Long> {
     public Long eval(GraphNode val) {
         return val.getId();
     }
+
+    @Override
+    public void accept(ValueExpressionVisitor visitor) {
+        visitor.visit(this);
+    }
 }

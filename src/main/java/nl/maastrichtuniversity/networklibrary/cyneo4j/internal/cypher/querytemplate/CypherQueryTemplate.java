@@ -51,12 +51,20 @@ public class CypherQueryTemplate {
         return name;
     }
 
+    public String getCypherQuery() {
+        return cypherQuery;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
 
     public Map<String, Class<?>> getParameterTypes() {
         return parameterTypes;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
     }
 
     public void setParameters(Map<String, Object> parameterMap) {

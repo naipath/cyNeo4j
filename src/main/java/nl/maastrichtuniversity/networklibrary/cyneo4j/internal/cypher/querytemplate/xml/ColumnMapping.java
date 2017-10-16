@@ -1,11 +1,11 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.reader;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.xml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-class ColumnMapping {
+class ColumnMapping extends Mapping {
 
     @XmlElement(name = "node")
     private NodeMapping nodeMapping;
@@ -22,4 +22,16 @@ class ColumnMapping {
     }
 
 
+    public void setNodeMapping(NodeMapping nodeMapping) {
+        this.nodeMapping = nodeMapping;
+    }
+
+    public void setEdgeMapping(EdgeMapping edgeMapping) {
+        this.edgeMapping = edgeMapping;
+    }
+
+    @Override
+    void accept(MappingVisitor visitor) {
+        visitor.visit(this);
+    }
 }

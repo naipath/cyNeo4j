@@ -15,4 +15,17 @@ public class NodePropertyValue<T> implements ValueExpression<GraphNode, T> {
     public T eval(GraphNode val) {
         return val.getProperty(key, type).orElse(null);
     }
+
+    @Override
+    public void accept(ValueExpressionVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public Class<T> getType() {
+        return type;
+    }
 }

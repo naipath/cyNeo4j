@@ -19,4 +19,13 @@ public class LabelValue implements ValueExpression<GraphNode, String> {
                 .findFirst()
                 .orElse("");
     }
+
+    @Override
+    public void accept(ValueExpressionVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    public Pattern getPattern() {
+        return pattern;
+    }
 }

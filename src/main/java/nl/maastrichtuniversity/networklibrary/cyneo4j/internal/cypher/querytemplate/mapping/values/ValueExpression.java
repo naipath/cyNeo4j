@@ -2,4 +2,5 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemp
 
 public interface ValueExpression<T,V> {
     V eval(T val);
+    void accept(ValueExpressionVisitor visitor);
 }

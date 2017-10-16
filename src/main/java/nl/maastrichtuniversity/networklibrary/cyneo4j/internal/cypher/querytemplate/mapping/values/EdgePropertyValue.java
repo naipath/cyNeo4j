@@ -15,4 +15,17 @@ public class EdgePropertyValue<T> implements ValueExpression<GraphEdge, T> {
     public T eval(GraphEdge val) {
         return val.getProperty(key, type).orElse(null);
     }
+
+    @Override
+    public void accept(ValueExpressionVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public Class<T> getType() {
+        return type;
+    }
 }

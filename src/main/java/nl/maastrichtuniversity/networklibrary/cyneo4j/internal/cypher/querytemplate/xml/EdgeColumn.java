@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.reader;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.xml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -48,5 +48,29 @@ class EdgeColumn {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
+    }
+
+    public void setId(Id id) {
+        this.id = id;
+    }
+
+    public void setEdgeType(EdgeType edgeType) {
+        this.edgeType = edgeType;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression = expression;
     }
 }
