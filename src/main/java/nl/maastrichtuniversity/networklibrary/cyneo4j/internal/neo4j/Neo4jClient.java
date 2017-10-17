@@ -30,10 +30,12 @@ public class Neo4jClient {
             return false;
         }
     }
-    public List<GraphObject> executeQuery(CypherQuery cypherQuery) {
+    public List<GraphObject> executeQuery(CypherQuery cypherQuery) throws Neo4jClientException {
         try (Session session = driver.session()) {
             StatementResult statementResult = session.run(cypherQuery.getQuery(), cypherQuery.getParams());
             return statementResult.list( neo4JGraphFactory::create);
+        } catch (Exception e) {
+            throw new Neo4jClientException();
         }
     }
 
@@ -41,7 +43,7 @@ public class Neo4jClient {
         return driver != null && driver.session().isOpen();
     }
 
-    public void executeCommand(AddEdgeCommand cmd) {
+    public void executeCommand(AddEdgeCommand cmd) throws Neo4jClientException {
         CypherQuery cypherQuery = CypherQuery.builder()
                 .query("MATCH (s {suid:$startNodeId}), (e {suid:$endNodeId}) CREATE (s) -[:LINK]-> (e)")
                 .params("startNodeId", cmd.getStartId())
@@ -52,7 +54,7 @@ public class Neo4jClient {
         executeQuery(cypherQuery);
     }
 
-    public void executeCommand(AddNodeCommand cmd) {
+    public void executeCommand(AddNodeCommand cmd) throws Neo4jClientException {
     	String nodeName = cmd.getNodeLabel().replace(' ', '_');
         CypherQuery removerQuery = CypherQuery.builder().query("MATCH(n {suid:$suid}) DELETE n")
                 .params("suid", cmd.getNodeId())

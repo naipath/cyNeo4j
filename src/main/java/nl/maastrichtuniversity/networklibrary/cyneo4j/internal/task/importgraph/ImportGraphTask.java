@@ -3,6 +3,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphObject;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClientException;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -48,7 +49,13 @@ public class ImportGraphTask extends AbstractTask {
             ImportGraph cypherParser = new ImportGraph(network, importGraphStrategy, () -> this.cancelled);
 
             taskMonitor.setStatusMessage("Execute query");
-            CompletableFuture<List<GraphObject>> result = CompletableFuture.supplyAsync(() -> executeQuery(cypherQuery));
+            CompletableFuture<List<GraphObject>> result = CompletableFuture.supplyAsync(() -> {
+                try {
+                    return executeQuery(cypherQuery);
+                } catch (Neo4jClientException e) {
+                    throw new IllegalStateException(e.getMessage(), e);
+                }
+            });
 
             while(!result.isDone()) {
                 if(this.cancelled) {
@@ -84,7 +91,7 @@ public class ImportGraphTask extends AbstractTask {
         }
     }
 
-    private List<GraphObject> executeQuery(CypherQuery query) {
+    private List<GraphObject> executeQuery(CypherQuery query) throws Neo4jClientException {
         return services.getNeo4jClient().executeQuery(query);
     }
 
