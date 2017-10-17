@@ -39,15 +39,6 @@ public class ImportGraphTask extends AbstractTask {
     public void run(TaskMonitor taskMonitor) throws Exception {
         try {
 
-            taskMonitor.setTitle("Importing the Neo4j Graph " + networkName);
-
-            // setup network
-            CyNetwork network = services.getCyNetworkFactory().createNetwork();
-            network.getRow(network).set(CyNetwork.NAME, networkName);
-            services.getCyNetworkManager().addNetwork(network);
-
-            ImportGraph cypherParser = new ImportGraph(network, importGraphStrategy, () -> this.cancelled);
-
             taskMonitor.setStatusMessage("Execute query");
             CompletableFuture<List<GraphObject>> result = CompletableFuture.supplyAsync(() -> {
                 try {
@@ -63,7 +54,21 @@ public class ImportGraphTask extends AbstractTask {
                 }
                 Thread.sleep(400);
             }
+            if(result.isCompletedExceptionally()) {
+                throw new IllegalStateException("Error executing cypher query");
+            }
+
             List<GraphObject> graphObjects = result.get();
+
+            taskMonitor.setTitle("Importing the Neo4j Graph " + networkName);
+
+            // setup network
+            CyNetwork network = services.getCyNetworkFactory().createNetwork();
+            network.getRow(network).set(CyNetwork.NAME, networkName);
+            services.getCyNetworkManager().addNetwork(network);
+
+            ImportGraph cypherParser = new ImportGraph(network, importGraphStrategy, () -> this.cancelled);
+
 
             taskMonitor.setStatusMessage("Importing graph");
             cypherParser.importGraph(graphObjects);
