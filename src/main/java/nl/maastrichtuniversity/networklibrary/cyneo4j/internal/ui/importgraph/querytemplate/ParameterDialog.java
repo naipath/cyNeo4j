@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.querytemplate;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.importgraph.querytemplate;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.DialogMethods;
 
 import javax.swing.*;

@@ -4,8 +4,9 @@ import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.configuration.App
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.Neo4jClient;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.CommandMenuAction;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.connect.ConnectInstanceMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.cypherquery.CypherQueryMenuAction;
-import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.querytemplate.QueryTemplateMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.exportnetwork.ExportNetworkMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.importgraph.CypherQueryMenuAction;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.importgraph.querytemplate.QueryTemplateMenuAction;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.event.CyEventHelper;
@@ -34,7 +35,7 @@ public class CyActivator extends AbstractCyActivator  {
         ConnectInstanceMenuAction connectAction = ConnectInstanceMenuAction.create(services);
         CypherQueryMenuAction cypherQueryMenuAction = CypherQueryMenuAction.create(services);
         QueryTemplateMenuAction queryTemplateMenuAction = QueryTemplateMenuAction.create(services);
-        CommandMenuAction exportNetworkToNeo4jMenuAction = CommandMenuAction.create("Export network",services, () -> services.getCommandFactory().createExportNetworkToNeo4jTask());
+        ExportNetworkMenuAction exportNetworkToNeo4jMenuAction = ExportNetworkMenuAction.create(services);
         CommandMenuAction ImportGraphMenuAction = CommandMenuAction.create("Import graph",services, () -> services.getCommandFactory().createImportGraphTask());
 
         registerAllServices(context, connectAction, new Properties());

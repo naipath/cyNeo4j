@@ -5,7 +5,7 @@ import java.util.Map;
 public class AddNodeCommand {
     private Map<String, Object> nodeProperties;
     private Long nodeId;
-    private String label = null;
+    private NodeLabel label = null;
     
     public void setNodeProperties(Map<String, Object> nodeProperties) {
         this.nodeProperties = nodeProperties;
@@ -23,10 +23,10 @@ public class AddNodeCommand {
         return nodeId;
     }
     
-    public String getNodeLabel(){
+    public NodeLabel getNodeLabel(){
     	return label;
     }
-    public void setNodeLabel(String label) {
+    public void setNodeLabel(NodeLabel label) {
     	this.label = label;
     }
 }

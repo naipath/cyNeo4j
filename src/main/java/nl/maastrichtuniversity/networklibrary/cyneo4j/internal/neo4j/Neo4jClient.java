@@ -3,6 +3,7 @@ package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.AddEdgeCommand;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.AddNodeCommand;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.GraphObject;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.NodeLabel;
 import org.neo4j.driver.v1.*;
 import org.neo4j.driver.v1.exceptions.AuthenticationException;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
@@ -45,7 +46,7 @@ public class Neo4jClient {
 
     public void executeCommand(AddEdgeCommand cmd) throws Neo4jClientException {
         CypherQuery cypherQuery = CypherQuery.builder()
-                .query("MATCH (s {suid:$startNodeId}), (e {suid:$endNodeId}) CREATE (s) -[:LINK]-> (e)")
+                .query("MATCH (s:" + cmd.getNodeLabel().getLabel() + " {suid:$startNodeId}), (e:" + cmd.getNodeLabel().getLabel() + " {suid:$endNodeId}) CREATE (s) -[:LINK]-> (e)")
                 .params("startNodeId", cmd.getStartId())
                 .params("endNodeId", cmd.getEndId())
                 .params("relationship", cmd.getRelationship())
@@ -55,12 +56,12 @@ public class Neo4jClient {
     }
 
     public void executeCommand(AddNodeCommand cmd) throws Neo4jClientException {
-    	String nodeName = cmd.getNodeLabel().replace(' ', '_');
+    	NodeLabel nodeName = cmd.getNodeLabel();
         CypherQuery removerQuery = CypherQuery.builder().query("MATCH(n {suid:$suid}) DELETE n")
                 .params("suid", cmd.getNodeId())
                 .build();
         executeQuery(removerQuery);
-        CypherQuery insertQuery = CypherQuery.builder().query("CREATE(n:" + nodeName + " $props) SET n.suid=$suid")
+        CypherQuery insertQuery = CypherQuery.builder().query("CREATE(n:" + nodeName.getLabel() + " $props) SET n.suid=$suid")
                 .params("props",cmd.getNodeProperties())
                 .params("suid", cmd.getNodeId())
                 .build();

@@ -1,4 +1,4 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.cypherquery;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.importgraph;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.Services;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;

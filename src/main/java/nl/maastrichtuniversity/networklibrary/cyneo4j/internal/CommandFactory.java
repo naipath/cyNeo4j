@@ -1,6 +1,7 @@
 package nl.maastrichtuniversity.networklibrary.cyneo4j.internal;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CypherQueryTemplate;
+import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.graph.NodeLabel;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.neo4j.CypherQuery;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.exportnetwork.ExportNetworkToNeo4jTask;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.task.importgraph.CopyAllImportStrategy;
@@ -29,8 +30,8 @@ public class CommandFactory {
                 new CopyAllImportStrategy(),
                 cypherQuery);
     }
-    public ExportNetworkToNeo4jTask createExportNetworkToNeo4jTask() {
-        return new ExportNetworkToNeo4jTask(services);
+    public ExportNetworkToNeo4jTask createExportNetworkToNeo4jTask(NodeLabel nodeLabel) {
+        return new ExportNetworkToNeo4jTask(services, nodeLabel);
     }
 
     public ImportGraphTask createRetrieveDataFromQueryTemplateTask(String networkName, CypherQueryTemplate query, String visualStyle) {

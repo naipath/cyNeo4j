@@ -1,19 +1,14 @@
-package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.querytemplate;
+package nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.importgraph.querytemplate;
 
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CopyAllMappingStrategy;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.cypher.querytemplate.CypherQueryTemplate;
 import nl.maastrichtuniversity.networklibrary.cyneo4j.internal.ui.DialogMethods;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 

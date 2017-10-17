@@ -8,6 +8,7 @@ public class AddEdgeCommand {
     private Long endId;
     private boolean directed;
     private String relationship;
+    private NodeLabel nodeLabel;
 
     public void setEdgeProperties(Map<String, Object> edgeProperties) {
         this.edgeProperties = edgeProperties;
@@ -47,5 +48,13 @@ public class AddEdgeCommand {
 
     public String getRelationship() {
         return relationship;
+    }
+
+    public NodeLabel getNodeLabel() {
+        return nodeLabel;
+    }
+
+    public void setNodeLabel(NodeLabel nodeLabel) {
+        this.nodeLabel = nodeLabel;
     }
 }
