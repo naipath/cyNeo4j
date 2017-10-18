@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class CypherQueryMenuAction extends AbstractCyAction {
 
-    private final static String MENU_TITLE = "Cypher Query";
+    private final static String MENU_TITLE = "Import Cypher Query";
     private final static String MENU_LOC = "Apps.cyNeo4j";
 
     private final Services services;
